@@ -1,2 +1,2 @@
 class Config(object):
-  debug = True   
+  db='localhost'
