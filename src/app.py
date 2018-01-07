@@ -1,14 +1,12 @@
+import os
 from flask import Flask, jsonify
 from libraries.response import api_response
-import os
-
-# modules
 from v2.modules.competitions import api_competitions_bp
 from v2.modules.competition import api_competition_bp
 from v2.modules.news_list import api_newslist_bp
 from v2.modules.news import api_news_bp
 
-
+# app init
 def create_app(environment=None):
     app = Flask(__name__)
 

@@ -7,6 +7,8 @@ def api_response(status, message, data={}):
             message = 'ok'
         elif status == 201:
             message = 'aksi sukses'
+        elif status == 204:
+            message = 'data kosong'
         else:
             message = 'sedang terjadi masalah'
 
@@ -15,7 +17,7 @@ def api_response(status, message, data={}):
         'message': message
     }
 
-    if status == 200 and not data:
+    if status == 200 and data:
         json_response.update(data)
 
     return json_response
