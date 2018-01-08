@@ -14,6 +14,8 @@ class NewsList(Resource):
         data = getData({
             'limit': limit
         })
+
+        # return response as standard json
         if(len(data) > 0):
             return api_response(200, 'success', {'results': data}), 200
         else:

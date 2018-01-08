@@ -5,4 +5,4 @@ from sqlalchemy import create_engine
 db = create_engine('mysql+pymysql://root:rahasia@localhost/ki', pool_recycle=3600)
 # print executed query
 db.echo = True
-# connect = db.connect()
+connect = db.connect()
