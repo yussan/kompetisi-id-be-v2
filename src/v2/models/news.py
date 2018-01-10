@@ -14,18 +14,27 @@ News = Table('berita', metadata,
              Column('author', BIGINT)
              )
 
-join_user = News.join(Users, News.c.author == Users.c.id)
+join_user = News.join(Users, News.c.author == Users.c.id_user)
 
-def getData(Params = {}):
+select_column = [News.c.id, News.c.title, Users.c.username]
+
+def getList(Params = {}):
     data = []
-    s = select([News.c.id, News.c.title, Users.c.username])\
-        .limit(5).select_from(join_user)
-    if(not Params.id != 0):
-        s.where('')
+    s = select(select_column)\
+        .limit(Params['limit']).select_from(join_user)
     res = connect.execute(s)
     rows = res.fetchall()
     for n in rows:
         data.append(dict(n))
-    print data
 
     return data
+
+def getDetail(id):
+    s = select(select_column).where(News.c.id == id)
+    res = connect.execute(s)
+    row = res.fetchone()
+    print(row)
+    if not row:
+        return {}
+    else:
+        return dict(row)

@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from flask_restful import Api, Resource
-from v2.models.news import getData
+from v2.models.news import getList
 from libraries.response import api_response
 
 class NewsList(Resource):
@@ -11,7 +11,7 @@ class NewsList(Resource):
         if (not limit): limit = 10
 
         # get data from db
-        data = getData({
+        data = getList({
             'limit': limit
         })
 

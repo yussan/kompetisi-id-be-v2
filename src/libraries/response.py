@@ -1,4 +1,4 @@
-def api_response(status, message, data={}):
+def api_response(status, message='', data={}):
     if not status:
         status = 500
 

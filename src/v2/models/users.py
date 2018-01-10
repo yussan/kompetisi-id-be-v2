@@ -1,8 +1,7 @@
-from ..modules.db import db
 from sqlalchemy import Table, Column, MetaData, join
 from sqlalchemy import BIGINT, TEXT, VARCHAR
 
-metadata = MetaData(bind=db)
+metadata = MetaData()
 Users = Table('user', metadata,
-              Column('id', BIGINT),
+              Column('id_user', BIGINT),
               Column('username', VARCHAR))
