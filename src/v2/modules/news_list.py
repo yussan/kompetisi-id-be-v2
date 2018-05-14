@@ -8,11 +8,13 @@ class NewsList(Resource):
         # get url query
         limit = request.args.get('limit')
         lastid = request.args.get('lastid')
+
         if (not limit): limit = 10
 
         # get data from db
         data = getList({
-            'limit': limit
+            'limit': limit,
+            'lastid': lastid
         })
 
         # return response as standard json

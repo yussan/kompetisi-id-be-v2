@@ -1,7 +1,6 @@
 from ..modules.db import connect
 from users import Users
-from sqlalchemy import Table, Column, MetaData, select
-from sqlalchemy import BIGINT, VARCHAR, DATETIME, Enum, TEXT
+from sqlalchemy import Table, Column, MetaData, select, desc, BIGINT, VARCHAR, DATETIME, Enum, TEXT
 
 metadata = MetaData()
 
@@ -16,12 +15,18 @@ News = Table('berita', metadata,
 
 join_user = News.join(Users, News.c.author == Users.c.id_user)
 
-select_column = [News.c.id, News.c.title, Users.c.username]
+select_column = [News.c.id, News.c.title, News.c.content, Users.c.username]
+
 
 def getList(Params = {}):
+
     data = []
     s = select(select_column)\
         .limit(Params['limit']).select_from(join_user)
+
+    # generate where
+    if 'lastid' in Params: s = s.where(News.c.id > Params['lastid'])
+
     res = connect.execute(s)
     rows = res.fetchall()
     for n in rows:
