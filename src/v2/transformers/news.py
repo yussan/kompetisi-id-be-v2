@@ -1,5 +1,4 @@
 def transform(n):
-    print(n)
     return {
       'id': n.id,
       'author': {
