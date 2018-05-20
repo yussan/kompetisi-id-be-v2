@@ -26,14 +26,13 @@ select_column = [News.c.id, News.c.title, News.c.content, News.c.status, News.c.
 
 
 def getList(Params={}, returncount=False):
-
     s = select(select_column)\
         .limit(Params['limit']).select_from(join_user)
     c = select([func.count().label('total')]).select_from(join_user)
 
     # generate where
     if 'notid' in Params:
-        k = []
+        s = s.where(News.c.id != Params['notid'])
     if 'lastid' in Params:
         s = s.where(News.c.id > Params['lastid'])
     if 'draft' in Params['status']:
