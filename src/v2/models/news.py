@@ -25,10 +25,13 @@ select_column = [News.c.id, News.c.title, News.c.content, News.c.status, News.c.
                  Users.c.username, Users.c.id_user]
 
 
-def getList(Params={}, returncount=False):
+def getList(Params={}):
 
+    # select data from table, order by id desc by default
+    # ref: order by https://stackoverflow.com/questions/4186062/sqlalchemy-order-by-descending?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+    s = select(select_column).order_by(News.c.id.desc()).select_from(join_user)
 
-    s = select(select_column).select_from(join_user)
+    # select total row from table
     c = select([func.count().label('total')]).select_from(join_user)
 
     # generate where
@@ -36,8 +39,9 @@ def getList(Params={}, returncount=False):
         s = s.limit(Params['limit'])
     if 'notid' in Params:
         s = s.where(News.c.id != Params['notid'])
+        c = c.where(News.c.id != Params['notid'])
     if 'lastid' in Params:
-        s = s.where(News.c.id > Params['lastid'])
+        s = s.where(News.c.id < Params['lastid'])
     if 'draft' in Params['status']:
         s = s.where(News.c.status == 'draft')
         c = c.where(News.c.status == 'draft')
@@ -51,10 +55,10 @@ def getList(Params={}, returncount=False):
     res = connect.execute(s)
     rescount = connect.execute(c)
 
-    if(returncount):
-        return rescount.fetchone()['total']
-    else:
-        return res.fetchall()
+    return {
+        'data': res.fetchall(),
+        'count': rescount.fetchone()['total']
+    }
 
 
 def getDetail(id):

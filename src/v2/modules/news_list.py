@@ -32,17 +32,16 @@ class NewsList(Resource):
             params['status'] = []
 
         # get data from db
-        data = getList(params)
-        count = getList(params, True)
+        news = getList(params)
 
         # return response as standard json
-        if(len(data) > 0):
-            news = []
-            for n in data:
-                news.append(dict(transform(n)))
+        if(len(news['data']) > 0):
+            newsdata = []
+            for n in news['data']:
+                newsdata.append(dict(transform(n)))
             response = {}
-            response['data'] = news 
-            response['count'] = count 
+            response['data'] = newsdata
+            response['count'] = news['count'] 
             
             return api_response(200, 'success', response), 200
         else:

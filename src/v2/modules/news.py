@@ -12,13 +12,13 @@ class News(Resource):
         if(data):
             # get related post
             ParamsRelated = {'status':['published'], 'notid': id, 'limit': 3}
-            related_data = getList(ParamsRelated)
+            related = getList(ParamsRelated)
 
-            related = []
-            for n in related_data:
-                related.append(dict(transform(n)))
+            relateddata = []
+            for n in related['data']:
+                relateddata.append(dict(transform(n)))
 
-            return api_response(200, 'success', {'data': dict(transform(data)), 'related': related}), 200
+            return api_response(200, 'success', {'data': dict(transform(data)), 'related': relateddata}), 200
         else:
             return api_response(204, 'berita tidak ditemukan'), 204
 
