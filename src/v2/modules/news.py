@@ -9,15 +9,15 @@ class News(Resource):
     def get(self, id):
         data = getDetail(id)
 
-        # get related post
-        ParamsRelated = {'status':['published'], 'notid': id, 'limit': 3}
-        ParamsCountRelated = {'status':['published'], 'notid': id}
-        related = {
-            'data': getList(ParamsRelated),
-            'count': getList(ParamsCountRelated, True)
-        }
-
         if(data):
+            # get related post
+            ParamsRelated = {'status':['published'], 'notid': id, 'limit': 3}
+            related_data = getList(ParamsRelated)
+
+            related = []
+            for n in related_data:
+                related.append(dict(transform(n)))
+
             return api_response(200, 'success', {'data': dict(transform(data)), 'related': related}), 200
         else:
             return api_response(204, 'berita tidak ditemukan'), 204
