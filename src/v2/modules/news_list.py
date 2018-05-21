@@ -7,14 +7,14 @@ from v2.transformers.news import transform
 
 class NewsList(Resource):
     def get(self):
-        # get url query
+        # get query
         limit = request.args.get('limit')
         lastid = request.args.get('lastid')
         status = request.args.get('status')
         tag = request.args.get('tag')
 
         if (not limit):
-            limit = 10
+            limit = 9
 
         params = {
             'limit': limit
