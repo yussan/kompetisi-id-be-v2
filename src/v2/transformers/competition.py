@@ -3,6 +3,7 @@ def transform(n):
     'id': n.id_kompetisi,
     'user': {
       'id': 1,
-      'username': 'username'
+      'username': n.username,
+      'name': n.fullname
     }
   }

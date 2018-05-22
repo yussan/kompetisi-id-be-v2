@@ -33,7 +33,7 @@ Competition = Table('kompetisi', metadata,
 
 join_user = Competition.join(Users, Competition.c.id_user == Users.c.id_user)
 
-select_column = [Competition.c.id_kompetisi]
+select_column = [Competition.c.id_kompetisi, Users.c.username, Users.c.fullname]
 
 def getList(Params = {}):
   s = select(select_column).order_by(Competition.c.id_kompetisi.desc()).select_from(join_user)
