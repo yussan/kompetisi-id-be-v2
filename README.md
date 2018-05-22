@@ -14,7 +14,7 @@ or install from virtualenv
 ./venv/bin/pip install -r requirements.txt
 ```
 
-## Run 
+## Run
 ```
 ./run.sh
 ```
@@ -33,3 +33,6 @@ DB_PORT=<string> default = 3306
 #flask
 DEBUG=<boolean> default = True
 ```
+
+## Documentation 
+https://documenter.getpostman.com/view/100843/RW87q9og

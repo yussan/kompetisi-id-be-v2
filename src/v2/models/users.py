@@ -4,4 +4,6 @@ from sqlalchemy import BIGINT, TEXT, VARCHAR
 metadata = MetaData()
 Users = Table('user', metadata,
               Column('id_user', BIGINT),
-              Column('username', VARCHAR))
+              Column('username', VARCHAR),
+              Column('fullname', VARCHAR)
+              )
