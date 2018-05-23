@@ -21,6 +21,12 @@ class CompetitionListApi(Resource):
         lastid = request.args.get('lastid')
         tag = request.args.get('tag')
         search = request.args.get('search')
+        mainkat = request.args.get('mainkat')
+        subkat = request.args.get('subkat')
+        orderby = request.args.get('orderby')
+        status = request.args.get('status')
+        is_mediapartner = request.args.get('is_mediapartner')
+        is_guaranted = request.args.get('is_guaranted')
 
         if(not limit):
             limit = 9
@@ -36,6 +42,18 @@ class CompetitionListApi(Resource):
             params['tag'] = tag
         if (search):
             params['search'] = search
+        if (mainkat):
+            params['mainkat'] = mainkat
+        if (subkat):
+            params['subkat'] = subkat
+        if (orderby):
+            params['orderby'] = orderby
+        if (status):
+            params['status'] = status
+        if (is_mediapartner):
+            params['is_mediapartner'] = is_mediapartner
+        if (is_guaranted):
+            params['is_guaranted'] = is_guaranted
 
         competitions = getList(params)
 
