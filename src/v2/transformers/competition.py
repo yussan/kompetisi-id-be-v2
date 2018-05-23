@@ -34,8 +34,9 @@ def transform(n):
       'username': n.username,
       'name': n.fullname
     },
-    # 'announcement': json.loads(n.dataPengumuman),
-    'contacts': json.loads(n.kontak),
+    # ref teranary condition: https://stackoverflow.com/questions/394809/does-python-have-a-ternary-conditional-operator
+    'announcement': json.loads(n.dataPengumuman) if n.dataPengumuman else [],
+    'contacts': json.loads(n.kontak) if n.kontak else [],
     'tag': n.tag,
     'link_source': n.sumber,
     'link_join': n.ikuti
