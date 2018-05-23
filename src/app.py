@@ -1,6 +1,6 @@
 import os
 from flask import Flask, jsonify
-from libraries.response import api_response
+from v2.helpers.response import api_response
 from v2.modules.competitions import api_competitions_bp
 from v2.modules.competition import api_competition_bp
 from v2.modules.news_list import api_newslist_bp

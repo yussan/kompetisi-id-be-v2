@@ -9,12 +9,12 @@ def transform(n):
     'title': n.judul_kompetisi,
     'sort': n.sort,
     'organizer': n.penyelenggara,
-    'deadline_at': n.deadline.strftime('%s'),
-    'announcement_at': n.pengumuman.strftime('%s'),
+    'deadline_at': n.deadline.strftime('%s') if n.deadline != '0000-00-00' else 0,
+    'announcement_at': n.pengumuman.strftime('%s') if n.pengumuman != '0000-00-00' else 0,
     'created_at': n.created_at.strftime('%s'),
     'updated_at': n.updated_at.strftime('%s'),
     'is_mediapartner': n.mediapartner == 1,
-    'is_garansi': n.garansi == 1,
+    'is_garansi': n.garansi == "1",
     'content': n.konten,
     'prize': {
       'total': n.total_hadiah,
@@ -39,5 +39,6 @@ def transform(n):
     'contacts': json.loads(n.kontak) if n.kontak else [],
     'tag': n.tag,
     'link_source': n.sumber,
-    'link_join': n.ikuti
+    'link_join': n.ikuti,
+    'views': n.views
   }
