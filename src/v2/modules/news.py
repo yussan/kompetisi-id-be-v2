@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restful import Resource, Api
 from v2.models.news import getDetail, getList
-from libraries.response import api_response
+from v2.helpers.response import api_response
 from v2.transformers.news import transform
 
 

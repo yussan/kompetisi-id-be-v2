@@ -39,5 +39,6 @@ def transform(n):
     'contacts': json.loads(n.kontak) if n.kontak else [],
     'tag': n.tag,
     'link_source': n.sumber,
-    'link_join': n.ikuti
+    'link_join': n.ikuti,
+    'views': n.views
   }

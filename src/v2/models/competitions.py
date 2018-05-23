@@ -1,6 +1,6 @@
 from ..modules.db import connect
 from users import Users
-from sqlalchemy import Table, Column, MetaData, select, func, desc, BIGINT, INT, VARCHAR, DATETIME, Enum, TEXT
+from sqlalchemy import Table, Column, MetaData, select, func, desc, BIGINT, INT, VARCHAR, DATETIME, Enum, TEXT, or_
 
 metadata = MetaData()
 
@@ -54,13 +54,15 @@ join_main_cat = join_user.join(
 join_sub_cat = join_main_cat.join(
     SubCategory, Competition.c.id_sub_kat == SubCategory.c.id_sub_kat)
 
-select_column = [Competition.c.id_kompetisi, Competition.c.judul_kompetisi, Competition.c.sort, Competition.c.poster, Competition.c.penyelenggara,
-                 Competition.c.hadiah, Competition.c.total_hadiah, 
-                 Competition.c.konten, Competition.c.sumber, Competition.c.ikuti, 
+select_column = [Competition.c.id_kompetisi, Competition.c.judul_kompetisi, Competition.c.sort, Competition.c.poster,
+                 Competition.c.penyelenggara,
+                 Competition.c.hadiah, Competition.c.total_hadiah,
+                 Competition.c.konten, Competition.c.sumber, Competition.c.ikuti,
                  Competition.c.dataPengumuman,
                  Competition.c.created_at, Competition.c.updated_at, Competition.c.deadline, Competition.c.pengumuman,
-                 Competition.c.tag, Competition.c.hadiah, Competition.c.status, Competition.c.rating, Competition.c.views, 
-                 Competition.c.mediapartner, Competition.c.garansi, 
+                 Competition.c.tag, Competition.c.hadiah, Competition.c.status, Competition.c.rating,
+                 Competition.c.views,
+                 Competition.c.mediapartner, Competition.c.garansi,
                  Competition.c.kontak, Competition.c.sumber,
                  MainCategory.c.id_main_kat, MainCategory.c.main_kat,
                  SubCategory.c.id_sub_kat, SubCategory.c.sub_kat,
@@ -72,19 +74,22 @@ def getList(Params={}):
     s = select(select_column).order_by(Competition.c.id_kompetisi.desc()).select_from(join_sub_cat)
 
     # generate query to get count
-    c=select([func.count().label('total')]).select_from(Competition)
+    c = select([func.count().label('total')]).select_from(Competition)
 
     # generate query
     if 'limit' in Params:
-        s=s.limit(Params['limit'])
+        s = s.limit(Params['limit'])
     if 'lastid' in Params:
-        s=s.where(Competition.c.id < Params['lastid'])
+        s = s.where(Competition.c.id_kompetisi < Params['lastid'])
     if 'tag' in Params:
-        s=s.where(Competition.c.tag.like('%'+Params['tag']+'%'))
-        c=c.where(Competition.c.tag.like('%'+Params['tag']+'%'))
+        s = s.where(Competition.c.tag.like('%' + Params['tag'] + '%'))
+        c = c.where(Competition.c.tag.like('%' + Params['tag'] + '%'))
+    if 'search' in Params:
+        s = s.where(or_(Competition.c.judul_kompetisi.like('%' + Params['search'] + '%'), Competition.c.tag.like('%' + Params['search'] + '%')))
+        c = c.where(or_(Competition.c.judul_kompetisi.like('%' + Params['search'] + '%'), Competition.c.tag.like('%' + Params['search'] + '%')))
 
-    res=connect.execute(s)
-    rescount=connect.execute(c)
+    res = connect.execute(s)
+    rescount = connect.execute(c)
 
     return {
         'data': res.fetchall(),
