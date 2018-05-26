@@ -5,5 +5,6 @@ metadata = MetaData()
 Users = Table('user', metadata,
               Column('id_user', BIGINT),
               Column('username', VARCHAR),
-              Column('fullname', VARCHAR)
+              Column('fullname', VARCHAR),
+              Column('moto', VARCHAR),
               )
