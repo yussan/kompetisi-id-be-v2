@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-./venv/bin/python ./src/run.py
+export $(cat .env)  && ./venv/bin/python ./src/run.py
