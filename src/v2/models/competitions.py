@@ -125,14 +125,19 @@ def getList(Params={}):
             c = c.where(Competition.c.deadline > datetime.datetime.now())
 
     # show mediapartner
-    if 'is_mediapartner' in Params and Params['is_mediapartner'] == 'true':
+    if  Params['is_mediapartner']:
         s = s.where(Competition.c.mediapartner == 1)
         c = c.where(Competition.c.mediapartner == 1)
 
     # show guaranted competition
-    if 'is_guaranted' in Params and Params['is_guaranted'] == 'true':
+    if  Params['is_guaranted']:
         s = s.where(Competition.c.garansi == "1")
         c = c.where(Competition.c.garansi == "1")
+
+    # show popular competition
+    if Params['is_popular']:
+        s = s.where(or_(Competition.c.views > 50, Competition.c.views < 700))
+        c = c.where(or_(Competition.c.views > 50, Competition.c.views < 700))
 
     res = connect.execute(s)
     rescount = connect.execute(c)

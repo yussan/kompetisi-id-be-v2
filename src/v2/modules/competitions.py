@@ -27,6 +27,7 @@ class CompetitionListApi(Resource):
         status = request.args.get('status')
         is_mediapartner = request.args.get('is_mediapartner')
         is_guaranted = request.args.get('is_guaranted')
+        is_popular = request.args.get('is_popular')
 
         if(not limit):
             limit = 9
@@ -50,10 +51,10 @@ class CompetitionListApi(Resource):
             params['orderby'] = orderby
         if (status):
             params['status'] = status
-        if (is_mediapartner):
-            params['is_mediapartner'] = is_mediapartner
-        if (is_guaranted):
-            params['is_guaranted'] = is_guaranted
+
+        params['is_mediapartner'] = is_mediapartner == 'true'
+        params['is_guaranted'] = is_guaranted == 'true'
+        params['is_popular'] = is_popular == 'true'
 
         competitions = getList(params)
 
