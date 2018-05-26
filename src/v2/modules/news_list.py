@@ -2,6 +2,7 @@ from flask import Blueprint, request
 from flask_restful import Api, Resource
 from v2.models.news import getList
 from v2.helpers.response import api_response
+from v2.helpers.encId import decId
 from v2.transformers.news import transform
 
 
@@ -10,6 +11,7 @@ class NewsList(Resource):
         # get query
         limit = request.args.get('limit')
         lastid = request.args.get('lastid')
+        notid = request.args.get('notid')
         status = request.args.get('status')
         tag = request.args.get('tag')
 
@@ -22,7 +24,7 @@ class NewsList(Resource):
 
         # custom params
         if (lastid):
-            params['lastid'] = lastid
+            params['lastid'] = decId(lastid)
         if (tag):
             params['tag'] = tag
         if (status):
@@ -30,6 +32,10 @@ class NewsList(Resource):
             params['status'] = status.split(',')
         else:
             params['status'] = []
+
+        # get news list if id not
+        if notid:
+            params['notid'] = decId(notid)
 
         # get data from db
         news = getList(params)
@@ -45,7 +51,7 @@ class NewsList(Resource):
             
             return api_response(200, 'success', response), 200
         else:
-            return api_response(204), 204
+            return api_response(204), 200
 
 api_newslist_bp = Blueprint('api_newslist', __name__)
 api_newslist = Api(api_newslist_bp)

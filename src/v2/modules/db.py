@@ -8,7 +8,8 @@ db_user = os.environ.get('DB_USER', 'root42')
 db_password = os.environ.get('DB_PASSWORD', 'Rahasia42_')
 db_name = os.environ.get('DB_NAME', 'ki_dev42')
 
-engine = create_engine('mysql+pymysql://' + db_user + ':' + db_password + '@' + db_host + '/' + db_name, pool_recycle=3600)
+# solved utf8 from: https://stackoverflow.com/questions/11972363/sqlalchemy-and-unicodedecodeerror?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+engine = create_engine('mysql+pymysql://' + db_user + ':' + db_password + '@' + db_host + '/' + db_name + '?charset=utf8', pool_recycle=3600)
 # print executed query
 engine.echo = True
 connect = engine.connect()
