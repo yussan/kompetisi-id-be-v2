@@ -76,6 +76,9 @@ def getList(Params={}):
     if 'orderby' in Params:
         if Params['orderby'] == 'prize_dsc':
             orderby = Competition.c.total_hadiah.desc()
+    
+    if Params['is_popular']:
+        orderby = Competition.c.views.desc()
 
     # generate query to get data
     s = select(select_column).order_by(orderby).select_from(join_sub_cat)
