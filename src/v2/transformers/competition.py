@@ -1,4 +1,5 @@
 from v2.helpers.encId import encId
+from v2.helpers.strings import generateTitleUrl
 # ref: http://docs.python-guide.org/en/latest/scenarios/json/
 import json
 import re
@@ -8,6 +9,7 @@ def transform(n):
         # 'id': n.id_kompetisi,
         'id': encId(n.id_kompetisi),
         'title': n.judul_kompetisi,
+        'nospace_title':  generateTitleUrl(n.judul_kompetisi)[0],
         'sort': n.sort,
         'organizer': n.penyelenggara,
         'deadline_at': n.deadline.strftime('%s') if n.deadline != '0000-00-00' else 0,
@@ -30,10 +32,11 @@ def transform(n):
             'id': n.id_sub_kat,
             'name': n.sub_kat
         },
-        'user': {
+        'author': {
             'id': 1,
             'username': n.username,
-            'name': n.fullname
+            'name': n.fullname,
+            'moto': n.moto
         },
         # ref teranary condition: https://stackoverflow.com/questions/394809/does-python-have-a-ternary-conditional-operator
         'announcement': json.loads(n.dataPengumuman) if n.dataPengumuman else [],
