@@ -151,7 +151,7 @@ def getList(Params={}):
 def getRelated(Params={}):
     # generate query to get data
     s = select(select_column).order_by(
-        Competition.c.id_kompetisi.desc()).select_from(join_sub_cat).limit(4)
+        Competition.c.id_kompetisi.desc()).select_from(join_sub_cat).limit(3)
     s = s.where(Competition.c.id_kompetisi != Params['notid'])
     s = s.where(Competition.c.deadline > datetime.datetime.now())
     s = s.where(MainCategory.c.main_kat == Params['mainkat'])
@@ -160,13 +160,13 @@ def getRelated(Params={}):
     data = res.fetchall()
     totaldata = len(data)
 
-    if totaldata > 3:
+    if totaldata > 2:
         return {
             'data': data
         }
     else:
         s2 = select(select_column).order_by(
-            Competition.c.id_kompetisi.desc()).select_from(join_sub_cat).limit(4 - totaldata)
+            Competition.c.id_kompetisi.desc()).select_from(join_sub_cat).limit(3 - totaldata)
         s2 = s2.where(Competition.c.id_kompetisi != Params['notid'])
 
         res2 = connect.execute(s2)
