@@ -152,6 +152,9 @@ def getList(Params={}):
 
 
 def getRelated(Params={}):
+    #get detail competitoin 
+    competition = select([Competition.c.main_kat, Competition.c.id_kompetisi, Competition.c.tag]).select_from(Competition).where(Competition.c.id_kompetisi == Params['notid'])
+
     # generate query to get data
     s = select(select_column).order_by(
         Competition.c.id_kompetisi.desc()).select_from(join_sub_cat).limit(3)

@@ -71,23 +71,15 @@ class CompetitionListApi(Resource):
             return api_response(204), 200
 
 class CompetitionRelatedApi(Resource):
-    def get(self):
+    def get(self, encid):
         params = {}
 
-        # get kompetisi id
-        encid = request.args.get('notid')
         # main category 
         mainkat = request.args.get('mainkat')
         # tag 
         tag = request.args.get('tag')
 
-        if not encid or not mainkat or not tag:
-            return api_response(400), 200
-        else:
-            params['notid'] = decId(encid)
-            params['mainkat'] = mainkat
-            params['tag'] = tag 
-
+        params['notid'] = decId(encid)
 
         # get data from db
         competitions = getRelated(params)
@@ -106,4 +98,4 @@ class CompetitionRelatedApi(Resource):
 api_competitions_bp = Blueprint('api_competitions', __name__)
 api_competitions = Api(api_competitions_bp)
 api_competitions.add_resource(CompetitionListApi, '/v2/competitions')
-api_competitions.add_resource(CompetitionRelatedApi, '/v2/competitions/related')
+api_competitions.add_resource(CompetitionRelatedApi, '/v2/competitions/related/<encid>')
