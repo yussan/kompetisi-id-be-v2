@@ -9,7 +9,8 @@ def transform(n):
       'id': encId(n.id),
       'author': {
           'id': n.id_user,
-          'username': n.username
+          'username': n.username,
+          'moto': n.moto
       },
       'title': n.title,
       'nospace_title':  generateTitleUrl(n.title)[0],

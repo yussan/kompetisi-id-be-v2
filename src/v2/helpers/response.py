@@ -9,6 +9,8 @@ def api_response(status, message='', data={}):
             message = 'aksi sukses'
         elif status == 204:
             message = 'data kosong'
+        elif status == 400:
+            message = 'parameter tidak valid'
         else:
             message = 'sedang terjadi masalah'
 

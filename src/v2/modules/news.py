@@ -1,12 +1,15 @@
 from flask import Blueprint
 from flask_restful import Resource, Api
 from v2.models.news import getDetail, getList
+from v2.helpers.encId import decId
 from v2.helpers.response import api_response
 from v2.transformers.news import transform
 
 
 class News(Resource):
     def get(self, id):
+        # decrypt id
+        id = decId(id)
         data = getDetail(id)
 
         if(data):
@@ -31,4 +34,4 @@ class News(Resource):
 
 api_news_bp = Blueprint('api_news', __name__)
 api_news = Api(api_news_bp)
-api_news.add_resource(News, '/v2/news/<int:id>')
+api_news.add_resource(News, '/v2/news/<string:id>')

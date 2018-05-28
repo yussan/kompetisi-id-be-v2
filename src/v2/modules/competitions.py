@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from flask_restful import Api, Resource
-from v2.models.competitions import getList
+from v2.models.competitions import getList, getRelated
 from v2.helpers.response import api_response
 from v2.helpers.encId import decId
 from v2.transformers.competition import transform
@@ -27,6 +27,7 @@ class CompetitionListApi(Resource):
         status = request.args.get('status')
         is_mediapartner = request.args.get('is_mediapartner')
         is_guaranted = request.args.get('is_guaranted')
+        is_popular = request.args.get('is_popular')
 
         if(not limit):
             limit = 9
@@ -50,14 +51,14 @@ class CompetitionListApi(Resource):
             params['orderby'] = orderby
         if (status):
             params['status'] = status
-        if (is_mediapartner):
-            params['is_mediapartner'] = is_mediapartner
-        if (is_guaranted):
-            params['is_guaranted'] = is_guaranted
+
+        params['is_mediapartner'] = is_mediapartner == 'true'
+        params['is_guaranted'] = is_guaranted == 'true'
+        params['is_popular'] = is_popular == 'true'
 
         competitions = getList(params)
 
-        if(len(competitions) > 0):
+        if(len(competitions['data']) > 0):
             comdata = []
             for n in competitions['data']:
                 comdata.append(dict(transform(n)))
@@ -67,13 +68,42 @@ class CompetitionListApi(Resource):
 
             return api_response(200, 'success', response), 200
         else:
-            return api_response(204), 204
+            return api_response(204), 200
 
-        return {
-            'status': 200,
-            'data': competitions
-               }, 200
+class CompetitionRelatedApi(Resource):
+    def get(self):
+        params = {}
+
+        # get kompetisi id
+        encid = request.args.get('notid')
+        # main category 
+        mainkat = request.args.get('mainkat')
+        # tag 
+        tag = request.args.get('tag')
+
+        if not encid or not mainkat or not tag:
+            return api_response(400), 200
+        else:
+            params['notid'] = decId(encid)
+            params['mainkat'] = mainkat
+            params['tag'] = tag 
+
+
+        # get data from db
+        competitions = getRelated(params)
+
+        if(len(competitions['data']) > 0):
+            comdata = []
+            for n in competitions['data']:
+                comdata.append(dict(transform(n)))
+            response = {}
+            response['data'] = comdata
+
+            return api_response(200, 'success', response), 200
+        else:
+            return api_response(204), 200
 
 api_competitions_bp = Blueprint('api_competitions', __name__)
 api_competitions = Api(api_competitions_bp)
 api_competitions.add_resource(CompetitionListApi, '/v2/competitions')
+api_competitions.add_resource(CompetitionRelatedApi, '/v2/competitions/related')

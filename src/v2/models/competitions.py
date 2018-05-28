@@ -67,17 +67,18 @@ select_column = [Competition.c.id_kompetisi, Competition.c.judul_kompetisi, Comp
                  Competition.c.kontak, Competition.c.sumber,
                  MainCategory.c.id_main_kat, MainCategory.c.main_kat,
                  SubCategory.c.id_sub_kat, SubCategory.c.sub_kat,
-                 Users.c.username, Users.c.fullname]
+                 Users.c.username, Users.c.fullname, Users.c.moto]
 
 
 def getList(Params={}):
-
-
     # order by
     orderby = Competition.c.id_kompetisi.desc()
     if 'orderby' in Params:
         if Params['orderby'] == 'prize_dsc':
             orderby = Competition.c.total_hadiah.desc()
+    
+    if Params['is_popular']:
+        orderby = Competition.c.views.desc()
 
     # generate query to get data
     s = select(select_column).order_by(orderby).select_from(join_sub_cat)
@@ -105,8 +106,10 @@ def getList(Params={}):
     # filter result by search keyword based on title and tag
     if 'search' in Params:
         # ref _or: http://docs.sqlalchemy.org/en/latest/core/sqlelement.html#sqlalchemy.sql.expression.or_
-        s = s.where(or_(Competition.c.judul_kompetisi.like('%' + Params['search'] + '%'), Competition.c.tag.like('%' + Params['search'] + '%')))
-        c = c.where(or_(Competition.c.judul_kompetisi.like('%' + Params['search'] + '%'), Competition.c.tag.like('%' + Params['search'] + '%')))
+        s = s.where(or_(Competition.c.judul_kompetisi.like(
+            '%' + Params['search'] + '%'), Competition.c.tag.like('%' + Params['search'] + '%')))
+        c = c.where(or_(Competition.c.judul_kompetisi.like(
+            '%' + Params['search'] + '%'), Competition.c.tag.like('%' + Params['search'] + '%')))
 
     # filter result by main kategori
     if 'mainkat' in Params:
@@ -125,19 +128,58 @@ def getList(Params={}):
             c = c.where(Competition.c.deadline > datetime.datetime.now())
 
     # show mediapartner
-    if 'is_mediapartner' in Params and Params['is_mediapartner'] == 'true':
+    if Params['is_mediapartner']:
         s = s.where(Competition.c.mediapartner == 1)
         c = c.where(Competition.c.mediapartner == 1)
 
     # show guaranted competition
-    if 'is_guaranted' in Params and Params['is_guaranted'] == 'true':
+    if Params['is_guaranted']:
         s = s.where(Competition.c.garansi == "1")
         c = c.where(Competition.c.garansi == "1")
 
+<<<<<<< HEAD
     res = connection.execute(s)
     rescount = connection.execute(c)
+=======
+    # show popular competition
+    if Params['is_popular']:
+        s = s.where(or_(Competition.c.views > 50, Competition.c.views < 700))
+        c = c.where(or_(Competition.c.views > 50, Competition.c.views < 700))
+
+    res = connect.execute(s)
+    rescount = connect.execute(c)
+>>>>>>> 41bea0726fc4f53c04bca850867261c00fc576ac
 
     return {
         'data': res.fetchall(),
         'count': rescount.fetchone()['total']
     }
+
+
+def getRelated(Params={}):
+    # generate query to get data
+    s = select(select_column).order_by(
+        Competition.c.id_kompetisi.desc()).select_from(join_sub_cat).limit(3)
+    s = s.where(Competition.c.id_kompetisi != Params['notid'])
+    s = s.where(Competition.c.deadline > datetime.datetime.now())
+    s = s.where(MainCategory.c.main_kat == Params['mainkat'])
+
+    res = connect.execute(s)
+    data = res.fetchall()
+    totaldata = len(data)
+
+    if totaldata > 2:
+        return {
+            'data': data
+        }
+    else:
+        s2 = select(select_column).order_by(
+            Competition.c.id_kompetisi.desc()).select_from(join_sub_cat).limit(3 - totaldata)
+        s2 = s2.where(Competition.c.id_kompetisi != Params['notid'])
+
+        res2 = connect.execute(s2)
+        data2 = res2.fetchall()
+
+        return {
+            'data': data2
+        }
