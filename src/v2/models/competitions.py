@@ -1,4 +1,4 @@
-from ..modules.db import connect
+from ..modules.db import connection
 import datetime
 from users import Users
 from sqlalchemy import Table, Column, MetaData, select, func, BIGINT, INT, DATETIME, TEXT, or_
@@ -137,6 +137,10 @@ def getList(Params={}):
         s = s.where(Competition.c.garansi == "1")
         c = c.where(Competition.c.garansi == "1")
 
+<<<<<<< HEAD
+    res = connection.execute(s)
+    rescount = connection.execute(c)
+=======
     # show popular competition
     if Params['is_popular']:
         s = s.where(or_(Competition.c.views > 50, Competition.c.views < 700))
@@ -144,6 +148,7 @@ def getList(Params={}):
 
     res = connect.execute(s)
     rescount = connect.execute(c)
+>>>>>>> 41bea0726fc4f53c04bca850867261c00fc576ac
 
     return {
         'data': res.fetchall(),

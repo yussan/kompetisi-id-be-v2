@@ -1,4 +1,4 @@
-from ..modules.db import connect
+from ..modules.db import connection
 from users import Users
 from sqlalchemy import Table, Column, MetaData, select, func, desc, BIGINT, VARCHAR, DATETIME, Enum, TEXT
 
@@ -52,8 +52,8 @@ def getList(Params={}):
         s = s.where(News.c.tag.like('%'+Params['tag']+'%'))
         c = c.where(News.c.tag.like('%'+Params['tag']+'%'))
 
-    res = connect.execute(s)
-    rescount = connect.execute(c)
+    res = connection.execute(s)
+    rescount = connection.execute(c)
 
     return {
         'data': res.fetchall(),
@@ -63,7 +63,7 @@ def getList(Params={}):
 
 def getDetail(id):
     s = select(select_column).where(News.c.id == id)
-    res = connect.execute(s)
+    res = connection.execute(s)
     row = res.fetchone()
     if not row:
         return {}
