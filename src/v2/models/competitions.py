@@ -1,4 +1,4 @@
-from ..modules.db import connect
+from ..modules.db import connection
 import datetime
 from users import Users
 from sqlalchemy import Table, Column, MetaData, select, func, BIGINT, INT, DATETIME, TEXT, or_
@@ -134,8 +134,8 @@ def getList(Params={}):
         s = s.where(Competition.c.garansi == "1")
         c = c.where(Competition.c.garansi == "1")
 
-    res = connect.execute(s)
-    rescount = connect.execute(c)
+    res = connection.execute(s)
+    rescount = connection.execute(c)
 
     return {
         'data': res.fetchall(),

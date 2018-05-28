@@ -12,4 +12,7 @@ db_name = os.environ.get('DB_NAME', 'ki_dev42')
 engine = create_engine('mysql+pymysql://' + db_user + ':' + db_password + '@' + db_host + '/' + db_name + '?charset=utf8', pool_recycle=3600)
 # print executed query
 engine.echo = True
-connect = engine.connect()
+connection = engine.connect()
+connection = connection.execution_options(
+    isolation_level="READ COMMITTED"
+)
