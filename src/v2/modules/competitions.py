@@ -72,17 +72,10 @@ class CompetitionListApi(Resource):
 
 class CompetitionRelatedApi(Resource):
     def get(self, encid):
-        params = {}
-
-        # main category 
-        mainkat = request.args.get('mainkat')
-        # tag 
-        tag = request.args.get('tag')
-
-        params['notid'] = decId(encid)
+        id = decId(encid)
 
         # get data from db
-        competitions = getRelated(params)
+        competitions = getRelated(id)
 
         if(len(competitions['data']) > 0):
             comdata = []

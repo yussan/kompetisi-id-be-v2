@@ -137,18 +137,13 @@ def getList(Params={}):
         s = s.where(Competition.c.garansi == "1")
         c = c.where(Competition.c.garansi == "1")
 
-<<<<<<< HEAD
-    res = connection.execute(s)
-    rescount = connection.execute(c)
-=======
     # show popular competition
     if Params['is_popular']:
         s = s.where(or_(Competition.c.views > 50, Competition.c.views < 700))
         c = c.where(or_(Competition.c.views > 50, Competition.c.views < 700))
 
-    res = connect.execute(s)
-    rescount = connect.execute(c)
->>>>>>> 41bea0726fc4f53c04bca850867261c00fc576ac
+    res = connection.execute(s)
+    rescount = connection.execute(c)
 
     return {
         'data': res.fetchall(),
@@ -156,18 +151,21 @@ def getList(Params={}):
     }
 
 
-def getRelated(Params={}):
+def getRelated(id):
     #get detail competitoin 
-    competition = select([Competition.c.main_kat, Competition.c.id_kompetisi, Competition.c.tag]).select_from(Competition).where(Competition.c.id_kompetisi == Params['notid'])
+    c_query = select([Competition.c.id_main_kat.label('main_kat'), Competition.c.tag]).select_from(Competition).where(Competition.c.id_kompetisi == id)
+    competition  = connection.execute(c_query).fetchone()
 
-    # generate query to get data
+    # get competition by main category
     s = select(select_column).order_by(
-        Competition.c.id_kompetisi.desc()).select_from(join_sub_cat).limit(3)
-    s = s.where(Competition.c.id_kompetisi != Params['notid'])
-    s = s.where(Competition.c.deadline > datetime.datetime.now())
-    s = s.where(MainCategory.c.main_kat == Params['mainkat'])
-
-    res = connect.execute(s)
+        Competition.c.id_kompetisi.desc()).select_from(join_sub_cat)\
+        .where(MainCategory.c.main_kat == competition['main_kat'])\
+        .where(Competition.c.deadline > datetime.datetime.now())\
+        .where(Competition.c.id_kompetisi != id)\
+        .limit(3)
+    
+    # generate query to get data
+    res = connection.execute(s)
     data = res.fetchall()
     totaldata = len(data)
 
@@ -178,9 +176,9 @@ def getRelated(Params={}):
     else:
         s2 = select(select_column).order_by(
             Competition.c.id_kompetisi.desc()).select_from(join_sub_cat).limit(3 - totaldata)
-        s2 = s2.where(Competition.c.id_kompetisi != Params['notid'])
+        s2 = s2.where(Competition.c.id_kompetisi != id).where(Competition.c.deadline > datetime.datetime.now())
 
-        res2 = connect.execute(s2)
+        res2 = connection.execute(s2)
         data2 = res2.fetchall()
 
         return {
