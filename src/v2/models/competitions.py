@@ -1,5 +1,6 @@
 from ..modules.db import connection
 import datetime
+from v2.helpers.encId import encId
 from users import Users
 from sqlalchemy import Table, Column, MetaData, select, func, BIGINT, INT, DATETIME, TEXT, or_
 
@@ -187,3 +188,36 @@ def getRelated(id):
         return {
             'data': data2
         }
+
+def getDetail(id):
+    query = select(select_column).select_from(join_sub_cat).where(Competition.c.id_kompetisi == id)
+    result = connection.execute(query)
+
+    response = {
+        'data': result.fetchone(),
+        'next': {},
+        'prev': {}
+    }
+
+    # compoetition found
+    if('id_kompetisi' in response['data']):
+        # get next competition
+        querynext = select([Competition.c.id_kompetisi.label('id'), Competition.c.judul_kompetisi.label('title')]).where(Competition.c.id_kompetisi > id).limit(1)
+        resultnext = connection.execute(querynext).fetchone()
+        if(resultnext): 
+            response['next'] = {
+                'id': encId(resultnext.id),
+                'title': resultnext.title
+            }
+
+
+        # get prev competition
+        queryprev = select([Competition.c.id_kompetisi.label('id'), Competition.c.judul_kompetisi.label('title')]).where(Competition.c.id_kompetisi < id).limit(1)
+        resultprev = connection.execute(queryprev).fetchone()
+        if(resultprev): 
+            response['prev'] = {
+                'id': encId(resultprev.id),
+                'title': resultprev.title
+            }
+
+    return response
