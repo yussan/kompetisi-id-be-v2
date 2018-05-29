@@ -200,7 +200,8 @@ def getDetail(id):
     }
 
     # compoetition found
-    if('id_kompetisi' in response['data']):
+    print('result db', response)
+    if( response['data'] != None):
         # get next competition
         querynext = select([Competition.c.id_kompetisi.label('id'), Competition.c.judul_kompetisi.label('title')]).where(Competition.c.id_kompetisi > id).limit(1)
         resultnext = connection.execute(querynext).fetchone()

@@ -15,7 +15,7 @@ class CompetitionApi(Resource):
         id = decId(encid)
         competition = getDetail(id)
 
-        if('id_kompetisi' in competition['data']):
+        if(competition['data'] != None):
             competition['data'] = transform(competition['data'])
             # competition found
             return api_response(200, 'success', competition), 200
