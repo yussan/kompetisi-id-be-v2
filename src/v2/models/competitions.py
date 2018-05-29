@@ -1,6 +1,7 @@
 from ..modules.db import connection
 import datetime
 from v2.helpers.encId import encId
+from v2.helpers.strings import generateTitleUrl
 from users import Users
 from sqlalchemy import Table, Column, MetaData, select, func, BIGINT, INT, DATETIME, TEXT, or_
 
@@ -208,17 +209,19 @@ def getDetail(id):
         if(resultnext): 
             response['next'] = {
                 'id': encId(resultnext.id),
-                'title': resultnext.title
+                'title': resultnext.title,
+                'nospace_title': generateTitleUrl(resultnext.title)
             }
 
 
         # get prev competition
-        queryprev = select([Competition.c.id_kompetisi.label('id'), Competition.c.judul_kompetisi.label('title')]).where(Competition.c.id_kompetisi < id).limit(1)
+        queryprev = select([Competition.c.id_kompetisi.label('id'), Competition.c.judul_kompetisi.label('title')]).where(Competition.c.id_kompetisi < id).order_by(Competition.c.id_kompetisi.desc()).limit(1)
         resultprev = connection.execute(queryprev).fetchone()
         if(resultprev): 
             response['prev'] = {
                 'id': encId(resultprev.id),
-                'title': resultprev.title
+                'title': resultprev.title,
+                'nospace_title': generateTitleUrl(resultprev.title)
             }
 
     return response
