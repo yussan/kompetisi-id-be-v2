@@ -3,7 +3,7 @@ import datetime
 from v2.helpers.encId import encId
 from v2.helpers.strings import generateTitleUrl
 from users import Users
-from sqlalchemy import Table, Column, MetaData, select, func, BIGINT, INT, DATETIME, TEXT, or_
+from sqlalchemy import Table, Column, MetaData, select, update, func, BIGINT, INT, DATETIME, TEXT, or_
 
 metadata = MetaData()
 
@@ -203,6 +203,11 @@ def getDetail(id):
     # compoetition found
     print('result db', response)
     if( response['data'] != None):
+
+        # update total views
+        queryupdateviews = update(Competition).where(Competition.c.id_kompetisi == id).values(views = Competition.c.views + 1)
+        connection.execute(queryupdateviews)
+
         # get next competition
         querynext = select([Competition.c.id_kompetisi.label('id'), Competition.c.judul_kompetisi.label('title')]).where(Competition.c.id_kompetisi > id).limit(1)
         resultnext = connection.execute(querynext).fetchone()
