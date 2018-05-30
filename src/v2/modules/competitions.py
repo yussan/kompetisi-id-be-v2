@@ -39,6 +39,7 @@ class CompetitionListApi(Resource):
         # custom params
         if (lastid):
             params['lastid'] = decId(lastid)
+            params['lastprize'] = lastid
         if (tag):
             params['tag'] = tag
         if (search):

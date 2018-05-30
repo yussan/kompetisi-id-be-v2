@@ -82,7 +82,7 @@ def getList(Params={}):
     if 'lastid' in Params:
         if 'orderby' in Params:
             if Params['orderby'] == 'prize_dsc':
-                s = s.where(Competition.c.total_hadiah < Params['lastid'])
+                s = s.where(Competition.c.total_hadiah < Params['lastprize'])
         else:
             s = s.where(Competition.c.id_kompetisi < Params['lastid'])
 
