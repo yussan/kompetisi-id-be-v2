@@ -30,7 +30,6 @@ def transformImage(image):
         }
     else :
         image = json.loads(image)
-        print('image', image)
         return {
             'small': image['small'] if image['small'].find('http') > -1  else 'https://media.kompetisi.id' + image['small'],
             'original': image['original'] if re.match(r'^http', image['original'])  else 'https://media.kompetisi.id' + image['original']
