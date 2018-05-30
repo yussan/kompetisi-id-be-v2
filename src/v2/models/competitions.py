@@ -22,7 +22,7 @@ SubCategory = Table('sub_kat', metadata,
                     Column('sub_kat', TEXT)
                     )
 
-# competition table delaration
+# competition table declaration
 Competition = Table('kompetisi', metadata,
                     Column('id_kompetisi', BIGINT),
                     Column('id_user', BIGINT),
@@ -71,7 +71,7 @@ select_column = [Competition.c.id_kompetisi, Competition.c.judul_kompetisi, Comp
                  SubCategory.c.id_sub_kat, SubCategory.c.sub_kat,
                  Users.c.username, Users.c.fullname, Users.c.moto]
 
-
+# functino to get list of competitions
 def getList(Params={}):
     # order by
     orderby = Competition.c.id_kompetisi.desc()
@@ -152,7 +152,7 @@ def getList(Params={}):
         'count': rescount.fetchone()['total']
     }
 
-
+# function to get competition related by competition id
 def getRelated(id):
     #get detail competitoin 
     c_query = select([Competition.c.id_main_kat.label('main_kat'), Competition.c.tag]).select_from(Competition).where(Competition.c.id_kompetisi == id)
@@ -190,6 +190,7 @@ def getRelated(id):
             'data': data2
         }
 
+# function to get detial competition by competition id
 def getDetail(id):
     query = select(select_column).select_from(join_sub_cat).where(Competition.c.id_kompetisi == id)
     result = connection.execute(query)
@@ -230,3 +231,13 @@ def getDetail(id):
             }
 
     return response
+
+# function to get list competition categories and sub categories
+def getCategories():
+    query = select([MainCategory.c.id_main_kat, MainCategory.c.main_kat, MainCategory.c.deskripsi, MainCategory.c.color])
+    result = connection.execute(query).fetchall()
+    return result 
+
+# function to get sub categories by main category id
+def getSubCategories(main_category_id):
+    return {}
