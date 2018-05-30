@@ -216,13 +216,3 @@ def getDetail(id):
             }
 
     return response
-
-# function to get list competition categories and sub categories
-def getCategories():
-    query = select([MainCategory.c.id_main_kat, MainCategory.c.main_kat, MainCategory.c.deskripsi, MainCategory.c.color])
-    result = connection.execute(query).fetchall()
-    return result 
-
-# function to get sub categories by main category id
-def getSubCategories(main_category_id):
-    return {}
