@@ -5,7 +5,7 @@ metadata = MetaData()
 
 # main category table declaration
 MainCategory = Table('main_kat', metadata,
-                     Column('id_main_kat', BIGINT),
+                     Column('id_main_kat', INT),
                      Column('main_kat', TEXT),
                      Column('color', TEXT),
                      Column('logo', TEXT),
@@ -14,8 +14,8 @@ MainCategory = Table('main_kat', metadata,
 
 # sub category table declaration
 SubCategory = Table('sub_kat', metadata,
-                    Column('id_sub_kat', BIGINT),
-                    Column('id_main_kat', BIGINT),
+                    Column('id_sub_kat', INT),
+                    Column('id_main_kat', INT),
                     Column('sub_kat', TEXT)
                     )
 

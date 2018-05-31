@@ -15,23 +15,18 @@ class MainCat(Resource):
     for n in data:
       # transform main categories
       mc = transformMainCategory(n)
-      mc['subcategories'] = []
-
       # get subcategories by main cat id
-      subdata = getSubCategories(mc['id'])
-      # transform sub categories
-      for m in subdata:
-        sc = transformSubCategory(m)
-        mc['subcategories'].append(sc)
+      subcategories = []
+      for n in getSubCategories(mc['id']):
+        sc = transformSubCategory(n)
+        subcategories.append(sc)
+
+      mc['subcategories'] = subcategories
 
       maincategories.append(mc)
+
     return {'data': maincategories}
 
-class SubCat(Resource):
-
-  # function to get list sub categories by main category id
-  def get(self, main_cat_id):
-    return {}
-
-api_category.add_resource(MainCat, '/v2/maincategories')
-api_category.add_resource(SubCat, '/v2/subcategories/<int:main_cat_id>')
+api_categories_bp = Blueprint('api_categories', __name__)
+api_categories = Api(api_categories_bp)
+api_categories.add_resource(MainCat, '/v2/maincategories')
