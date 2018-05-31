@@ -44,7 +44,7 @@ class NewsList(Resource):
         if(len(news['data']) > 0):
             newsdata = []
             for n in news['data']:
-                newsdata.append(dict(transform(n)))
+                newsdata.append(transform(n))
             response = {}
             response['data'] = newsdata
             response['count'] = news['count'] 

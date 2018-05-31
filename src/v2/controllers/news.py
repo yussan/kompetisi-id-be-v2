@@ -19,7 +19,7 @@ class News(Resource):
 
             relateddata = []
             for n in related['data']:
-                relateddata.append(dict(transform(n)))
+                relateddata.append(transform(n))
 
             return api_response(200, 'success', {'data': dict(transform(data)), 'related': relateddata}), 200
         else:

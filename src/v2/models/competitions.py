@@ -69,7 +69,7 @@ def getList(Params={}):
         orderby = Competition.c.views.desc()
 
     # generate query to get data
-    s = select(select_column).order_by(orderby).select_from(join_sub_cat)
+    s = select(select_column).select_from(join_sub_cat).order_by(orderby)
 
     # generate query to get count
     c = select([func.count().label('total')]).select_from(Competition)
@@ -83,6 +83,8 @@ def getList(Params={}):
         if 'orderby' in Params:
             if Params['orderby'] == 'prize_dsc':
                 s = s.where(Competition.c.total_hadiah < Params['lastprize'])
+            else:
+                s = s.where(Competition.c.id_kompetisi < Params['lastid'])
         else:
             s = s.where(Competition.c.id_kompetisi < Params['lastid'])
 

@@ -6,6 +6,7 @@ from v2.controllers.competition import api_competition_bp
 from v2.controllers.news_list import api_newslist_bp
 from v2.controllers.news import api_news_bp
 from v2.controllers.categories import api_categories_bp
+from v2.controllers.request import api_request_bp
 
 # app init
 def create_app(environment=None):
@@ -46,6 +47,10 @@ def create_app(environment=None):
 
     app.register_blueprint(
         api_categories_bp
+    )
+
+    app.register_blueprint(
+        api_request_bp
     )
     # end of api v2
     # end of blueprint registration
