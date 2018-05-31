@@ -1,11 +1,11 @@
 import os
 from flask import Flask, jsonify
 from v2.helpers.response import api_response
-from v2.modules.competitions import api_competitions_bp
-from v2.modules.competition import api_competition_bp
-from v2.modules.news_list import api_newslist_bp
-from v2.modules.news import api_news_bp
-from v2.modules.categories import api_category_bp
+from v2.controllers.competitions import api_competitions_bp
+from v2.controllers.competition import api_competition_bp
+from v2.controllers.news_list import api_newslist_bp
+from v2.controllers.news import api_news_bp
+from v2.controllers.categories import api_category_bp
 
 # app init
 def create_app(environment=None):
