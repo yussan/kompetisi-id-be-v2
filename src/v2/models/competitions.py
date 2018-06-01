@@ -72,7 +72,7 @@ def getList(Params={}):
     s = select(select_column).select_from(join_sub_cat).order_by(orderby)
 
     # generate query to get count
-    c = select([func.count().label('total')]).select_from(Competition)
+    c = select([func.count().label('total')]).select_from(join_sub_cat)
 
     # limit result
     if 'limit' in Params:
@@ -143,7 +143,7 @@ def getList(Params={}):
 # function to get competition related by competition id
 def getRelated(id):
     #get detail competitoin 
-    c_query = select([Competition.c.id_main_kat.label('main_kat'), Competition.c.tag]).select_from(Competition).where(Competition.c.id_kompetisi == id)
+    c_query = select([Competition.c.id_main_kat.label('main_kat'), Competition.c.tag]).select_from(join_sub_cat).where(Competition.c.id_kompetisi == id)
     competition  = connection.execute(c_query).fetchone()
 
     # get competition by main category
