@@ -2,7 +2,7 @@ from flask import Blueprint, Request
 from flask_restful import Api, Resource
 from v2.models.categories import getMainCategories, getSubCategories
 from v2.transformers.categories import transformMainCategory, transformSubCategory
-from v2.helpers.response import api_response
+from v2.helpers.response import apiResponse
 
 api_category_bp = Blueprint('api_category', __name__)
 api_category = Api(api_category_bp)
@@ -26,7 +26,7 @@ class MainCat(Resource):
 
       maincategories.append(mc)
 
-    return api_response(200, 'ok', {'data': maincategories}), 200 
+    return apiResponse(200, 'ok', {'data': maincategories}), 200 
 
 api_categories_bp = Blueprint('api_categories', __name__)
 api_categories = Api(api_categories_bp)

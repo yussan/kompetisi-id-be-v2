@@ -1,5 +1,6 @@
 from ..modules.db import connection
-from sqlalchemy import Table, Column, MetaData, select, update, func, BIGINT, INT, DATETIME, TEXT, or_
+from sqlalchemy import Table, Column, MetaData, select, update, insert, func, BIGINT, INT, DATETIME, TEXT, or_
+import datetime
 
 metadata = MetaData()
 
@@ -46,3 +47,9 @@ def getRequest(Params={}):
         'data': res.fetchall(),
         'count': rescount.fetchone()['total']
     }
+
+def insertRequest(Params={}):
+    # ref: https://stackoverflow.com/a/13370382
+    Params['created_at'] = datetime.datetime.utcnow()
+    Params['updated_at'] = datetime.datetime.utcnow()
+    return connection.execute(Request.insert(), Params)

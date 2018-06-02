@@ -3,7 +3,7 @@ from flask_restful import Api, Resource
 from v2.helpers.encId import decId
 from v2.models.competitions import getDetail
 from v2.transformers.competition import transform
-from v2.helpers.response import api_response
+from v2.helpers.response import apiResponse
 
 api_competition_bp = Blueprint('api_competition', __name__)
 api_competition = Api(api_competition_bp)
@@ -18,10 +18,10 @@ class CompetitionApi(Resource):
         if(competition['data'] != None):
             competition['data'] = transform(competition['data'])
             # competition found
-            return api_response(200, 'success', competition), 200
+            return apiResponse(200, 'success', competition), 200
         else:
             # component not found
-            return api_response(204), 200
+            return apiResponse(204), 200
 
     def put(self, encid):
         pass

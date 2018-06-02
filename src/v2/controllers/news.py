@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask_restful import Resource, Api
 from v2.models.news import getDetail, getList
 from v2.helpers.encId import decId
-from v2.helpers.response import api_response
+from v2.helpers.response import apiResponse
 from v2.transformers.news import transform
 
 
@@ -21,9 +21,9 @@ class News(Resource):
             for n in related['data']:
                 relateddata.append(transform(n))
 
-            return api_response(200, 'success', {'data': dict(transform(data)), 'related': relateddata}), 200
+            return apiResponse(200, 'success', {'data': dict(transform(data)), 'related': relateddata}), 200
         else:
-            return api_response(204, 'berita tidak ditemukan'), 204
+            return apiResponse(204, 'berita tidak ditemukan'), 204
 
     def post(self, id):
         return {}, 201

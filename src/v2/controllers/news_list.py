@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 from v2.models.news import getList
-from v2.helpers.response import api_response
+from v2.helpers.response import apiResponse
 from v2.helpers.encId import decId
 from v2.transformers.news import transform
 
@@ -49,9 +49,9 @@ class NewsList(Resource):
             response['data'] = newsdata
             response['count'] = news['count'] 
             
-            return api_response(200, 'success', response), 200
+            return apiResponse(200, 'success', response), 200
         else:
-            return api_response(204), 200
+            return apiResponse(204), 200
 
 api_newslist_bp = Blueprint('api_newslist', __name__)
 api_newslist = Api(api_newslist_bp)

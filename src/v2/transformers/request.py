@@ -12,7 +12,7 @@ def transform(n):
         'status': n.status,
         'created_at': n.created_at.strftime('%s'),
         'updated_at': n.updated_at.strftime('%s'),
-        'accepted_at': n.accepted_at.strftime('%s'),
+        'accepted_at': n.accepted_at.strftime('%s') if n.accepted_at else 0,
         'note': n.note
     }
 

@@ -1,6 +1,6 @@
 import os
 from flask import Flask, jsonify
-from v2.helpers.response import api_response
+from v2.helpers.response import apiResponse
 from v2.controllers.competitions import api_competitions_bp
 from v2.controllers.competition import api_competition_bp
 from v2.controllers.news_list import api_newslist_bp
@@ -25,7 +25,7 @@ def create_app(environment=None):
     # handle 404
     @app.errorhandler(404)
     def handleNotFound(e):
-        return jsonify(api_response(404, 'endpoint tidak ditemukan'))
+        return jsonify(apiResponse(404, 'endpoint tidak ditemukan'))
 
     # blueprint registration
     # api v2
