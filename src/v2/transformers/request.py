@@ -1,13 +1,30 @@
+import json 
+import re
+
 def transform(n):
-  return {
-    'id': n.id_req, 
-    'title': n.nama,
-    'email': n.email,
-    'link': n.link,
-    'poster': n.poster,
-    'status': n.status,
-    'created_at': n.created_at.strftime('%s'),
-    'updated_at': n.updated_at.strftime('%s'),
-    'accepted_at': n.accepted_at.strftime('%s'),
-    'note': n.note
-  }
+    return {
+        'id': n.id_req,
+        'title': n.nama,
+        'email': n.email,
+        'link': n.link,
+        'poster': transformImage(n.poster),
+        'status': n.status,
+        'created_at': n.created_at.strftime('%s'),
+        'updated_at': n.updated_at.strftime('%s'),
+        'accepted_at': n.accepted_at.strftime('%s'),
+        'note': n.note
+    }
+
+
+def transformImage(image):
+    if not image:
+        return {
+            'small': 'https://kompetisi.id/assets/images/news-default-image.png',
+            'original': 'https://kompetisi.id/assets/images/news-default-image.png'
+        }
+    else:
+        image = json.loads(image)
+        return {
+            'small': image['small'] if image['small'].find('http') > -1 else 'https://media.kompetisi.id/request/' + image['small'],
+            'original': image['original'] if re.match(r'^http', image['original']) else 'https://media.kompetisi.id/request/' + image['original']
+        }

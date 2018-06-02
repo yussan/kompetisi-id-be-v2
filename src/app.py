@@ -14,7 +14,7 @@ def create_app(environment=None):
 
     # environment conf
     if not environment:
-        environment = os.environ.get('FLASK_CONFIG', 'development')
+        environment = os.environ.get('FLASK_ENV', 'development')
     app.config.from_object('config.{}'.format(environment.capitalize()))
     app.config.from_pyfile(
         'config_{}.py'.format(environment.lower()),

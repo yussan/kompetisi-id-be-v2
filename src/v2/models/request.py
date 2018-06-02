@@ -19,29 +19,30 @@ Request = Table('request', metadata,
 select_column = [Request.c.id_req, Request.c.nama, Request.c.email, Request.c.link, Request.c.poster, Request.c.status,
                  Request.c.created_at, Request.c.updated_at, Request.c.accepted_at, Request.c.note]
 
+
 def getRequest(Params={}):
-  # order by 
-  orderby = Request.c.id_req.desc()
+    # order by
+    orderby = Request.c.id_req.desc()
 
-  s = select(select_column).order_by(orderby).select_from(Request)
-  c = select([func.count().label('total')]).select_from(Request)
+    s = select(select_column).order_by(orderby).select_from(Request)
+    c = select([func.count().label('total')]).select_from(Request)
 
-  # limit result
-  if 'limit' in Params:
-    s = s.limit(Params['limit'])
-  else:
-    s = s.limit(20)
+    # limit result
+    if 'limit' in Params:
+        s = s.limit(Params['limit'])
+    else:
+        s = s.limit(20)
 
-  # filter by status
-  if 'status' in Params:
-      if(Params['status'] in ['reject', 'waiting', 'posted']):
-        s.where(Request.c.status == Params['status'])
-        c.where(Request.c.status == Params['status'])
+    # filter by status
+    if(Params['status'] in ['reject', 'waiting', 'posted']):
+        print('status accepted')
+        s = s.where(Request.c.status == Params['status'])
+        c = c.where(Request.c.status == Params['status'])
 
-  res = connection.execute(s)
-  rescount = connection.execute(c)
+    res = connection.execute(s)
+    rescount = connection.execute(c)
 
-  return {
-    'data': res.fetchall(),
-    'count': rescount.fetchone()['total']
-  }
+    return {
+        'data': res.fetchall(),
+        'count': rescount.fetchone()['total']
+    }
