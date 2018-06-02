@@ -1,5 +1,6 @@
-import json 
+import json
 import re
+
 
 def transform(n):
     return {
@@ -23,8 +24,14 @@ def transformImage(image):
             'original': 'https://kompetisi.id/assets/images/news-default-image.png'
         }
     else:
-        image = json.loads(image)
-        return {
-            'small': image['small'] if image['small'].find('http') > -1 else 'https://media.kompetisi.id/request/' + image['small'],
-            'original': image['original'] if re.match(r'^http', image['original']) else 'https://media.kompetisi.id/request/' + image['original']
-        }
+        try:
+            image = json.loads(image)
+            return {
+                'small': image['small'] if image['small'].find('http') > -1 else 'https://media.kompetisi.id' + image['small'],
+                'original': image['original'] if re.match(r'^http', image['original']) else 'https://media.kompetisi.id' + image['original']
+            }
+        except ValueError:
+            return {
+                'small': 'https://kompetisi.id/assets/images/news-default-image.png',
+                'original': 'https://kompetisi.id/assets/images/news-default-image.png'
+            }

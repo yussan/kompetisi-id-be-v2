@@ -13,7 +13,7 @@ engine = create_engine('mysql+pymysql://' + db_user + ':' + db_password + '@' + 
 # print executed query
 
 # log option
-engine.echo = os.environ.get('DEBUG') == 'True'
+engine.echo = os.environ.get('FLASK_DEBUG') == 'True' or os.environ.get('FLASK_DEBUG') == True
 connection = engine.connect()
 connection = connection.execution_options(
     isolation_level="READ COMMITTED"
