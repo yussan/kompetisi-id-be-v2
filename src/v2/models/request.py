@@ -21,6 +21,12 @@ select_column = [Request.c.id_req, Request.c.nama, Request.c.email, Request.c.li
                  Request.c.created_at, Request.c.updated_at, Request.c.accepted_at, Request.c.note]
 
 
+def getRequestById(id):
+    s = select(select_column).select_from(Request).where(Request.c.id_req == id)
+    result = connection.execute(s).fetchone() 
+
+    return result
+
 def getRequest(Params={}):
     # order by
     orderby = Request.c.id_req.desc()
@@ -53,3 +59,8 @@ def insertRequest(Params={}):
     Params['created_at'] = datetime.datetime.utcnow()
     Params['updated_at'] = datetime.datetime.utcnow()
     return connection.execute(Request.insert(), Params)
+
+def updateRequest(Params, id):
+    Params['updated_at'] = datetime.datetime.utcnow()
+    query = Request.update().where(Request.c.id_req == id).values(Params)
+    return connection.execute(query)

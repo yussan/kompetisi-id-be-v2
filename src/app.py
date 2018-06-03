@@ -1,5 +1,6 @@
 import os
 from flask import Flask, jsonify
+from flask_mail import Mail
 from v2.helpers.response import apiResponse
 from v2.controllers.competitions import api_competitions_bp
 from v2.controllers.competition import api_competition_bp
@@ -8,10 +9,11 @@ from v2.controllers.news import api_news_bp
 from v2.controllers.categories import api_categories_bp
 from v2.controllers.request import api_request_bp
 
+mail = Mail()
+
 # app init
 def create_app(environment=None):
     app = Flask(__name__)
-
     # environment conf
     if not environment:
         environment = os.environ.get('FLASK_ENV', 'development')
@@ -20,6 +22,7 @@ def create_app(environment=None):
         'config_{}.py'.format(environment.lower()),
         silent=True
     )
+    mail.init_app(app)
     # end of environment conf
 
     # handle 404
@@ -54,5 +57,6 @@ def create_app(environment=None):
     )
     # end of api v2
     # end of blueprint registration
+
 
     return app

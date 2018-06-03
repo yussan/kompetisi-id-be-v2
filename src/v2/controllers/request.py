@@ -4,17 +4,25 @@ import json
 from flask import Blueprint, request
 from flask_restful import Resource, Api
 from wtforms import Form, BooleanField, StringField, PasswordField, validators, FileField
+# from flask_mail import Message
 from v2.modules.file_upload import handleUpload
-from v2.models.request import getRequest, insertRequest
+from v2.models.request import getRequest, getRequestById, insertRequest, updateRequest
 from v2.helpers.response import apiResponse
 from v2.transformers.request import transform
+from v2.middlewares.auth import isModerator
 
+# validations
 # ref: http://flask.pocoo.org/docs/0.12/patterns/wtforms/
 class FormValidator(Form):
     title = StringField('Judul kompetisi', [validators.Length(min=4, max=100)])
     email = StringField('Email', [validators.Length(min=4, max=50)])
     link = StringField('Link', [validators.Length(min=4, max=100)])
     poster = FileField('poster')
+
+# constrollers
+class FormActionValidator(Form):
+    status = StringField('Status', [validators.Length(min=4, max=10)])
+    message = StringField('Pesan', [validators.Length(min=4, max=300)])
 
 class RequestApi(Resource):
 
@@ -41,7 +49,6 @@ class RequestApi(Resource):
     # function to add list request
     # TODO: validation input file
     def post(self):
-
         form = FormValidator(request.form)
         if form.validate():
 
@@ -70,6 +77,48 @@ class RequestApi(Resource):
         else: 
             return apiResponse(400, 'formdata not valid'), 400
 
+class RequestAction(Resource):
+
+    @isModerator
+    def put(self, id):
+
+        # check si request available
+        request_data = getRequestById(id)
+
+        if request_data :
+            
+            request_data = transform(request_data)
+
+            form = FormActionValidator(request.form)
+            if form.validate():
+                params = {
+                    'note': request.form.get('message'),
+                    # status is one of: "posted" , "reject"
+                    'status': request.form.get('status')
+                }
+
+                # updata database
+                updateRequest(params, id)
+
+                # send email to users
+                # msg = Message('Kompetisi ada Telah kami pasang', sender = 'noreply@kompetisi.id', recipients = [request_data['email']])
+                # msg.body =   'This is email body'
+                # mail.send(msg)
+                
+                # json response
+                return apiResponse(200, 'Request berhasil di update'), 200
+            else:
+                return apiResponse(400, 'formdata not valid'), 400
+        else:
+            return apiResponse(204, 'data request tidak ditemukan'), 200
+
+# blueprint initial
 api_request_bp = Blueprint('api_request', __name__)
 api_request = Api(api_request_bp)
+
+# middlewares
+
+
+# routes
 api_request.add_resource(RequestApi, '/v2/request')
+api_request.add_resource(RequestAction, '/v2/request/action/<int:id>')
