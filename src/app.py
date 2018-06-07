@@ -9,6 +9,7 @@ from v2.controllers.news import api_news_bp
 from v2.controllers.categories import api_categories_bp
 from v2.controllers.request import api_request_bp
 from v2.controllers.test import api_test_bp
+from v2.controllers.auth import api_auth_bp
 
 mail = Mail()
 
@@ -61,6 +62,10 @@ def create_app(environment=None):
 
     app.register_blueprint(
         api_request_bp
+    )
+
+    app.register_blueprint(
+        api_auth_bp
     )
 
     app.register_blueprint(

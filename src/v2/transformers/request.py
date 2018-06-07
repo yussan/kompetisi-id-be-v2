@@ -1,7 +1,6 @@
 import json
 import re
 
-
 def transform(n):
     return {
         'id': n.id_req,
