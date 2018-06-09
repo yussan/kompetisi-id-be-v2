@@ -15,7 +15,7 @@ class Login(Resource):
 
     result = login(params)
     if result is not None:
-      return apiResponse(200, transform(result))
+      return apiResponse(200,  'Login berhasil', {'data': transform(result)})
     else:
       return apiResponse(204)
 
