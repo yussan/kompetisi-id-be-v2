@@ -64,12 +64,15 @@ class RequestApi(Resource):
 
         limit = request.args.get('limit')
         status = request.args.get('status')
+        lastid = request.args.get('lastid')
 
         # parameter generator
         if(limit):
             Params['limit'] = limit
         if(status):
             Params['status'] = status
+        if(lastid):
+            Params['lastid'] = lastid
 
         requestdata = []
         result = getRequest(Params)
