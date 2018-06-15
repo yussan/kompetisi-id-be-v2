@@ -40,9 +40,8 @@ def getRequest(Params={}):
     else:
         s = s.limit(20)
 
-    # filter by status
-    if(Params['status'] in ['reject', 'waiting', 'posted']):
-        print('status accepted')
+    if 'status' in Params and Params['status'] in ['reject', 'waiting', 'posted']:
+        # filter by status
         s = s.where(Request.c.status == Params['status'])
         c = c.where(Request.c.status == Params['status'])
 
