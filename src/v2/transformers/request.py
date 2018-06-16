@@ -1,4 +1,6 @@
 import json
+import os
+from v2.config.hosts import hosts
 import re
 
 def transform(n):
@@ -17,6 +19,9 @@ def transform(n):
 
 
 def transformImage(image):
+
+    FLASK_ENV = os.environ.get('FLASK_ENV', 'development')
+
     if not image:
         return {
             'small': 'https://kompetisi.id/assets/images/news-default-image.png',
@@ -26,8 +31,8 @@ def transformImage(image):
         try:
             image = json.loads(image)
             return {
-                'small': image['small'] if image['small'].find('http') > -1 else 'https://media.kompetisi.id' + image['small'],
-                'original': image['original'] if re.match(r'^http', image['original']) else 'https://media.kompetisi.id' + image['original']
+                'small': image['small'] if image['small'].find('http') > -1 else hosts[FLASK_ENV]['media'] + image['small'],
+                'original': image['original'] if re.match(r'^http', image['original']) else hosts[FLASK_ENV]['media'] + image['original']
             }
         except ValueError:
             return {
