@@ -7,7 +7,7 @@ from wtforms import Form, BooleanField, StringField, PasswordField, validators, 
 # from flask_mail import Message
 from v2.modules.file_upload import handleUpload
 from v2.modules.mail import sendEmail
-from v2.models.request import getRequest, getRequestById, insertRequest, updateRequest
+from v2.models.request import getRequest, getRequestById, insertRequest, updateRequest, countRequest
 from v2.helpers.response import apiResponse
 from v2.transformers.request import transform
 from v2.middlewares.auth import isModerator
@@ -192,6 +192,21 @@ class RequestAction(Resource):
         else:
             return apiResponse(204, 'data request tidak ditemukan'), 200
 
+class RequestApiCount(Resource):
+
+    def get(self):
+        countwaiting = countRequest('waiting')
+        countposted = countRequest('posted')
+        countreject = countRequest('reject')
+
+        return {
+            'status': 200,
+            'data': {
+                'posted': countreject,
+                'reject': countposted,
+                'waiting': countwaiting
+            }
+        }
 
 # blueprint initial
 api_request_bp = Blueprint('api_request', __name__)
@@ -202,4 +217,5 @@ api_request = Api(api_request_bp)
 
 # routes
 api_request.add_resource(RequestApi, '/v2/request')
+api_request.add_resource(RequestApiCount, '/v2/request/count')
 api_request.add_resource(RequestAction, '/v2/request/action/<int:id>')

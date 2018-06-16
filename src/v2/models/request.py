@@ -27,6 +27,12 @@ def getRequestById(id):
 
     return result
 
+def countRequest(status='waiting'):
+    c = select([func.count().label('total')]).select_from(Request).where(Request.c.status == status)
+    count = connection.execute(c)
+
+    return count.fetchone()['total']
+
 def getRequest(Params={}):
     # order by
     orderby = Request.c.id_req.desc()
