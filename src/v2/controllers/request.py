@@ -112,10 +112,14 @@ class RequestApi(Resource):
 
         requestdata = []
         result = getRequest(Params)
-        for n in result['data']:
-            requestdata.append(transform(n))
 
-        return apiResponse(200, 'ok', {'data': requestdata, 'count': result['count']}), 200
+        if len(result['data']) < 1:
+            return apiResponse(204), 200
+        else:
+            for n in result['data']:
+                requestdata.append(transform(n))
+
+            return apiResponse(200, 'ok', {'data': requestdata, 'count': result['count']}), 200
 
     # function to add list request
     # TODO: validation input file
