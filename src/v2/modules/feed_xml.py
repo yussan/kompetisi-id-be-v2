@@ -10,16 +10,16 @@ def feedWrapperCompetition(items = '', params={}):
         <category domain="https://kompetisi.id">kompetisi/lomba/kontes/sayembara</category>
         <copyright>Copyright 2017-2018 Id More Team.</copyright>
         <lastBuildDate>""" + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + """</lastBuildDate>
-        <language>en-us</language>
+        <language>id-id</language>
         <image>
-          <url>https://res.cloudinary.com/dhjkktmal/image/upload/v1528851826/kompetisi-id/email_assets/icon-512x512.png</url>
+          <url>https://res.cloudinary.com/dhjkktmal/image/upload/c_scale,w_100/v1523874145/kompetisi-id/big_icon.png</url>
           <title>""" + (params["title"] if "title" in params else "Kompetisi Id Feed")  + """</title>
           <link>https://kompetisi.id</link>
           <description>""" + (params["desc"] if "desc" in params else "Selalu ada hadiah setiap hari")  + """</description>
-          <width>400</width>
-          <height>400</height>
+          <width>100</width>
+          <height>100</height>
         </image>
-        <atom:link href="https://kompetisi.id/feed" rel="self" type="application/rss+xml" />
+        <atom:link href=" """ + (params["feed_link"] if "feed_link" in params else "https://kompetisi.id/feed")  + """ " rel="self" type="application/rss+xml" />
         """ + items + """
       </channel>
     </rss>"""

@@ -38,7 +38,8 @@ class FeedCompetition(Resource):
         # ref: https://stackoverflow.com/a/11774026/2780875
         return Response(feedWrapperCompetition(item, {
             "title": "Kompetisi Feed - Kompetisi Id",
-            "desc": "Kompetisi terbaru di Kompetisi.id - Selalu Ada hadiah Setiap Hari"
+            "desc": "Kompetisi terbaru di Kompetisi.id - Selalu Ada hadiah Setiap Hari",
+            "feed_link": "https://kompetisi.id/feed"
         }), mimetype='text/xml')
 
 class FeedNews(Resource):
@@ -63,7 +64,8 @@ class FeedNews(Resource):
             """
         return Response(feedWrapperCompetition(item, {
             "title": "Berita Feed - Kompetisi Id",
-            "desc": "Berita terbaru di Kompetisi.id - Selalu Ada hadiah Setiap Hari"
+            "desc": "Berita terbaru di Kompetisi.id - Selalu Ada hadiah Setiap Hari",
+            "feed_link": "https://kompetisi.id/feed/news"
         }), mimetype='text/xml')
 
 api_feed_competition_bp = Blueprint('api_feed_competition', __name__)
