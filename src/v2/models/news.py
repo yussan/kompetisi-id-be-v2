@@ -42,12 +42,13 @@ def getList(Params={}):
         c = c.where(News.c.id != Params['notid'])
     if 'lastid' in Params:
         s = s.where(News.c.id < Params['lastid'])
-    if 'draft' in Params['status']:
-        s = s.where(News.c.status == 'draft')
-        c = c.where(News.c.status == 'draft')
-    if 'published' in Params['status']:
-        s = s.where(News.c.status == 'post')
-        c = c.where(News.c.status == 'post')
+    if 'status' in Params:
+        if 'draft' in Params['status']:
+            s = s.where(News.c.status == 'draft')
+            c = c.where(News.c.status == 'draft')
+        if 'published' in Params['status']:
+            s = s.where(News.c.status == 'post')
+            c = c.where(News.c.status == 'post')
     if 'tag' in Params:
         s = s.where(News.c.tag.like('%'+Params['tag']+'%'))
         c = c.where(News.c.tag.like('%'+Params['tag']+'%'))

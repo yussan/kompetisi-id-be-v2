@@ -13,6 +13,7 @@ from v2.controllers.request import api_request_bp
 from v2.controllers.test import api_test_bp
 from v2.controllers.auth import api_auth_bp
 from v2.controllers.feed import api_feed_competition_bp
+from v2.controllers.feed import api_feed_news_bp
 
 mail = Mail()
 
@@ -77,6 +78,10 @@ def create_app(environment=None):
 
     app.register_blueprint(
         api_feed_competition_bp
+    )
+
+    app.register_blueprint(
+        api_feed_news_bp
     )
     # end of api v2
     # end of blueprint registration

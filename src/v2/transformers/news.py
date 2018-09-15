@@ -5,7 +5,6 @@ import re
 
 def transform(n):
     return {
-    #   'id': n.id,
       'id': encId(n.id),
       'author': {
           'id': n.id_user,
