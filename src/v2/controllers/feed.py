@@ -32,7 +32,10 @@ class FeedCompetition(Resource):
 
         # return as feed rss
         # ref: https://stackoverflow.com/a/11774026/2780875
-        return Response(feedWrapperCompetition(item), mimetype='text/xml')
+        return Response(feedWrapperCompetition(item, {
+            "title": "Kompetisi Feed - Kompetisi Id",
+            "desc": "Kompetisi terbaru di Kompetisi.id - Selalu Ada hadiah Setiap Hari"
+        }), mimetype='text/xml')
 
 
 api_feed_competition_bp = Blueprint('api_feed_competition', __name__)
