@@ -19,7 +19,7 @@ def feedWrapperCompetition(items = '', params={}):
           <width>100</width>
           <height>100</height>
         </image>
-        <atom:link href=" """ + (params["feed_link"] if "feed_link" in params else "https://kompetisi.id/feed")  + """ " rel="self" type="application/rss+xml" />
+        <atom:link href="""" + (params["feed_link"] if "feed_link" in params else "https://kompetisi.id/feed")  + """" rel="self" type="application/rss+xml" />
         """ + items + """
       </channel>
     </rss>"""
