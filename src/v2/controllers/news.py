@@ -5,7 +5,6 @@ from v2.helpers.encId import decId
 from v2.helpers.response import apiResponse
 from v2.transformers.news import transform
 
-
 class News(Resource):
     def get(self, id):
         # decrypt id
@@ -14,7 +13,7 @@ class News(Resource):
 
         if(data):
             # get related post
-            ParamsRelated = {'status':['published'], 'notid': id, 'limit': 3}
+            ParamsRelated = {'status': ['published'], 'notid': id, 'limit': 3}
             related = getList(ParamsRelated)
 
             relateddata = []

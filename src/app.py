@@ -2,6 +2,8 @@ import os
 from flask import Flask, jsonify
 from flask_mail import Mail
 from v2.helpers.response import apiResponse
+
+# controllers
 from v2.controllers.competitions import api_competitions_bp
 from v2.controllers.competition import api_competition_bp
 from v2.controllers.news_list import api_newslist_bp
@@ -10,6 +12,7 @@ from v2.controllers.categories import api_categories_bp
 from v2.controllers.request import api_request_bp
 from v2.controllers.test import api_test_bp
 from v2.controllers.auth import api_auth_bp
+from v2.controllers.feed import api_feed_competition_bp
 
 mail = Mail()
 
@@ -70,6 +73,10 @@ def create_app(environment=None):
 
     app.register_blueprint(
         api_test_bp
+    )
+
+    app.register_blueprint(
+        api_feed_competition_bp
     )
     # end of api v2
     # end of blueprint registration

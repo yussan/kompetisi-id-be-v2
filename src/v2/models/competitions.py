@@ -59,13 +59,15 @@ select_column = [Competition.c.id_kompetisi, Competition.c.judul_kompetisi, Comp
 
 # functino to get list of competitions
 def getList(Params={}):
+    print(Params)
     # order by
     orderby = Competition.c.id_kompetisi.desc()
+    limit = 10
     if 'orderby' in Params:
         if Params['orderby'] == 'prize_dsc':
             orderby = Competition.c.total_hadiah.desc()
     
-    if Params['is_popular']:
+    if 'is_popular' in Params:
         orderby = Competition.c.views.desc()
 
     # generate query to get data
@@ -118,17 +120,17 @@ def getList(Params={}):
             c = c.where(Competition.c.deadline > datetime.datetime.now())
 
     # show mediapartner
-    if Params['is_mediapartner']:
+    if 'is_mediapartner' in Params:
         s = s.where(Competition.c.mediapartner == 1)
         c = c.where(Competition.c.mediapartner == 1)
 
     # show guaranted competition
-    if Params['is_guaranted']:
+    if 'is_guaranted' in Params:
         s = s.where(Competition.c.garansi == "1")
         c = c.where(Competition.c.garansi == "1")
 
     # show popular competition
-    if Params['is_popular']:
+    if 'is_popular' in Params:
         s = s.where(or_(Competition.c.views > 50, Competition.c.views < 700))
         c = c.where(or_(Competition.c.views > 50, Competition.c.views < 700))
 
