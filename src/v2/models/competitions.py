@@ -59,7 +59,6 @@ select_column = [Competition.c.id_kompetisi, Competition.c.judul_kompetisi, Comp
 
 # functino to get list of competitions
 def getList(Params={}):
-    print(Params)
     # order by
     orderby = Competition.c.id_kompetisi.desc()
     limit = 10
@@ -67,7 +66,7 @@ def getList(Params={}):
         if Params['orderby'] == 'prize_dsc':
             orderby = Competition.c.total_hadiah.desc()
     
-    if 'is_popular' in Params:
+    if 'is_popular' in Params and Params['is_popular'] == True:
         orderby = Competition.c.views.desc()
 
     # generate query to get data
