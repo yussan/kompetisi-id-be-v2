@@ -119,17 +119,17 @@ def getList(Params={}):
             c = c.where(Competition.c.deadline > datetime.datetime.now())
 
     # show mediapartner
-    if 'is_mediapartner' in Params:
+    if 'is_mediapartner' in Params && Params['is_mediapartner'] == True:
         s = s.where(Competition.c.mediapartner == 1)
         c = c.where(Competition.c.mediapartner == 1)
 
     # show guaranted competition
-    if 'is_guaranted' in Params:
+    if 'is_guaranted' in Params && Params['is_guaranted'] == True:
         s = s.where(Competition.c.garansi == "1")
         c = c.where(Competition.c.garansi == "1")
 
     # show popular competition
-    if 'is_popular' in Params:
+    if 'is_popular' in Params && Params['is_popular'] == True:
         s = s.where(or_(Competition.c.views > 50, Competition.c.views < 700))
         c = c.where(or_(Competition.c.views > 50, Competition.c.views < 700))
 
