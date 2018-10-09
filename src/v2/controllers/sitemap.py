@@ -15,7 +15,7 @@ class SitemapCompetition(Resource):
         # get latest 200 posts as sitemap
         items = ""
         competitions = CompetitionModel.getList({
-            "limit": 10,
+            "limit": 200,
             "orderby": "id_dsc"
         })
 
