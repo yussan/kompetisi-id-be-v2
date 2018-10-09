@@ -1,6 +1,6 @@
 from time import gmtime, strftime
 
-def feedWrapperCompetition(items = '', params={}):
+def feedTemplate(items = '', params={}):
   # ref: strftime https://docs.python.org/3.3/library/time.html?highlight=time.strftime#time.strftime
   return """<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
       <channel>
@@ -23,3 +23,11 @@ def feedWrapperCompetition(items = '', params={}):
         """ + items + """
       </channel>
     </rss>"""
+
+def sitemapTemplate(items='', params={}):
+    return """
+    <?xml version="1.0" encoding="UTF-8"?>
+      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+        """ + items + """
+      </urlset> 
+    """
