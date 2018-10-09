@@ -11,8 +11,8 @@ def transform(n):
           'username': n.username,
           'moto': n.moto
       },
-      'title': n.title,
-      'nospace_title':  generateTitleUrl(n.title)[0],
+      'title': n.title.replace('&', ''),
+      'nospace_title':  (generateTitleUrl(n.title)[0]).replace('&', ''),
       'content': n.content,
       'image': transformImage(n.image),
       'is_draft': n.status == 'draft',

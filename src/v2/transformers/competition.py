@@ -8,8 +8,8 @@ def transform(n):
     return {
         # 'id': n.id_kompetisi,
         'id': encId(n.id_kompetisi),
-        'title': n.judul_kompetisi,
-        'nospace_title':  generateTitleUrl(n.judul_kompetisi)[0],
+        'title': n.judul_kompetisi.replace('&', ''),
+        'nospace_title':  (generateTitleUrl(n.judul_kompetisi)[0]).replace('&', ''),
         'sort': n.sort,
         'organizer': n.penyelenggara,
         'deadline_at': n.deadline.strftime('%s') if n.deadline != '0000-00-00' else 0,
