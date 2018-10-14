@@ -47,11 +47,12 @@ class NewsList(Resource):
                 newsdata.append(transform(n))
             response = {}
             response['data'] = newsdata
-            response['count'] = news['count'] 
-            
+            response['count'] = news['count']
+
             return apiResponse(200, 'success', response), 200
         else:
-            return apiResponse(204), 200
+            return apiResponse(404, "berita tidak ditemukan"), 200
+
 
 api_newslist_bp = Blueprint('api_newslist', __name__)
 api_newslist = Api(api_newslist_bp)

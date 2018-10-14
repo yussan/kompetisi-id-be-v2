@@ -22,7 +22,7 @@ class News(Resource):
 
             return apiResponse(200, 'success', {'data': dict(transform(data)), 'related': relateddata}), 200
         else:
-            return apiResponse(204, 'berita tidak ditemukan'), 204
+            return apiResponse(204, 'berita tidak ditemukan'), 200
 
     def post(self, id):
         return {}, 201
