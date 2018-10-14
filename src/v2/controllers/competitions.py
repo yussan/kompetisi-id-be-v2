@@ -69,7 +69,7 @@ class CompetitionListApi(Resource):
 
             return apiResponse(200, 'success', response), 200
         else:
-            return apiResponse(204), 200
+            return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
 
 class CompetitionRelatedApi(Resource):
     def get(self, encid):
@@ -87,7 +87,7 @@ class CompetitionRelatedApi(Resource):
 
             return apiResponse(200, 'success', response), 200
         else:
-            return apiResponse(204), 200
+            return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
 
 api_competitions_bp = Blueprint('api_competitions', __name__)
 api_competitions = Api(api_competitions_bp)

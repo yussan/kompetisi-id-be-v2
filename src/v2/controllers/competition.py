@@ -21,7 +21,7 @@ class CompetitionApi(Resource):
             return apiResponse(200, 'success', competition), 200
         else:
             # component not found
-            return apiResponse(204), 200
+            return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
 
     def put(self, encid):
         pass
