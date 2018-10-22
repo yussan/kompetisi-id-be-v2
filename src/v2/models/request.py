@@ -61,8 +61,8 @@ def getRequest(Params={}):
 
 def insertRequest(Params={}):
     # ref: https://stackoverflow.com/a/13370382
-    Params['created_at'] = datetime.datetime.utcnow()
-    Params['updated_at'] = datetime.datetime.utcnow()
+    Params['created_at'] = datetime.datetime.today().strftime('%Y-%m-%d %H:%i:%s')
+    Params['updated_at'] = datetime.datetime.today().strftime('%Y-%m-%d %H:%i:%s')
     return connection.execute(Request.insert(), Params)
 
 def updateRequest(Params, id):

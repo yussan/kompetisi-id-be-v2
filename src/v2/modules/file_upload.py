@@ -36,4 +36,5 @@ def handleUpload(directory, file, directory_db):
   #   ReturnFile['small'] = directory_db + '/' + filename
 
   # store to server
+  print("uploading image...", ReturnFile)
   return ReturnFile
