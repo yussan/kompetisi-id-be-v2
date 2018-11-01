@@ -10,7 +10,7 @@ def generateEmailVerifToken(user_id):
   # generate token using jwt 
   # ref: https://realpython.com/token-based-authentication-with-flask/#encode-token
   payload = {
-    "exp":  datetime.datetime.utcnow() + datetime.timedelta(days=0 , seconds=5),
+    "exp":  datetime.datetime.utcnow() + datetime.timedelta(days=7 , seconds=0),
     "iat": datetime.datetime.utcnow(),
     "sub": user_id
   } 
@@ -22,8 +22,14 @@ def generateEmailVerifToken(user_id):
   )
   return user_id
 
-# function to validation email token
+# function to get user id from email token
 # param {string} token get from email
-# return {boolean}
-def validationEmailVerifToken(user_id):
-  return true
+# return *
+def validationEmailVerifToken(token):
+  try:
+    payload = jwt.decode(token, EMAIL_VERIFICATION_KEY)
+    return int(payload["sub"])
+  except jwt.ExpiredSignatureError:
+    return 'Signature expired. Please log in again.'
+  except jwt.InvalidTokenError:
+    return 'Invalid token. Please log in again.'
