@@ -70,7 +70,7 @@ class Register(Resource):
                 return apiResponse(400, message), 400
             else:
                 # upload avatar
-                upload_dir_db = '/' + params["username"] + '/avatar/'
+                upload_dir_db = '/' + params["username"] + '/avatar'
                 upload_dir = os.environ.get(
                     'MEDIA_DIR', '../media-kompetisiid') + upload_dir_db
                 input_avatar = request.files['avatar']
@@ -79,7 +79,8 @@ class Register(Resource):
                 # set params["avatar"] value
                 params["avatar"] = json.dumps(avatar, separators=(',', ':'))
                 userdata = register(params)
-                return apiResponse(201, "Registrasi berhasil, selamat datang " + params["username"], {"data": userdata}), 201
+                
+                return apiResponse(201, "Registrasi berhasil, selamat datang " + params["username"], {"data": transform(userdata)}), 201
         else:
             return apiResponse(400, 'formdata not valid'), 400
 
