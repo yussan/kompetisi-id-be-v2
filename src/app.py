@@ -14,6 +14,7 @@ from v2.controllers.test import api_test_bp
 from v2.controllers.auth import api_auth_bp
 from v2.controllers.feed import api_feed_competition_bp, api_feed_news_bp
 from v2.controllers.sitemap import api_sitemap_competition_bp, api_sitemap_news_bp
+from v2.controllers.email_verification import api_email_verification_bp
 
 mail = Mail()
 
@@ -94,6 +95,10 @@ def create_app(environment=None):
 
     app.register_blueprint(
         api_sitemap_news_bp
+    )
+
+    app.register_blueprint(
+        api_email_verification_bp
     )
     # end of api v2
     # end of blueprint registration

@@ -3,8 +3,7 @@ from ..modules.mail import sendEmail
 from ..modules.crypto import generateEmailVerifToken
 import datetime
 import md5
-from sqlalchemy import Table, Column, MetaData, join
-from sqlalchemy import BIGINT, INT, TEXT, VARCHAR, DATETIME, select, or_
+from sqlalchemy import Table, Column, MetaData, join, BIGINT, INT, TEXT, VARCHAR, DATETIME, select, or_, update
 
 metadata = MetaData()
 Users = Table("user", metadata,
@@ -127,11 +126,10 @@ def register(params):
     emailBody = EmailVerificationBody.format(emailVerifUrl, emailVerifUrl)
     sendEmail("Konfirmasi email anda untuk Kompetisi Id", emailBody, [params["email"]])
 
-
     return user
 
 
-# function to select username by usrname and password
+# function to select username by username and password
 def login(params):
     query = select(select_column_user)\
         .select_from(Users)\
@@ -142,6 +140,10 @@ def login(params):
 
     return result
 
+# function to set user email is valid
+def setValidEmail(userId):
+    query = update(Users).where(Users.c.id_user == userId).values(is_verified = 1, updated_at= datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S") )
+    return connection.execute(query)
 
 def oauthLogin(params):
   query = select(select_column_user)\
