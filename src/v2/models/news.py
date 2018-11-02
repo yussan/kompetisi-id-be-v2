@@ -63,7 +63,7 @@ def getList(Params={}):
 
 
 def getDetail(id):
-    s = select(select_column).where(News.c.id == id)
+    s = select(select_column).select_from(join_user).where(News.c.id == id)
     res = connection.execute(s)
     row = res.fetchone()
     if not row:
