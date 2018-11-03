@@ -3,7 +3,7 @@ from ..modules.mail import sendEmail
 from ..modules.crypto import generateEmailVerifToken
 import datetime
 import md5
-from sqlalchemy import Table, Column, MetaData, join, BIGINT, INT, TEXT, VARCHAR, DATETIME, select, or_, update
+from sqlalchemy import Table, Column, MetaData, join, outerjoin, BIGINT, INT, TEXT, VARCHAR, DATETIME, select, or_, update
 
 metadata = MetaData()
 Users = Table("user", metadata,
@@ -34,7 +34,7 @@ UsersOauth = Table("user_oauth", metadata,
 select_column_user = [Users.c.id_user, Users.c.username, Users.c.email, Users.c.fullname,
                  Users.c.moto, Users.c.last_login, Users.c.status, Users.c.level, Users.c.is_verified]
 
-join_user = Users.join(UsersOauth, Users.c.id_user == UsersOauth.c.user_id)
+join_user = Users.outerjoin(UsersOauth, Users.c.id_user == UsersOauth.c.user_id)
 
 EmailVerificationBody = """
 <div class="">
@@ -69,6 +69,14 @@ EmailVerificationBody = """
         <!--[if (!mso)&(!IE)]><!-->
     </div>
 """
+
+# function to get userdata by user id
+def getDataById(userid):
+    query = select(select_column_user)\
+        .select_from(join_user)\
+        .where(Users.c.id_user == userid) 
+
+    return connection.execute(query).fetchone()  
 
 # function to check is available same username in table user
 def checkUsername(username):

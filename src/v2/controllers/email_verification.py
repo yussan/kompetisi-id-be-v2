@@ -1,12 +1,34 @@
-from flask import Blueprint, Response
+from flask import Blueprint, Response, request
 from flask_restful import Resource, Api
-from ..modules.crypto import validationEmailVerifToken
 from ..helpers.response import apiResponse
-from ..models.users import setValidEmail
+from ..models.users import setValidEmail, getDataById, EmailVerificationBody
+from ..transformers.user import transform as transformUser
+from ..modules.crypto import validationEmailVerifToken, generateEmailVerifToken
+from ..modules.mail import sendEmail
 
 class emailVerificationRequest(Resource):
-    def get(self):
-        return {}
+    def post(self):
+        # get user id
+        userId = request.form.get('user_id')
+
+        if userId is None :
+            return apiResponse(400, "user id tidak ditemukan")
+        else :
+            # get userdata
+            userdata = getDataById(userId)
+            if userdata is not None and "id_user" in userdata:
+                userdata = transformUser(userdata)
+
+                # send new verification link to user email
+                emailVerifToken = generateEmailVerifToken(userdata["id"])
+                emailVerifUrl = "https://kompetisi.id/email-verification/" + emailVerifToken
+                emailBody = EmailVerificationBody.format(emailVerifUrl, emailVerifUrl)
+                sendEmail("Konfirmasi email anda untuk Kompetisi Id", emailBody, [userdata["email"]])
+                
+                return apiResponse(200, "token telah terkirim, silahkan cek email anda")
+            else:  
+                return apiResponse(400, "user tidak ditemukan")
+            
 
 class emailVerification(Resource):
     def get(self, token):
