@@ -38,7 +38,13 @@ class emailVerification(Resource):
             # update user data, and set is_verified to 1
             setValidEmail(userId)
 
-            return apiResponse(200,  'Email kamu telah berhasil terverifikasi')
+            userdata = getDataById(userId)
+
+            if userdata is not None and "id_user" in userdata:
+                userdata = transformUser(userdata)
+                return apiResponse(201,  'Email kamu telah berhasil terverifikasi', {"data": userdata} ), 201
+            else:
+                return apiResponse(400, "user tidak ditemukan")
         else:
             return apiResponse(400,  tokenValidate)
 

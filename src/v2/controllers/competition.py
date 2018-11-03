@@ -5,10 +5,6 @@ from v2.models.competitions import getDetail
 from v2.transformers.competition import transform
 from v2.helpers.response import apiResponse
 
-api_competition_bp = Blueprint('api_competition', __name__)
-api_competition = Api(api_competition_bp)
-
-
 class CompetitionApi(Resource):
 
     def get(self, encid):
@@ -29,5 +25,6 @@ class CompetitionApi(Resource):
     def delete(self, encid):
         pass
 
-
+api_competition_bp = Blueprint('api_competition', __name__)
+api_competition = Api(api_competition_bp)
 api_competition.add_resource(CompetitionApi, '/v2/competition/<encid>')
