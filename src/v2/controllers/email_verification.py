@@ -25,13 +25,13 @@ class emailVerificationRequest(Resource):
                 emailBody = EmailVerificationBody.format(emailVerifUrl, emailVerifUrl)
                 sendEmail("Konfirmasi email anda untuk Kompetisi Id", emailBody, [userdata["email"]])
                 
-                return apiResponse(200, "token telah terkirim, silahkan cek email anda")
+                return apiResponse(200, "Link verifikasi telah terkirim, silahkan cek email anda")
             else:  
                 return apiResponse(400, "user tidak ditemukan")
             
 
 class emailVerification(Resource):
-    def get(self, token):
+    def post(self, token):
         tokenValidate = validationEmailVerifToken(token)
         if type(tokenValidate) is int :
             userId = tokenValidate
