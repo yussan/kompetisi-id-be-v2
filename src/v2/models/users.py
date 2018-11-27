@@ -32,7 +32,7 @@ UsersOauth = Table("user_oauth", metadata,
                   )
 
 select_column_user = [Users.c.id_user, Users.c.username, Users.c.email, Users.c.fullname,
-                 Users.c.moto, Users.c.last_login, Users.c.status, Users.c.level, Users.c.is_verified]
+                 Users.c.moto, Users.c.tgl_gabung, Users.c.last_login, Users.c.status, Users.c.level, Users.c.is_verified]
 
 join_user = Users.outerjoin(UsersOauth, Users.c.id_user == UsersOauth.c.user_id)
 
@@ -75,6 +75,13 @@ def getDataById(userid):
     query = select(select_column_user)\
         .select_from(join_user)\
         .where(Users.c.id_user == userid) 
+
+    return connection.execute(query).fetchone()  
+
+def getDataByUsername(username):
+    query = select(select_column_user)\
+        .select_from(join_user)\
+        .where(Users.c.username == username) 
 
     return connection.execute(query).fetchone()  
 
