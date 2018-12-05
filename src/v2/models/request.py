@@ -61,11 +61,11 @@ def getRequest(Params={}):
 
 def insertRequest(Params={}):
     # ref: https://stackoverflow.com/a/13370382
-    Params['created_at'] = datetime.datetime.today().strftime('%Y-%m-%d %H:%i:%s')
-    Params['updated_at'] = datetime.datetime.today().strftime('%Y-%m-%d %H:%i:%s')
+    Params['created_at'] = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+    Params['updated_at'] = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
     return connection.execute(Request.insert(), Params)
 
 def updateRequest(Params, id):
-    Params['updated_at'] = datetime.datetime.utcnow()
+    Params['updated_at'] = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
     query = Request.update().where(Request.c.id_req == id).values(Params)
     return connection.execute(query)
