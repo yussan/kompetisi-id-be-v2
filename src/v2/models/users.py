@@ -21,20 +21,23 @@ Users = Table("user", metadata,
               Column("is_verified", INT),
               Column("gender", VARCHAR),
               Column("moto", VARCHAR),
+              Column("user_key", TEXT)
               )
 
 UsersOauth = Table("user_oauth", metadata,
-                  Column("id", BIGINT),
-                  Column("user_id", BIGINT),
-                  Column("provider", VARCHAR),
-                  Column("oauth_user_id", VARCHAR),
-                  Column("oauth_token", TEXT),
-                  )
+                   Column("id", BIGINT),
+                   Column("user_id", BIGINT),
+                   Column("provider", VARCHAR),
+                   Column("oauth_user_id", VARCHAR),
+                   Column("oauth_token", TEXT),
+                   )
 
 select_column_user = [Users.c.id_user, Users.c.username, Users.c.email, Users.c.fullname,
-                 Users.c.moto, Users.c.tgl_gabung, Users.c.last_login, Users.c.status, Users.c.level, Users.c.is_verified]
+                      Users.c.user_key,
+                      Users.c.moto, Users.c.tgl_gabung, Users.c.last_login, Users.c.status, Users.c.level, Users.c.is_verified]
 
-join_user = Users.outerjoin(UsersOauth, Users.c.id_user == UsersOauth.c.user_id)
+join_user = Users.outerjoin(
+    UsersOauth, Users.c.id_user == UsersOauth.c.user_id)
 
 EmailVerificationBody = """
 <div class="">
@@ -71,21 +74,26 @@ EmailVerificationBody = """
 """
 
 # function to get userdata by user id
+
+
 def getDataById(userid):
     query = select(select_column_user)\
         .select_from(join_user)\
-        .where(Users.c.id_user == userid) 
+        .where(Users.c.id_user == userid)
 
-    return connection.execute(query).fetchone()  
+    return connection.execute(query).fetchone()
+
 
 def getDataByUsername(username):
     query = select(select_column_user)\
         .select_from(join_user)\
-        .where(Users.c.username == username) 
+        .where(Users.c.username == username)
 
-    return connection.execute(query).fetchone()  
+    return connection.execute(query).fetchone()
 
 # function to check is available same username in table user
+
+
 def checkUsername(username):
     query = select([Users.c.id_user])\
         .select_from(Users)\
@@ -94,6 +102,8 @@ def checkUsername(username):
     return connection.execute(query).fetchone()
 
 # function to check is availbale same email in table user
+
+
 def checkEmail(email):
     query = select([Users.c.id_user])\
         .select_from(Users)\
@@ -101,7 +111,9 @@ def checkEmail(email):
 
     return connection.execute(query).fetchone()
 
-# function to insert data new user by register params 
+# function to insert data new user by register params
+
+
 def register(params):
     # insert data to the db
     # ref: http://strftime.org/
@@ -139,7 +151,8 @@ def register(params):
     emailVerifToken = generateEmailVerifToken(user["id_user"])
     emailVerifUrl = "https://kompetisi.id/email-verification/" + emailVerifToken
     emailBody = EmailVerificationBody.format(emailVerifUrl, emailVerifUrl)
-    sendEmail("Konfirmasi email anda untuk Kompetisi Id", emailBody, [params["email"]])
+    sendEmail("Konfirmasi email anda untuk Kompetisi Id",
+              emailBody, [params["email"]])
 
     return user
 
@@ -156,16 +169,27 @@ def login(params):
     return result
 
 # function to set user email is valid
+
+
 def setValidEmail(userId):
-    query = update(Users).where(Users.c.id_user == userId).values(is_verified = 1, updated_at= datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S") )
+    query = update(Users).where(Users.c.id_user == userId).values(
+        is_verified=1, updated_at=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
     return connection.execute(query)
 
+# function to update database
+
+
+def updateData(Params, UserId):
+    query = Users.update().where(Users.c.id_user == UserId).values(Params)
+    return connection.execute(query)
+
+
 def oauthLogin(params):
-  query = select(select_column_user)\
+    query = select(select_column_user)\
         .select_from(join_user)\
         .where(UsersOauth.c.provider == params["provider"])\
         .where(UsersOauth.c.oauth_user_id == params["user_id"])
 
-  result = connection.execute(query).fetchone()
+    result = connection.execute(query).fetchone()
 
-  return result
+    return result
