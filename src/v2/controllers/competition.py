@@ -134,7 +134,7 @@ class CompetitionDetailApi(Resource):
         competition = getDetail(id)
 
         # check competition by id
-        if(competition['data'] != None):
+        if(competition['data'] is not None):
             # check user key
             userkey = request.headers.get('User-Key')
             if userkey is None:
@@ -144,55 +144,59 @@ class CompetitionDetailApi(Resource):
                 userdata = getDataByUserKey(userkey)
                 if userdata is None:
                     return apiResponse(403, "anda tidak memiliki akses disini"), 403
+                else: 
+                    # is author / moderator / admin 
+                    if userdata["level"] == "moderator" or userdata["level"] == "admin" or userdata["id_user"] == competition["data"]["id_user"]:
+                        # start update database
+                        params = {}
+                        # get current timestamp
+                        now = datetime.datetime.now()
 
-            # start update database
-            params = {}
-            # get current timestamp
-            now = datetime.datetime.now()
+                        # handle update poster
+                        if "poster" in request.files:
+                            # upload poster first
+                            upload_dir_db = '/' + userdata["username"] + '/poster/'+ str(now.year)
+                            upload_dir = os.environ.get(
+                                'MEDIA_DIR', '../media-kompetisiid') + upload_dir_db
+                            input_poster = request.files['poster']
+                            poster = handleUpload(upload_dir, input_poster, upload_dir_db)
+                            # return as json stringify
+                            params["poster"] = str(poster)
+                            
+                        # set post status
+                        if userdata["level"] is "moderator" or userdata["level"] is "admin":
+                            params["status"] = "posted"
+                        else:
+                            params["status"] = "waiting" 
+                        
+                        # transform request to insert row data
+                        params["judul_kompetisi"] = request.form.get("title")
+                        params["sort"] = request.form.get("description") 
+                        params["penyelenggara"] = request.form.get("organizer")
+                        params["konten"] = request.form.get("content")
+                        params["updated_at"] = now.strftime('%Y-%m-%d %H:%M:%S')
+                        params["id_main_kat"] = request.form.get("main_cat")
+                        params["id_sub_kat"] = request.form.get("sub_cat")
+                        params["deadline"] = request.form.get("deadline_date")
+                        params["pengumuman"] = request.form.get("announcement_date")
+                        params["total_hadiah"] = request.form.get("prize_total")
+                        params["hadiah"] = request.form.get("prize_description")
+                        params["tag"] = request.form.get("tags")
+                        params["dataPengumuman"] = request.form.get("annoucements")
+                        params["dataGaleri"] = ""
+                        params["kontak"] = request.form.get("contacts")
+                        params["sumber"] =request.form.get("source_link")
+                        params["ikuti"] =request.form.get("register_link")
+                        params["mediapartner"] = 1 if request.form.get("is_mediapartner") is "true" else 0
+                        params["garansi"] = "1" if request.form.get("is_guaranteed") is "true" else "0"
+                        params["manage"] = "0"
 
-            # handle update poster
-            if "poster" in request.files:
-                # upload poster first
-                upload_dir_db = '/' + userdata["username"] + '/poster/'+ str(now.year)
-                upload_dir = os.environ.get(
-                    'MEDIA_DIR', '../media-kompetisiid') + upload_dir_db
-                input_poster = request.files['poster']
-                poster = handleUpload(upload_dir, input_poster, upload_dir_db)
-                # return as json stringify
-                params["poster"] = str(poster)
-                
-            # set post status
-            if userdata["level"] is "moderator" or userdata["level"] is "admin":
-                params["status"] = "posted"
-            else:
-                params["status"] = "waiting" 
-            
-            # transform request to insert row data
-            params["judul_kompetisi"] = request.form.get("title")
-            params["sort"] = request.form.get("description") 
-            params["penyelenggara"] = request.form.get("organizer")
-            params["konten"] = request.form.get("content")
-            params["updated_at"] = now.strftime('%Y-%m-%d %H:%M:%S')
-            params["id_main_kat"] = request.form.get("main_cat")
-            params["id_sub_kat"] = request.form.get("sub_cat")
-            params["deadline"] = request.form.get("deadline_date")
-            params["pengumuman"] = request.form.get("announcement_date")
-            params["total_hadiah"] = request.form.get("prize_total")
-            params["hadiah"] = request.form.get("prize_description")
-            params["tag"] = request.form.get("tags")
-            params["dataPengumuman"] = request.form.get("annoucements")
-            params["dataGaleri"] = ""
-            params["kontak"] = request.form.get("contacts")
-            params["sumber"] =request.form.get("source_link")
-            params["ikuti"] =request.form.get("register_link")
-            params["mediapartner"] = 1 if request.form.get("is_mediapartner") is "true" else 0
-            params["garansi"] = "1" if request.form.get("is_guaranteed") is "true" else "0"
-            params["manage"] = "0"
-
-            # insert into database competition table
-            updateData(params, id)
-            
-            return apiResponse(200, 'Kompetisi berhasil di update'), 200
+                        # insert into database competition table
+                        updateData(params, id)
+                        
+                        return apiResponse(200, 'Kompetisi berhasil di update'), 200
+                    else :
+                        return apiResponse(403, "anda tidak memiliki akses disini"), 403
             
         else:
             # component not found

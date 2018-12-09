@@ -61,6 +61,7 @@ select_column = [Competition.c.id_kompetisi, Competition.c.judul_kompetisi, Comp
                  Competition.c.views,
                  Competition.c.mediapartner, Competition.c.garansi,
                  Competition.c.kontak, Competition.c.sumber,
+                 Competition.c.id_user, 
                  MainCategory.c.id_main_kat, MainCategory.c.main_kat,
                  SubCategory.c.id_sub_kat, SubCategory.c.sub_kat,
                  Users.c.username, Users.c.fullname, Users.c.moto]
