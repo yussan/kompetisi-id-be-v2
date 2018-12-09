@@ -1,11 +1,15 @@
 from flask import Blueprint, request
 from flask_restful import Api, Resource
-from v2.helpers.encId import decId
-from v2.models.competitions import getDetail
-from v2.transformers.competition import transform
-from v2.helpers.response import apiResponse
+from ..helpers.encId import decId
+from ..models.competitions import getDetail, insertData
+from ..models.users import getDataByUserKey
+from ..transformers.competition import transform
+from ..helpers.response import apiResponse
 from wtforms import Form, StringField, TextAreaField, FileField, validators, BooleanField
+from ..modules.file_upload import handleUpload
 
+import datetime 
+import os
 
 # class to validate post
 class CreateCompetitionValidator(Form):
@@ -20,7 +24,7 @@ class CreateCompetitionValidator(Form):
     source_link = StringField('Link sumber', [validators.required()])
     # poster = FileField('Poster kompetisi', [validators.required()])
     tags = StringField('Tags', [validators.required()])
-    competition_detail = TextAreaField('Detail kompetisi', [
+    content = TextAreaField('Detail kompetisi', [
                                        validators.required(), validators.Length(min=100, max=5000)])
     main_cat = StringField('Main kategori', [validators.required()])
     sub_cat = StringField('Sub kategori', [validators.required()])
@@ -30,12 +34,72 @@ class CreateCompetitionValidator(Form):
 class CompetitionApi(Resource):
     # controller to post new competition
     def post(self):
+        # check required header
+        userkey = request.headers.get('User-Key')
+        
+        if userkey is None:
+            return apiResponse(403, "anda tidak memiliki akses disini"), 403
+        else:
+            # check userkey on database
+            userdata = getDataByUserKey(userkey)
+            if userdata is None:
+                return apiResponse(403, "anda tidak memiliki akses disini"), 403
+
         # validation form data
         form = CreateCompetitionValidator(request.form)
         if form.validate():
-            # handle upload poster
-            
+            params = {}
+            # get current timestamp
+            now = datetime.datetime.now()
 
+            # handle upload poster
+            if "poster" not in request.files:
+                # get validation error message
+                return apiResponse(400, "poster wajib diupload"), 400
+            else: 
+                # upload poster first
+                upload_dir_db = '/' + userdata["username"] + '/poster/'+ str(now.year)
+                upload_dir = os.environ.get(
+                    'MEDIA_DIR', '../media-kompetisiid') + upload_dir_db
+                input_poster = request.files['poster']
+                poster = handleUpload(upload_dir, input_poster, upload_dir_db)
+                # return as json stringify
+                params["poster"] = str(poster)
+
+            # set post status
+            if userdata["level"] is "moderator" or userdata["level"] is "admin":
+                params["status"] = "posted"
+            else:
+                params["status"] = "waiting" 
+
+            # transform request to insert row data
+            params["judul_kompetisi"] = request.form.get("title")
+            params["sort"] = request.form.get("description") 
+            params["penyelenggara"] = request.form.get("organizer")
+            params["konten"] = request.form.get("content")
+            params["created_at"] = now.strftime('%Y-%m-%d %H:%M:%S')
+            params["updated_at"] = now.strftime('%Y-%m-%d %H:%M:%S')
+            params["id_user"] = userdata["id_user"]
+            params["id_main_kat"] = request.form.get("main_cat")
+            params["id_sub_kat"] = request.form.get("sub_cat")
+            params["deadline"] = request.form.get("deadline_date")
+            params["pengumuman"] = request.form.get("announcement_date")
+            params["total_hadiah"] = request.form.get("prize_total")
+            params["hadiah"] = request.form.get("prize_description")
+            params["tag"] = request.form.get("tags")
+            params["rating"] = 0
+            params["views"] = 0
+            params["dataPengumuman"] = request.form.get("annoucements")
+            params["dataGaleri"] = ""
+            params["kontak"] = request.form.get("contacts")
+            params["sumber"] =request.form.get("source_link")
+            params["ikuti"] =request.form.get("register_link")
+            params["mediapartner"] = 1 if request.form.get("is_mediapartner") is "true" else 0
+            params["garansi"] = "1" if request.form.get("is_guaranteed") is "true" else "0"
+            params["manage"] = "0"
+
+            # insert into database competition table
+            insertData(params)
 
             return apiResponse(201, "kompetisi berhasil di tambahkan"), 201
         else:
@@ -71,7 +135,6 @@ class CompetitionDetailApi(Resource):
     # competition to delete competition by id
     def delete(self, encid):
         pass
-
 
 api_competition_detail_bp = Blueprint('api_competition_detail', __name__)
 api_competition_detail = Api(api_competition_detail_bp)

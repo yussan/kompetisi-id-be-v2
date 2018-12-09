@@ -5,12 +5,12 @@ from flask import Blueprint, request
 from flask_restful import Resource, Api
 from wtforms import Form, BooleanField, StringField, PasswordField, validators, FileField
 # from flask_mail import Message
-from v2.modules.file_upload import handleUpload
-from v2.modules.mail import sendEmail
-from v2.models.request import getRequest, getRequestById, insertRequest, updateRequest, countRequest
-from v2.helpers.response import apiResponse
-from v2.transformers.request import transform
-from v2.middlewares.auth import isModerator
+from ..modules.file_upload import handleUpload
+from ..modules.mail import sendEmail
+from ..models.request import getRequest, getRequestById, insertRequest, updateRequest, countRequest
+from ..helpers.response import apiResponse
+from ..transformers.request import transform
+from ..middlewares.auth import isModerator
 
 EmailThanksBody = """
 <div class="">

@@ -1,12 +1,17 @@
 from ..modules.db import connection
 import datetime
+import enum
 from v2.helpers.encId import encId
 from v2.helpers.strings import generateTitleUrl
 from users import Users
 from categories import MainCategory, SubCategory
-from sqlalchemy import Table, Column, MetaData, select, update, func, BIGINT, INT, DATETIME, TEXT, or_
+from sqlalchemy import Table, Column, MetaData, select, update, func, Enum, BIGINT, INT, DATE, DATETIME, TEXT, or_
 
 metadata = MetaData()
+
+# class FlagingEnum(enum.Enum):
+#     1 = 1
+#     0 = 0
 
 # competition table declaration
 Competition = Table('kompetisi', metadata,
@@ -19,8 +24,8 @@ Competition = Table('kompetisi', metadata,
                     Column('konten', TEXT),
                     Column('created_at', DATETIME),
                     Column('updated_at', DATETIME),
-                    Column('deadline', DATETIME),
-                    Column('pengumuman', DATETIME),
+                    Column('deadline', DATE),
+                    Column('pengumuman', DATE),
                     Column('total_hadiah', INT),
                     Column('hadiah', TEXT),
                     Column('tag', TEXT),
@@ -28,8 +33,10 @@ Competition = Table('kompetisi', metadata,
                     Column('rating', INT),
                     Column('views', INT),
                     Column('mediapartner', INT),
-                    Column('garansi', INT),
+                    Column('garansi', TEXT),
+                    Column('manage', TEXT),
                     Column('dataPengumuman', TEXT),
+                    Column('dataGaleri', TEXT),
                     Column('kontak', TEXT),
                     Column('sumber', TEXT),
                     Column('ikuti', TEXT),
@@ -48,6 +55,7 @@ select_column = [Competition.c.id_kompetisi, Competition.c.judul_kompetisi, Comp
                  Competition.c.hadiah, Competition.c.total_hadiah,
                  Competition.c.konten, Competition.c.sumber, Competition.c.ikuti,
                  Competition.c.dataPengumuman,
+                 Competition.c.dataGaleri,
                  Competition.c.created_at, Competition.c.updated_at, Competition.c.deadline, Competition.c.pengumuman,
                  Competition.c.tag, Competition.c.hadiah, Competition.c.status, Competition.c.rating,
                  Competition.c.views,
@@ -219,3 +227,8 @@ def getDetail(id):
             }
 
     return response
+
+# function to insert data into competition table
+def insertData(params):
+    query = Competition.insert().values(params)
+    return connection.execute(query)

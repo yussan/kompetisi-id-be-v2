@@ -83,6 +83,13 @@ def getDataById(userid):
 
     return connection.execute(query).fetchone()
 
+def getDataByUserKey(userkey):
+    query = select(select_column_user)\
+        .select_from(join_user)\
+        .where(Users.c.user_key == userkey)
+
+    return connection.execute(query).fetchone()
+
 
 def getDataByUsername(username):
     query = select(select_column_user)\
