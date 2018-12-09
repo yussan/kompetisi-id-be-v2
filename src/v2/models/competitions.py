@@ -232,3 +232,8 @@ def getDetail(id):
 def insertData(params):
     query = Competition.insert().values(params)
     return connection.execute(query)
+
+# function to update data competition by competition id
+def updateData(params, id):
+    query = Competition.update().where(Competition.c.id_kompetisi == id).values(params)
+    return connection.execute(query)

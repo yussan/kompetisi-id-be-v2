@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 from ..helpers.encId import decId
-from ..models.competitions import getDetail, insertData
+from ..models.competitions import getDetail, insertData, updateData
 from ..models.users import getDataByUserKey
 from ..transformers.competition import transform
 from ..helpers.response import apiResponse
@@ -130,6 +130,73 @@ class CompetitionDetailApi(Resource):
 
     # controller to update competition by id
     def put(self, encid):
+        id = encid
+        competition = getDetail(id)
+
+        # check competition by id
+        if(competition['data'] != None):
+            # check user key
+            userkey = request.headers.get('User-Key')
+            if userkey is None:
+                return apiResponse(403, "anda tidak memiliki akses disini"), 403
+            else:
+                # check userkey on database
+                userdata = getDataByUserKey(userkey)
+                if userdata is None:
+                    return apiResponse(403, "anda tidak memiliki akses disini"), 403
+
+            # start update database
+            params = {}
+            # get current timestamp
+            now = datetime.datetime.now()
+
+            # handle update poster
+            if "poster" in request.files:
+                # upload poster first
+                upload_dir_db = '/' + userdata["username"] + '/poster/'+ str(now.year)
+                upload_dir = os.environ.get(
+                    'MEDIA_DIR', '../media-kompetisiid') + upload_dir_db
+                input_poster = request.files['poster']
+                poster = handleUpload(upload_dir, input_poster, upload_dir_db)
+                # return as json stringify
+                params["poster"] = str(poster)
+                
+            # set post status
+            if userdata["level"] is "moderator" or userdata["level"] is "admin":
+                params["status"] = "posted"
+            else:
+                params["status"] = "waiting" 
+            
+            # transform request to insert row data
+            params["judul_kompetisi"] = request.form.get("title")
+            params["sort"] = request.form.get("description") 
+            params["penyelenggara"] = request.form.get("organizer")
+            params["konten"] = request.form.get("content")
+            params["updated_at"] = now.strftime('%Y-%m-%d %H:%M:%S')
+            params["id_main_kat"] = request.form.get("main_cat")
+            params["id_sub_kat"] = request.form.get("sub_cat")
+            params["deadline"] = request.form.get("deadline_date")
+            params["pengumuman"] = request.form.get("announcement_date")
+            params["total_hadiah"] = request.form.get("prize_total")
+            params["hadiah"] = request.form.get("prize_description")
+            params["tag"] = request.form.get("tags")
+            params["dataPengumuman"] = request.form.get("annoucements")
+            params["dataGaleri"] = ""
+            params["kontak"] = request.form.get("contacts")
+            params["sumber"] =request.form.get("source_link")
+            params["ikuti"] =request.form.get("register_link")
+            params["mediapartner"] = 1 if request.form.get("is_mediapartner") is "true" else 0
+            params["garansi"] = "1" if request.form.get("is_guaranteed") is "true" else "0"
+            params["manage"] = "0"
+
+            # insert into database competition table
+            updateData(params, id)
+            
+            return apiResponse(200, 'Kompetisi berhasil di update'), 200
+            
+        else:
+            # component not found
+            return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
         pass
 
     # competition to delete competition by id
