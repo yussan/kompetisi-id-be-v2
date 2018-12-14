@@ -16,6 +16,7 @@ from v2.controllers.user import api_user_bp
 from v2.controllers.feed import api_feed_competition_bp, api_feed_news_bp
 from v2.controllers.sitemap import api_sitemap_competition_bp, api_sitemap_news_bp
 from v2.controllers.email_verification import api_email_verification_bp
+from v2.controllers.sebangsa import api_sebangsa_bp
 
 mail = Mail()
 
@@ -108,6 +109,10 @@ def create_app(environment=None):
 
     app.register_blueprint(
         api_user_bp
+    )
+
+    app.register_blueprint(
+        api_sebangsa_bp
     )
     # end of api v2
     # end of blueprint registration

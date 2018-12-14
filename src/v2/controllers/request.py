@@ -84,13 +84,11 @@ class FormValidator(Form):
     link = StringField('Link', [validators.Length(min=4, max=100)])
     poster = FileField('poster')
 
-# constrollers
-
+# controllers
 
 class FormActionValidator(Form):
     status = StringField('Status', [validators.Length(min=4, max=10)])
     message = StringField('Pesan', [validators.Length(min=4, max=300)])
-
 
 class RequestApi(Resource):
 

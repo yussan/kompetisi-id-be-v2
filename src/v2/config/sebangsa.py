@@ -1,0 +1,6 @@
+SBS_COMMUNITY_ID = 2198
+SBS_USERNAME = "kompetisiid"
+SBS_PASSWORD = "rahasia"
+SBS_NEWS_ROOM = 1455
+SBS_COMMUNITY_ROOM = 1457
+SBS_API = "https://sebangsa.net/v5"

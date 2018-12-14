@@ -5,6 +5,7 @@ from v2.helpers.encId import decId
 from v2.helpers.response import apiResponse
 from v2.transformers.news import transform
 
+
 class News(Resource):
     def get(self, id):
         # decrypt id
@@ -13,16 +14,16 @@ class News(Resource):
 
         if(data):
             # get related post
-            ParamsRelated = {'status': ['published'], 'notid': id, 'limit': 3}
+            ParamsRelated = {"status": ["published"], "notid": id, "limit": 3}
             related = getList(ParamsRelated)
 
             relateddata = []
-            for n in related['data']:
+            for n in related["data"]:
                 relateddata.append(transform(n))
 
-            return apiResponse(200, 'success', {'data': dict(transform(data)), 'related': relateddata}), 200
+            return apiResponse(200, "success", {"data": dict(transform(data)), "related": relateddata}), 200
         else:
-            return apiResponse(204, 'berita tidak ditemukan'), 200
+            return apiResponse(204, "berita tidak ditemukan"), 200
 
     def post(self, id):
         return {}, 201
@@ -31,6 +32,6 @@ class News(Resource):
         return {}, 201
 
 
-api_news_bp = Blueprint('api_news', __name__)
+api_news_bp = Blueprint("api_news", __name__)
 api_news = Api(api_news_bp)
-api_news.add_resource(News, '/v2/news/<string:id>')
+api_news.add_resource(News, "/v2/news/<string:id>")
