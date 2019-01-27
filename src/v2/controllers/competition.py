@@ -10,6 +10,7 @@ from ..modules.file_upload import handleUpload
 
 import datetime 
 import os
+import json 
 
 # class to validate post
 class CreateCompetitionValidator(Form):
@@ -58,13 +59,13 @@ class CompetitionApi(Resource):
                 return apiResponse(400, "poster wajib diupload"), 400
             else: 
                 # upload poster first
-                upload_dir_db = '/' + userdata["username"] + '/poster/'+ str(now.year)
+                upload_dir_db = '/poster/' + userdata["username"] + '/'+ str(now.year)
                 upload_dir = os.environ.get(
                     'MEDIA_DIR', '../media-kompetisiid') + upload_dir_db
                 input_poster = request.files['poster']
                 poster = handleUpload(upload_dir, input_poster, upload_dir_db)
                 # return as json stringify
-                params["poster"] = str(poster)
+                params["poster"] = json.dumps(poster)
 
             # set post status
             if userdata["level"] is "moderator" or userdata["level"] is "admin":
@@ -94,7 +95,7 @@ class CompetitionApi(Resource):
             params["kontak"] = request.form.get("contacts")
             params["sumber"] =request.form.get("source_link")
             params["ikuti"] =request.form.get("register_link")
-            params["mediapartner"] = 1 if request.form.get("is_mediapartner") is "true" else 0
+            params["mediapartner"] = "1" if request.form.get("is_mediapartner") is "true" else "0"
             params["garansi"] = "1" if request.form.get("is_guaranteed") is "true" else "0"
             params["manage"] = "0"
 
@@ -130,7 +131,7 @@ class CompetitionDetailApi(Resource):
 
     # controller to update competition by id
     def put(self, encid):
-        id = encid
+        id = decId(encid)
         competition = getDetail(id)
 
         # check competition by id
@@ -155,7 +156,7 @@ class CompetitionDetailApi(Resource):
                         # handle update poster
                         if "poster" in request.files:
                             # upload poster first
-                            upload_dir_db = '/' + userdata["username"] + '/poster/'+ str(now.year)
+                            upload_dir_db = '/poster/' + userdata["username"] + '/'+ str(now.year)
                             upload_dir = os.environ.get(
                                 'MEDIA_DIR', '../media-kompetisiid') + upload_dir_db
                             input_poster = request.files['poster']
@@ -187,9 +188,11 @@ class CompetitionDetailApi(Resource):
                         params["kontak"] = request.form.get("contacts")
                         params["sumber"] =request.form.get("source_link")
                         params["ikuti"] =request.form.get("register_link")
-                        params["mediapartner"] = 1 if request.form.get("is_mediapartner") is "true" else 0
-                        params["garansi"] = "1" if request.form.get("is_guaranteed") is "true" else "0"
+                        params["mediapartner"] = "1" if request.form.get("is_mediapartner") == "true" else "0"
+                        params["garansi"] = "1" if request.form.get("is_guaranteed") == "true" else "0"
                         params["manage"] = "0"
+
+                        print(request.form.get("is_guaranteed"), request.form.get("is_guaranteed") is "true", request.form.get("is_guaranteed") is True)
 
                         # insert into database competition table
                         updateData(params, id)
