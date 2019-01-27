@@ -95,8 +95,8 @@ class CompetitionApi(Resource):
             params["kontak"] = request.form.get("contacts")
             params["sumber"] =request.form.get("source_link")
             params["ikuti"] =request.form.get("register_link")
-            params["mediapartner"] = "1" if request.form.get("is_mediapartner") is "true" else "0"
-            params["garansi"] = "1" if request.form.get("is_guaranteed") is "true" else "0"
+            params["mediapartner"] = "1" if request.form.get("is_mediapartner") == "true" else "0"
+            params["garansi"] = "1" if request.form.get("is_guaranteed") == "true" else "0"
             params["manage"] = "0"
 
             # insert into database competition table
