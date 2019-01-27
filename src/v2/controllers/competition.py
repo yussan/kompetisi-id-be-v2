@@ -162,7 +162,7 @@ class CompetitionDetailApi(Resource):
                             input_poster = request.files['poster']
                             poster = handleUpload(upload_dir, input_poster, upload_dir_db)
                             # return as json stringify
-                            params["poster"] = str(poster)
+                            params["poster"] = json.dumps(poster)
                             
                         # set post status
                         if userdata["level"] is "moderator" or userdata["level"] is "admin":
