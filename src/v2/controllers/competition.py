@@ -59,7 +59,7 @@ class CompetitionApi(Resource):
                 return apiResponse(400, "poster wajib diupload"), 400
             else: 
                 # upload poster first
-                upload_dir_db = 'poster/' + userdata["username"] + '/'+ str(now.year)
+                upload_dir_db = '/poster/' + userdata["username"] + '/'+ str(now.year)
                 upload_dir = os.environ.get(
                     'MEDIA_DIR', '../media-kompetisiid') + upload_dir_db
                 input_poster = request.files['poster']
@@ -156,7 +156,7 @@ class CompetitionDetailApi(Resource):
                         # handle update poster
                         if "poster" in request.files:
                             # upload poster first
-                            upload_dir_db = 'poster/' + userdata["username"] + '/'+ str(now.year)
+                            upload_dir_db = '/poster/' + userdata["username"] + '/'+ str(now.year)
                             upload_dir = os.environ.get(
                                 'MEDIA_DIR', '../media-kompetisiid') + upload_dir_db
                             input_poster = request.files['poster']
