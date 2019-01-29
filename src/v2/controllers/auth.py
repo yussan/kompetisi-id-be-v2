@@ -30,7 +30,7 @@ class Login(Resource):
         result = login(params)
         if result is not None:
             userdata =  transform(result)
-            if userdata["user_key"] is None:
+            if userdata["user_key"] == "":
                 # set user key if not available
                 UserKey = generateEmailVerifToken(userdata["id"])
                 userdata["user_key"] = UserKey
