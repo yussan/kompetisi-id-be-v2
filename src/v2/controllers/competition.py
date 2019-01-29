@@ -1,12 +1,14 @@
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 from ..helpers.encId import decId
-from ..models.competitions import getDetail, insertData, updateData
+from ..models.competitions import getDetail, insertData, updateData, getSingleLatest
 from ..models.users import getDataByUserKey
 from ..transformers.competition import transform
 from ..helpers.response import apiResponse
 from wtforms import Form, StringField, TextAreaField, FileField, validators, BooleanField
 from ..modules.file_upload import handleUpload
+from ..modules.sebangsa import postToSebangsa
+from ..config.sebangsa import SBS_API, SBS_COMMUNITY_ID, SBS_COMMUNITY_ROOM, SBS_NEWS_ROOM, SBS_PASSWORD, SBS_USERNAME
 
 import datetime 
 import os
@@ -101,6 +103,19 @@ class CompetitionApi(Resource):
 
             # insert into database competition table
             insertData(params)
+
+            # get lattest data of competition
+            latestCompetition = getSingleLatest()
+            postUrl = "https://kompetisi.id/competition/" + latestCompetition['id'] + "/regulations/" + latestCompetition['nospace_title'][0] + " " + latestCompetition['title'] + " #infokompetisi #kompetisiid"
+
+            print("posturl", postUrl)
+
+            #auto post to sebangsa
+            postToSebangsa({
+              "room_id": SBS_COMMUNITY_ROOM,
+              "group_id": SBS_COMMUNITY_ID,
+              "post": postUrl
+            })
 
             return apiResponse(201, "kompetisi berhasil di tambahkan"), 201
         else:

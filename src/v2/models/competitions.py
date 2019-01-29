@@ -219,6 +219,7 @@ def getDetail(id):
 
         # get prev competition
         queryprev = select([Competition.c.id_kompetisi.label('id'), Competition.c.judul_kompetisi.label('title')]).where(Competition.c.id_kompetisi < id).order_by(Competition.c.id_kompetisi.desc()).limit(1)
+        
         resultprev = connection.execute(queryprev).fetchone()
         if(resultprev): 
             response['prev'] = {
@@ -228,6 +229,18 @@ def getDetail(id):
             }
 
     return response
+
+def getSingleLatest():
+  query = select(select_column).select_from(join_sub_cat).order_by(Competition.c.id_kompetisi.desc()).limit(1)
+  competition  = connection.execute(query).fetchone() 
+
+  response  = {
+    'id': encId(competition.id_kompetisi),
+    'title': competition.judul_kompetisi,
+    'nospace_title': generateTitleUrl(competition.judul_kompetisi)
+  }
+
+  return response
 
 # function to insert data into competition table
 def insertData(params):
