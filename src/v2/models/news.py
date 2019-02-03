@@ -61,6 +61,14 @@ def getList(Params={}):
         'count': rescount.fetchone()['total']
     }
 
+# model to update news by news id
+def updateNews(Params, id):
+  query = News.update().where(News.c.id == id).values(Params)
+  return connection.execute(query)
+
+def createNews(Params):
+  query = News.insert().values(Params)
+  return connection.execute(query)
 
 def getDetail(id):
     s = select(select_column).select_from(join_user).where(News.c.id == id)
