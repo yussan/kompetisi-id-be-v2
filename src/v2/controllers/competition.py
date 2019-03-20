@@ -22,13 +22,13 @@ class CreateCompetitionValidator(Form):
                                 validators.required(), validators.Length(min=50, max=500)])
     prize_total = StringField('Total nilai hadiah', [validators.required()])
     prize_description = TextAreaField('Deskripsi hadiah', [
-                                      validators.required(), validators.Length(max=2000)])
+                                      validators.required(), validators.Length(max=100000)])
     organizer = StringField('Penyelenggara', [validators.required()])
     source_link = StringField('Link sumber', [validators.required()])
     # poster = FileField('Poster kompetisi', [validators.required()])
     tags = StringField('Tags', [validators.required()])
     content = TextAreaField('Detail kompetisi', [
-                                       validators.required(), validators.Length(min=100, max=5000)])
+                                       validators.required(), validators.Length(min=100, max=500000)])
     main_cat = StringField('Main kategori', [validators.required()])
     sub_cat = StringField('Sub kategori', [validators.required()])
 
