@@ -61,12 +61,14 @@ select_column = [Competition.c.id_kompetisi, Competition.c.judul_kompetisi, Comp
                  Competition.c.views,
                  Competition.c.mediapartner, Competition.c.garansi,
                  Competition.c.kontak, Competition.c.sumber,
-                 Competition.c.id_user, 
+                 Competition.c.id_user,
                  MainCategory.c.id_main_kat, MainCategory.c.main_kat,
                  SubCategory.c.id_sub_kat, SubCategory.c.sub_kat,
                  Users.c.username, Users.c.fullname, Users.c.moto]
 
 # functino to get list of competitions
+
+
 def getList(Params={}):
     # order by
     orderby = Competition.c.id_kompetisi.desc()
@@ -74,7 +76,7 @@ def getList(Params={}):
     if 'orderby' in Params:
         if Params['orderby'] == 'prize_dsc':
             orderby = Competition.c.total_hadiah.desc()
-    
+
     if 'is_popular' in Params and Params['is_popular'] == True:
         orderby = Competition.c.views.desc()
 
@@ -151,10 +153,13 @@ def getList(Params={}):
     }
 
 # function to get competition related by competition id
+
+
 def getRelated(id):
-    #get detail competitoin 
-    c_query = select([Competition.c.id_main_kat.label('main_kat'), Competition.c.tag]).select_from(join_sub_cat).where(Competition.c.id_kompetisi == id)
-    competition  = connection.execute(c_query).fetchone()
+    # get detail competitoin
+    c_query = select([Competition.c.id_main_kat.label('main_kat'), Competition.c.tag]).select_from(
+        join_sub_cat).where(Competition.c.id_kompetisi == id)
+    competition = connection.execute(c_query).fetchone()
 
     # get competition by main category
     s = select(select_column).order_by(
@@ -163,7 +168,7 @@ def getRelated(id):
         .where(Competition.c.deadline > datetime.datetime.now())\
         .where(Competition.c.id_kompetisi != id)\
         .limit(3)
-    
+
     # generate query to get data
     res = connection.execute(s)
     data = res.fetchall()
@@ -176,7 +181,8 @@ def getRelated(id):
     else:
         s2 = select(select_column).order_by(
             Competition.c.id_kompetisi.desc()).select_from(join_sub_cat).limit(3 - totaldata)
-        s2 = s2.where(Competition.c.id_kompetisi != id).where(Competition.c.deadline > datetime.datetime.now())
+        s2 = s2.where(Competition.c.id_kompetisi != id).where(
+            Competition.c.deadline > datetime.datetime.now())
         # generate where not query
         for n in data:
             s2 = s2.where(Competition.c.id_kompetisi != n.id_kompetisi)
@@ -189,8 +195,11 @@ def getRelated(id):
         }
 
 # function to get detial competition by competition id
+
+
 def getDetail(id):
-    query = select(select_column).select_from(join_sub_cat).where(Competition.c.id_kompetisi == id)
+    query = select(select_column).select_from(
+        join_sub_cat).where(Competition.c.id_kompetisi == id)
     result = connection.execute(query)
 
     response = {
@@ -200,28 +209,30 @@ def getDetail(id):
     }
 
     # compoetition found
-    if( response['data'] != None):
+    if(response['data'] != None):
 
         # update total views
-        queryupdateviews = update(Competition).where(Competition.c.id_kompetisi == id).values(views = Competition.c.views + 1)
+        queryupdateviews = update(Competition).where(
+            Competition.c.id_kompetisi == id).values(views=Competition.c.views + 1)
         connection.execute(queryupdateviews)
 
         # get next competition
-        querynext = select([Competition.c.id_kompetisi.label('id'), Competition.c.judul_kompetisi.label('title')]).where(Competition.c.id_kompetisi > id).limit(1)
+        querynext = select([Competition.c.id_kompetisi.label('id'), Competition.c.judul_kompetisi.label(
+            'title')]).where(Competition.c.id_kompetisi > id).limit(1)
         resultnext = connection.execute(querynext).fetchone()
-        if(resultnext): 
+        if(resultnext):
             response['next'] = {
                 'id': encId(resultnext.id),
                 'title': resultnext.title,
                 'nospace_title': generateTitleUrl(resultnext.title)
             }
 
-
         # get prev competition
-        queryprev = select([Competition.c.id_kompetisi.label('id'), Competition.c.judul_kompetisi.label('title')]).where(Competition.c.id_kompetisi < id).order_by(Competition.c.id_kompetisi.desc()).limit(1)
-        
+        queryprev = select([Competition.c.id_kompetisi.label('id'), Competition.c.judul_kompetisi.label(
+            'title')]).where(Competition.c.id_kompetisi < id).order_by(Competition.c.id_kompetisi.desc()).limit(1)
+
         resultprev = connection.execute(queryprev).fetchone()
-        if(resultprev): 
+        if(resultprev):
             response['prev'] = {
                 'id': encId(resultprev.id),
                 'title': resultprev.title,
@@ -230,24 +241,30 @@ def getDetail(id):
 
     return response
 
+
 def getSingleLatest():
-  query = select(select_column).select_from(join_sub_cat).order_by(Competition.c.id_kompetisi.desc()).limit(1)
-  competition  = connection.execute(query).fetchone() 
+    query = select(select_column).select_from(join_sub_cat).order_by(
+        Competition.c.id_kompetisi.desc()).limit(1)
+    competition = connection.execute(query).fetchone()
 
-  response  = {
-    'id': encId(competition.id_kompetisi),
-    'title': competition.judul_kompetisi,
-    'nospace_title': generateTitleUrl(competition.judul_kompetisi)
-  }
+    response = {
+        'id': encId(competition.id_kompetisi),
+        'title': competition.judul_kompetisi,
+        'nospace_title': generateTitleUrl(competition.judul_kompetisi)
+    }
 
-  return response
+    return response
 
 # function to insert data into competition table
+
+
 def insertData(params):
     query = Competition.insert().values(params)
     return connection.execute(query)
 
 # function to update data competition by competition id
+
+
 def updateData(params, id):
     query = Competition.update().where(Competition.c.id_kompetisi == id).values(params)
     return connection.execute(query)

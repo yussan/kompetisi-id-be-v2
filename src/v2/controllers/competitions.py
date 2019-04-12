@@ -1,16 +1,16 @@
 from flask import Blueprint, request
 from flask_restful import Api, Resource
-from v2.models.competitions import getList, getRelated
-from v2.helpers.response import apiResponse
-from v2.helpers.encId import decId
-from v2.transformers.competition import transform
+from ..models.competitions import getList, getRelated
+from ..helpers.response import apiResponse
+from ..helpers.encId import decId
+from ..transformers.competition import transform
 
 class CompetitionListApi(Resource):
     def post(self):
         return {
             'status': 201,
             'message': 'kompetisi berhasil dipasang'
-               }, 201
+        }, 201
 
     # endpoint to get list competition/browse competition
     def get(self):
@@ -65,7 +65,7 @@ class CompetitionListApi(Resource):
                 comdata.append(dict(transform(n)))
             response = {}
             response['data'] = comdata
-            response['count'] = competitions['count'] 
+            response['count'] = competitions['count']
 
             return apiResponse(200, 'success', response), 200
         else:
@@ -92,4 +92,5 @@ class CompetitionRelatedApi(Resource):
 api_competitions_bp = Blueprint('api_competitions', __name__)
 api_competitions = Api(api_competitions_bp)
 api_competitions.add_resource(CompetitionListApi, '/v2/competitions')
-api_competitions.add_resource(CompetitionRelatedApi, '/v2/competitions/related/<encid>')
+api_competitions.add_resource(
+    CompetitionRelatedApi, '/v2/competitions/related/<encid>')
