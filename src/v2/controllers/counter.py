@@ -1,10 +1,12 @@
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 from ..models.counter import homeCounter
+from ..helpers.response import apiResponse
 
 class HomeCounter(Resource):
     def get(self):
-        return homeCounter()
+        stats = homeCounter()
+        return apiResponse(200, "success", stats), 200
 
 
 api_counter_bp = Blueprint("api_counter", __name__)
