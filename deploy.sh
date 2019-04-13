@@ -1,3 +1,5 @@
+cd "/home/webdev/Api/kompetisiid-api-python"
+
 echo 'Pull update code from branch master...'
 git pull origin master 
 
