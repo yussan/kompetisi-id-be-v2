@@ -84,8 +84,8 @@ def superSidebarCounter():
         Users)
 
     # get count user by condition
-    qActiveU = qCountC.where(Users.c.status == "active")
-    qBannedU = qCountC.where(Users.c.status == "banned")
+    qActiveU = qCountU.where(Users.c.status == "active")
+    qBannedU = qCountU.where(Users.c.status == "banned")
 
     # execute query
     rWaitingC = connection.execute(qWaitingC)
