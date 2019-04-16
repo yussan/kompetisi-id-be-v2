@@ -15,6 +15,11 @@ class SuperSidebarCounter(Resource):
       count = superSidebarCounter()
       return apiResponse(200, "success", count), 200
 
+# endpoint to get count of request
+class SuperRequestCounter(Resource):
+  def get(self):
+      return {}
+
 
 api_counter_bp = Blueprint("api_counter", __name__)
 api_counter = Api(api_counter_bp)

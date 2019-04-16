@@ -59,6 +59,7 @@ def superSidebarCounter():
         Competition)
 
     # get count competition by condition
+    qLiveC = qCountC.where(Competition.c.deadline > datetime.datetime.now())
     qWaitingC = qCountC.where(Competition.c.status == "waiting")
     qPostedC = qCountC.where(Competition.c.status == "posted")
     qDraftC = qCountC.where(Competition.c.status == "draft")
@@ -78,6 +79,8 @@ def superSidebarCounter():
     # get count request by condition
     qTotalR = qCountR
     qWaitingR = qCountR.where(Request.c.status == "waiting")
+    qAcceptR = qCountR.where(Request.c.status == "posted")
+    qRejectR = qCountR.where(Request.c.status == "reject")
 
     # get count users
     qCountU = select([func.count().label('total')]).select_from(
@@ -88,6 +91,7 @@ def superSidebarCounter():
     qBannedU = qCountU.where(Users.c.status == "banned")
 
     # execute query
+    rLiveC = connection.execute(qLiveC)
     rWaitingC = connection.execute(qWaitingC)
     rPostedC = connection.execute(qPostedC)
     rDraftC = connection.execute(qDraftC)
@@ -98,12 +102,15 @@ def superSidebarCounter():
 
     rTotalR = connection.execute(qTotalR)
     rWaitingR = connection.execute(qWaitingR)
+    rAcceptR = connection.execute(qAcceptR)
+    rRejectR = connection.execute(qRejectR)
 
     rActiveU = connection.execute(qActiveU)
     rBannedU = connection.execute(qBannedU)
 
     return {
         "competition": {
+            "live": rLiveC.fetchone()["total"],
             "waiting": rWaitingC.fetchone()["total"],
             "posted": rPostedC.fetchone()["total"],
             "draft": rDraftC.fetchone()["total"],
@@ -113,6 +120,8 @@ def superSidebarCounter():
         "request": {
             "total": rTotalR.fetchone()["total"],
             "waiting": rWaitingR.fetchone()["total"],
+            "accept": rAcceptR.fetchone()["total"],
+            "reject": rRejectR.fetchone()["total"],
         },
         "news": {
             "posted": rPostedN.fetchone()["total"],
