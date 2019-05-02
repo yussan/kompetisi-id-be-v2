@@ -126,8 +126,14 @@ def getList(Params={}):
     # filter by status
     if 'status' in Params:
         if Params['status'] == 'active':
-            s = s.where(Competition.c.deadline > datetime.datetime.now())
-            c = c.where(Competition.c.deadline > datetime.datetime.now())
+            s = s.where(or_(Competition.c.deadline > datetime.datetime.now(), Competition.c.status == "posted"))
+            c = c.where(or_(Competition.c.deadline > datetime.datetime.now(), Competition.c.status == "posted"))
+        elif Params['status'] == 'waiting':
+            s = s.where(Competition.c.status == "waiting")
+            c = c.where(Competition.c.status == "waiting")
+        else :
+            s = s.where(Competition.c.status == "posted")
+            c = c.where(Competition.c.status == "posted")
 
     # show mediapartner
     if 'is_mediapartner' in Params and Params['is_mediapartner'] == True:
@@ -143,6 +149,11 @@ def getList(Params={}):
     if 'is_popular' in Params and Params['is_popular'] == True:
         s = s.where(or_(Competition.c.views > 50, Competition.c.views < 700))
         c = c.where(or_(Competition.c.views > 50, Competition.c.views < 700))
+
+    # get competition by user_id
+    if "user_id" in Params:
+        s = s.where(Users.c.id_user == Params["user_id"])
+        c = c.where(Users.c.id_user == Params["user_id"])
 
     res = connection.execute(s)
     rescount = connection.execute(c)

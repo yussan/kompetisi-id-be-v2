@@ -44,7 +44,8 @@ def transform(n):
         'tag': n.tag,
         'link_source': n.sumber,
         'link_join': n.ikuti,
-        'views': n.views
+        'views': n.views,
+        "status": n.status
     }
 
 

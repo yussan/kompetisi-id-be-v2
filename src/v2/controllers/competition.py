@@ -189,7 +189,8 @@ class CompetitionDetailApi(Resource):
                             params["poster"] = json.dumps(poster)
 
                         # set post status
-                        if userdata["level"] is "moderator" or userdata["level"] is "admin":
+                        print("userdata level", userdata["level"] == "admin")
+                        if userdata["level"] == "moderator" or userdata["level"] == "admin":
                             params["status"] = "posted"
                         else:
                             params["status"] = "waiting"
@@ -223,8 +224,7 @@ class CompetitionDetailApi(Resource):
                             "is_guaranteed") == "true" else "0"
                         params["manage"] = "0"
 
-                        print(request.form.get("is_guaranteed"), request.form.get(
-                            "is_guaranteed") is "true", request.form.get("is_guaranteed") is True)
+                        print("updated competition", encid, params)
 
                         # insert into database competition table
                         updateData(params, id)

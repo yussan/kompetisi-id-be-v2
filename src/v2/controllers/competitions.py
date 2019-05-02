@@ -1,9 +1,11 @@
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 from ..models.competitions import getList, getRelated
+from ..models.users import getDataByUserKey
 from ..helpers.response import apiResponse
 from ..helpers.encId import decId
 from ..transformers.competition import transform
+
 
 class CompetitionListApi(Resource):
     def post(self):
@@ -28,6 +30,7 @@ class CompetitionListApi(Resource):
         is_mediapartner = request.args.get('is_mediapartner')
         is_guaranted = request.args.get('is_guaranted')
         is_popular = request.args.get('is_popular')
+        by_me = request.args.get("by_me")
 
         if(not limit):
             limit = 9
@@ -53,6 +56,22 @@ class CompetitionListApi(Resource):
         if (status):
             params['status'] = status
 
+        # get competitio by me (must logged in)
+        if by_me:
+            userkey = request.headers.get('User-Key')
+            if userkey is None:
+                # response failed
+                return apiResponse(403, "kamu belum login"), 403
+            else:
+                # get userdata by userkey
+                # check userkey on database
+                userdata = getDataByUserKey(userkey)
+                if userdata is None:
+                    return apiResponse(403, "kamu belum login"), 403
+                else:
+                    # added params
+                    params['user_id'] = userdata["id_user"]
+
         params['is_mediapartner'] = is_mediapartner == 'true'
         params['is_guaranted'] = is_guaranted == 'true'
         params['is_popular'] = is_popular == 'true'
@@ -71,6 +90,7 @@ class CompetitionListApi(Resource):
         else:
             return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
 
+
 class CompetitionRelatedApi(Resource):
     def get(self, encid):
         id = decId(encid)
@@ -88,6 +108,7 @@ class CompetitionRelatedApi(Resource):
             return apiResponse(200, 'success', response), 200
         else:
             return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
+
 
 api_competitions_bp = Blueprint('api_competitions', __name__)
 api_competitions = Api(api_competitions_bp)
