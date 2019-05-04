@@ -5,7 +5,7 @@ from v2.helpers.encId import encId
 from v2.helpers.strings import generateTitleUrl
 from users import Users
 from categories import MainCategory, SubCategory
-from sqlalchemy import Table, Column, MetaData, select, update, func, Enum, BIGINT, INT, DATE, DATETIME, TEXT, or_
+from sqlalchemy import Table, Column, MetaData, select, update, func, Enum, BIGINT, INT, DATE, DATETIME, TEXT, or_, and_
 
 metadata = MetaData()
 
@@ -126,11 +126,14 @@ def getList(Params={}):
     # filter by status
     if 'status' in Params:
         if Params['status'] == 'active':
-            s = s.where(or_(Competition.c.deadline > datetime.datetime.now(), Competition.c.status == "posted"))
-            c = c.where(or_(Competition.c.deadline > datetime.datetime.now(), Competition.c.status == "posted"))
+            s = s.where(and_(Competition.c.deadline > datetime.datetime.now(), Competition.c.status == "posted"))
+            c = c.where(and_(Competition.c.deadline > datetime.datetime.now(), Competition.c.status == "posted"))
         elif Params['status'] == 'waiting':
             s = s.where(Competition.c.status == "waiting")
             c = c.where(Competition.c.status == "waiting")
+        elif Params['status'] == 'reject':
+            s = s.where(Competition.c.status == "reject")
+            c = c.where(Competition.c.status == "reject")
         else :
             s = s.where(Competition.c.status == "posted")
             c = c.where(Competition.c.status == "posted")

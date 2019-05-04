@@ -59,7 +59,7 @@ def superSidebarCounter():
         Competition)
 
     # get count competition by condition
-    qLiveC = qCountC.where(Competition.c.deadline > datetime.datetime.now())
+    qLiveC = qCountC.where(and_(Competition.c.deadline > datetime.datetime.now(), Competition.c.status == "posted"))
     qWaitingC = qCountC.where(Competition.c.status == "waiting")
     qPostedC = qCountC.where(Competition.c.status == "posted")
     qDraftC = qCountC.where(Competition.c.status == "draft")
