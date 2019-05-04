@@ -3,6 +3,7 @@ from v2.helpers.strings import generateTitleUrl
 # ref: http://docs.python-guide.org/en/latest/scenarios/json/
 import json
 import re
+import os
 
 def transform(n):
     return {
@@ -59,8 +60,8 @@ def transformImage(image):
       try :
         image = json.loads(image)
         return {
-          'small': image['small'] if image['small'].find('http') > -1 else 'https://media.kompetisi.id' + image['small'],
-          'original': image['original'] if re.match(r'^http', image['original']) else 'https://media.kompetisi.id' + image['original']
+          'small': image['small'] if image['small'].find('http') > -1 else  os.environ.get('MEDIA_HOST', 'https://media.kompetisi.id') + image['small'],
+          'original': image['original'] if re.match(r'^http', image['original']) else os.environ.get('MEDIA_HOST', 'https://media.kompetisi.id') + image['original']
         }
       except ValueError :
         return {
