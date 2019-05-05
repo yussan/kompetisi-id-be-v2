@@ -47,7 +47,7 @@ class CompetitionApi(Resource):
             # check userkey on database
             userdata = getDataByUserKey(userkey)
             if userdata is None:
-                return apiResponse(403, "anda tidak memiliki akses disini"), 403
+                return apiResponse(403, "akun tidak diteumkan"), 403
 
         # validation form data
         form = CreateCompetitionValidator(request.form)

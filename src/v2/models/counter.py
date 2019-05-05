@@ -3,8 +3,8 @@ from competitions import Competition
 from news import News
 from request import Request
 from competitions import Competition
-from news import News
 from users import Users
+from news import News
 from ..modules.db import connection
 from ..modules.number import convertToRelativeCurrency
 from sqlalchemy import select, func, and_
@@ -12,11 +12,12 @@ import datetime
 import calendar
 from decimal import Decimal
 
+
 def homeCounter():
     # ref: https://stackoverflow.com/a/30071999/2780875
     now = datetime.datetime.now()
 
-    # get count of competitio
+    # get count of competition
     queryCount = select([func.count().label('total')]).select_from(Competition)
     querySumPrize = select(
         [func.sum(Competition.c.total_hadiah).label('total')]).select_from(Competition)
@@ -59,7 +60,8 @@ def superSidebarCounter():
         Competition)
 
     # get count competition by condition
-    qLiveC = qCountC.where(and_(Competition.c.deadline > datetime.datetime.now(), Competition.c.status == "posted"))
+    qLiveC = qCountC.where(and_(Competition.c.deadline >
+                                datetime.datetime.now(), Competition.c.status == "posted"))
     qWaitingC = qCountC.where(Competition.c.status == "waiting")
     qPostedC = qCountC.where(Competition.c.status == "posted")
     qDraftC = qCountC.where(Competition.c.status == "draft")
@@ -130,5 +132,38 @@ def superSidebarCounter():
         "members": {
             "active": rActiveU.fetchone()["total"],
             "banned": rBannedU.fetchone()["total"]
+        }
+    }
+
+
+def dashboardSidebarCounter(user_id):
+    # get count competition
+    join_user = Competition.join(
+        Users, Competition.c.id_user == Users.c.id_user)
+    qCountC = select([func.count().label('total')]).select_from(
+        join_user)
+
+    # query
+    qWaitingC = qCountC.where(
+        and_(Competition.c.status == "waiting", Users.c.id_user == user_id))
+    qRejectC = qCountC.where(
+        and_(Competition.c.status == "reject", Users.c.id_user == user_id))
+    qPostedC = qCountC.where(
+        and_(Competition.c.status == "posted", Users.c.id_user == user_id))
+    qLiveC = qCountC.where(and_(Competition.c.status == "posted", Users.c.id_user ==
+                                user_id, Competition.c.deadline > datetime.datetime.now()))
+
+    # execute query
+    rWaitingC = connection.execute(qWaitingC)
+    rPostedC = connection.execute(qPostedC)
+    rRejectC = connection.execute(qRejectC)
+    rLiveC = connection.execute(qLiveC)
+
+    return {
+        "competition": {
+            "waiting": rWaitingC.fetchone()["total"],
+            "posted": rPostedC.fetchone()["total"],
+            "reject": rRejectC.fetchone()["total"],
+            "live": rLiveC.fetchone()["total"],
         }
     }
