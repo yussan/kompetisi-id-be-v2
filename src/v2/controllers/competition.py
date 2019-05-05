@@ -189,9 +189,8 @@ class CompetitionDetailApi(Resource):
                             params["poster"] = json.dumps(poster)
 
                         # set post status
-                        print("userdata level", userdata["level"] == "admin")
                         if userdata["level"] == "moderator" or userdata["level"] == "admin":
-                            params["status"] = "posted"
+                            params["status"] = request.form.get("status") if request.form.get("status") else "posted"
                         else:
                             params["status"] = "waiting"
 
