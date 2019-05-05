@@ -77,18 +77,18 @@ class CompetitionListApi(Resource):
         params['is_popular'] = is_popular == 'true'
 
         competitions = getList(params)
+        response = {}
+        response['count'] = competitions['count'] if competitions['count'] else 0
+        
 
         if(len(competitions['data']) > 0):
             comdata = []
             for n in competitions['data']:
                 comdata.append(dict(transform(n)))
-            response = {}
             response['data'] = comdata
-            response['count'] = competitions['count']
-
             return apiResponse(200, 'success', response), 200
         else:
-            return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
+            return apiResponse(204, 'Kompetisi tidak ditemukan', response), 200
 
 
 class CompetitionRelatedApi(Resource):

@@ -19,7 +19,7 @@ def apiResponse(status, message='', data={}):
         'message': message
     }
 
-    if (status == 200 or status == 201) and data:
+    if data:
         json_response.update(data)
 
     return json_response
