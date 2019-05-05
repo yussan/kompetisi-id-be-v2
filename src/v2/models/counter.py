@@ -163,7 +163,7 @@ def dashboardSidebarCounter(user_id):
         "competition": {
             "waiting": rWaitingC.fetchone()["total"],
             "posted": rPostedC.fetchone()["total"],
-            "reject": rRejectC.fetchone()["total"],
+            "rejected": rRejectC.fetchone()["total"],
             "live": rLiveC.fetchone()["total"],
         }
     }
