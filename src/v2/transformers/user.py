@@ -1,5 +1,4 @@
 def transform(n):
-  print(n.tgl_gabung)
   return {
     'id': n.id_user,
     'fullname': n.fullname,

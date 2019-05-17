@@ -16,7 +16,6 @@ class RegiterFormValidator(Form):
     username = StringField("Username", [validators.Length(min=4, max=100)])
     email = StringField("Email", [validators.Length(min=4, max=50)])
     password = StringField("Nama lengkap", [validators.Length(min=4, max=100)])
-    avatar = FileField("avatar")
 
 
 class Login(Resource):
@@ -29,12 +28,12 @@ class Login(Resource):
 
         result = login(params)
         if result is not None:
-            userdata =  transform(result)
-            if userdata["user_key"] == "" or userdata["user_key"] is None :
+            userdata = transform(result)
+            if userdata["user_key"] == "" or userdata["user_key"] is None:
                 # set user key if not available
                 UserKey = generateEmailVerifToken(userdata["id"])
                 userdata["user_key"] = UserKey
-                
+
                 # update database
                 updateData({"user_key": UserKey}, userdata["id"])
 
@@ -78,18 +77,34 @@ class Register(Resource):
             if len(message) > 0:
                 return apiResponse(400, message), 400
             else:
-                # upload avatar
-                upload_dir_db = "/" + params["username"] + "/avatar"
-                upload_dir = os.environ.get(
-                    "MEDIA_DIR", "../media-kompetisiid") + upload_dir_db
-                input_avatar = request.files["avatar"]
-                avatar = handleUpload(upload_dir, input_avatar, upload_dir_db)
+                if len(request.files) < 1 or request.files["avatar"] == None :
+                    return apiResponse(400, "Wajib upload avatar"), 400
+                else :
+                    # upload avatar
+                    upload_dir_db = "/" + params["username"] + "/avatar"
+                    upload_dir = os.environ.get(
+                        "MEDIA_DIR", "../media-kompetisiid") + upload_dir_db
+                    input_avatar = request.files["avatar"]
+                    avatar = handleUpload(upload_dir, input_avatar, upload_dir_db)
+                    
+                    # set params["avatar"] value
+                    params["avatar"] = json.dumps(avatar, separators=(",", ":"))
 
-                # set params["avatar"] value
-                params["avatar"] = json.dumps(avatar, separators=(",", ":"))
-                userdata = register(params)
-                
-                return apiResponse(201, "Registrasi berhasil, selamat datang " + params["username"], {"data": transform(userdata)}), 201
+                    
+                    # insert to database
+                    userdata = register(params)
+                    # transform userdata
+                    userdata = transform(userdata)
+
+                    # generate userkey 
+                    UserKey = generateEmailVerifToken(userdata["id"])
+                    userdata["user_key"] = UserKey
+
+                    # update user_key by id_user
+                    updateData({"user_key": UserKey}, userdata["id"])
+
+                    
+                    return apiResponse(201, "Registrasi berhasil, selamat datang " + params["username"], {"data": userdata}), 201
         else:
             return apiResponse(400, "formdata not valid"), 400
 
@@ -123,6 +138,7 @@ class OauthRegister(Resource):
         else:
             # start to register
             return {}
+
 
 api_auth_bp = Blueprint("api_auth", __name__)
 api_auth = Api(api_auth_bp)
