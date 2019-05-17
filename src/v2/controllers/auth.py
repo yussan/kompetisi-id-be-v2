@@ -85,10 +85,14 @@ class Register(Resource):
                     upload_dir = os.environ.get(
                         "MEDIA_DIR", "../media-kompetisiid") + upload_dir_db
                     input_avatar = request.files["avatar"]
-                    avatar = handleUpload(upload_dir, input_avatar, upload_dir_db)
+                    # start upload avatar
+                    uploadAvatar = handleUpload(upload_dir, input_avatar, upload_dir_db)
                     
                     # set params["avatar"] value
-                    params["avatar"] = json.dumps(avatar, separators=(",", ":"))
+                    params["avatar"] = json.dumps({
+                        "small": "/" + params["username"] + "/avatar/" + uploadAvatar["filename"] ,
+                        "original": "/" + params["username"] + "/avatar/" + uploadAvatar["filename"]
+                    })
 
                     
                     # insert to database

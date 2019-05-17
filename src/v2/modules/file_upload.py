@@ -22,6 +22,7 @@ def handleUpload(directory, file, directory_db):
 
   ReturnFile['original'] = directory_db + '/' + filename
   ReturnFile['small'] = directory_db + '/' + filename
+  ReturnFile["filename"] = filename
 
   # TODO: compress image
   # # ref: https://stackoverflow.com/a/15782516/2780875

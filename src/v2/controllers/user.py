@@ -6,8 +6,12 @@ from ..helpers.response import apiResponse
 class Profile(Resource):
   def get(self, username):
     result = getDataByUsername(username)
+    
     if result is not None:
-        return apiResponse(200,  'success', {'data': transform(result)})
+        result = transform(result)
+        # delete userkey
+        del result["user_key"]
+        return apiResponse(200,  'success', {'data': result})
     else:
         return apiResponse(204)
 
