@@ -5,6 +5,7 @@ import json
 import re
 import os
 
+
 def transform(n):
     return {
         # 'id': n.id_kompetisi,
@@ -34,10 +35,11 @@ def transform(n):
             'name': n.sub_kat
         },
         'author': {
-            'id': 1,
+            'id': n.id_user,
             'username': n.username,
             'name': n.fullname,
-            'moto': n.moto
+            'moto': n.moto,
+            'level': n.level
         },
         # ref teranary condition: https://stackoverflow.com/questions/394809/does-python-have-a-ternary-conditional-operator
         'announcement': json.loads(n.dataPengumuman) if n.dataPengumuman else [],
@@ -51,21 +53,20 @@ def transform(n):
 
 
 def transformImage(image):
-  if not image:
-      return {
-          'small': 'https://kompetisi.id/assets/images/news-default-image.png',
-          'original': 'https://kompetisi.id/assets/images/news-default-image.png'
-      }
-  else:
-      try :
-        image = json.loads(image)
+    if not image:
         return {
-          'small': image['small'] if image['small'].find('http') > -1 else  os.environ.get('MEDIA_HOST', 'https://media.kompetisi.id') + image['small'],
-          'original': image['original'] if re.match(r'^http', image['original']) else os.environ.get('MEDIA_HOST', 'https://media.kompetisi.id') + image['original']
+            'small': 'https://kompetisi.id/assets/images/news-default-image.png',
+            'original': 'https://kompetisi.id/assets/images/news-default-image.png'
         }
-      except ValueError :
-        return {
-          'small': 'https://kompetisi.id/assets/images/news-default-image.png',
-          'original': 'https://kompetisi.id/assets/images/news-default-image.png'
-        }
-      
+    else:
+        try:
+            image = json.loads(image)
+            return {
+                'small': image['small'] if image['small'].find('http') > -1 else os.environ.get('MEDIA_HOST', 'https://media.kompetisi.id') + image['small'],
+                'original': image['original'] if re.match(r'^http', image['original']) else os.environ.get('MEDIA_HOST', 'https://media.kompetisi.id') + image['original']
+            }
+        except ValueError:
+            return {
+                'small': 'https://kompetisi.id/assets/images/news-default-image.png',
+                'original': 'https://kompetisi.id/assets/images/news-default-image.png'
+            }
