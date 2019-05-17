@@ -18,6 +18,7 @@ from v2.controllers.sitemap import api_sitemap_competition_bp, api_sitemap_news_
 from v2.controllers.email_verification import api_email_verification_bp
 from v2.controllers.sebangsa import api_sebangsa_bp
 from v2.controllers.counter import api_counter_bp
+from v2.controllers.settings import api_settings_bp
 
 mail = Mail()
 
@@ -119,6 +120,11 @@ def create_app(environment=None):
     app.register_blueprint(
         api_counter_bp
     )
+
+    app.register_blueprint(
+        api_settings_bp
+    )
+
     # end of api v2
     # end of blueprint registration
 

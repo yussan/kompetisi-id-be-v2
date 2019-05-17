@@ -105,11 +105,28 @@ class OauthLogin(Resource):
         if result is not None:
             return apiResponse(200,  "Login berhasil", {"data": transform(result)})
         else:
-            return apiResponse(204, "Akun tidak ditemukan, silahkan melakukan \"registrasi\" terlebih dahulu")
+            return apiResponse(204, "Akun tidak ditemukan, silahkan melakukan login/registrasi, kemudian masuk menu seting untuk menghubungkan akun ke sosial media")
 
+
+class OauthRegister(Resource):
+    def post(self):
+        params = {
+            "provider": request.form.get("provider"),
+            "user_id": request.form.get("user_id"),
+            "username": request.form.get("username")
+        }
+
+        # check is available
+        result = oauthLogin(params)
+        if result is not None:
+            return apiResponse(200,  "Login berhasil", {"data": transform(result)})
+        else:
+            # start to register
+            return {}
 
 api_auth_bp = Blueprint("api_auth", __name__)
 api_auth = Api(api_auth_bp)
 api_auth.add_resource(Login, "/v2/login")
 api_auth.add_resource(Register, "/v2/register")
 api_auth.add_resource(OauthLogin, "/v2/oauth/login")
+api_auth.add_resource(OauthRegister, "/v2/oauth/register")

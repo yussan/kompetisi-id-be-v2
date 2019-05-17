@@ -48,11 +48,11 @@ class News(Resource):
             userkey = request.headers.get('User-Key')
             if userkey is None:
                 # user not valid
-                return apiResponse(403, "anda tidak memiliki akses disini"), 403
+                return apiResponse(403, "kamu tidak memiliki akses disini"), 403
             else:
                 userdata = getDataByUserKey(userkey)
                 if userdata is None:
-                    return apiResponse(403, "anda tidak memiliki akses disini"), 403
+                    return apiResponse(403, "kamu tidak memiliki akses disini"), 403
                 else:
                     # form validation
                     form = CreateNewsValidator(request.form)

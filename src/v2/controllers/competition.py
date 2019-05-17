@@ -190,7 +190,8 @@ class CompetitionDetailApi(Resource):
 
                         # set post status
                         if userdata["level"] == "moderator" or userdata["level"] == "admin":
-                            params["status"] = request.form.get("status") if request.form.get("status") else "posted"
+                            params["status"] = request.form.get(
+                                "status") if request.form.get("status") else "posted"
                         else:
                             params["status"] = "waiting"
 
@@ -211,8 +212,8 @@ class CompetitionDetailApi(Resource):
                         params["hadiah"] = request.form.get(
                             "prize_description")
                         params["tag"] = request.form.get("tags")
-                        params["dataPengumuman"] = request.form.get(
-                            "annoucements")
+                        # params["dataPengumuman"] = request.form.get(
+                        #     "annoucements")
                         params["dataGaleri"] = ""
                         params["kontak"] = request.form.get("contacts")
                         params["sumber"] = request.form.get("source_link")
@@ -223,9 +224,30 @@ class CompetitionDetailApi(Resource):
                             "is_guaranteed") == "true" else "0"
                         params["manage"] = "0"
 
-                        print("updated competition", encid, params)
+                        # update data pengumuman
+                        # ref: http://strftime.org/
+                        newAnnoucement = {"tgl": now.strftime(
+                            '%Y-%m-%d %H:%M:%S'), "data": "Data kompetisi telah diupdate", "by": "sistem"}
+
+                        if competition["data"]["dataPengumuman"] == "" or competition["data"]["dataPengumuman"] == None:
+                            # create new pengumuman data
+                            params["dataPengumuman"] = []
+                        else:
+                            # convert to array
+                            params["dataPengumuman"] = json.loads(competition["data"]["dataPengumuman"])
+
+                        # push to data pengumuman from top
+                        # ref : https://stackoverflow.com/a/17911209/2780875
+                        print("params data pengumuman", params["dataPengumuman"])
+                        params["dataPengumuman"].insert(0, newAnnoucement)
+
+
+                        # convert array to string
+                        params["dataPengumuman"] = json.dumps(
+                            params["dataPengumuman"])
 
                         # insert into database competition table
+                        print("updated competition", encid)
                         updateData(params, id)
 
                         return apiResponse(200, 'Kompetisi berhasil di update'), 200
