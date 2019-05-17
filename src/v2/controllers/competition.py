@@ -234,13 +234,12 @@ class CompetitionDetailApi(Resource):
                             params["dataPengumuman"] = []
                         else:
                             # convert to array
-                            params["dataPengumuman"] = json.loads(competition["data"]["dataPengumuman"])
+                            params["dataPengumuman"] = json.loads(
+                                competition["data"]["dataPengumuman"])
 
                         # push to data pengumuman from top
                         # ref : https://stackoverflow.com/a/17911209/2780875
-                        print("params data pengumuman", params["dataPengumuman"])
                         params["dataPengumuman"].insert(0, newAnnoucement)
-
 
                         # convert array to string
                         params["dataPengumuman"] = json.dumps(
@@ -264,10 +263,60 @@ class CompetitionDetailApi(Resource):
         pass
 
 
+# class to manage competition announcemen
+class CompetitionAnnouncement(Resource):
+    def put(self, encid):
+
+        userkey = request.headers.get('User-Key')
+
+        if userkey == None:
+            return apiResponse(403, "anda tidak memiliki akses disini"), 403
+        else:
+            # check userkey on database
+            userdata = getDataByUserKey(userkey)
+            if userdata is None:
+                return apiResponse(403, "akun tidak ditemukan"), 403
+
+        # userkey is valid
+        userStatus = userdata.level if userdata.level != "user" else "penyelenggara"
+        now = datetime.datetime.now()
+        id = decId(encid)
+        competition = getDetail(id)
+
+        # check us competition available
+        if(competition['data'] == None):
+            return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
+
+        # only moderator, admin or author can added new annoucement
+        if userdata["level"] == "moderator" or userdata["level"] == "admin" or userdata["id_user"] == competition["data"]["author"]["id"]:
+            newAnnoucement = {"tgl": now.strftime(
+                '%Y-%m-%d %H:%M:%S'), "data": request.form.get("pengumuman"), "by": userStatus}
+            params = {}
+
+            if competition["data"]["dataPengumuman"] == "" or competition["data"]["dataPengumuman"] == None:
+                # create new pengumuman data
+                params["dataPengumuman"] = []
+            else:
+                # convert to array
+                params["dataPengumuman"] = json.loads(
+                    competition["data"]["dataPengumuman"])
+
+            params["dataPengumuman"].insert(0, newAnnoucement)
+            params["dataPengumuman"] = json.dumps(params["dataPengumuman"])
+            print("Added announcement", encid)
+            updateData(params, id)
+
+            return apiResponse(200, 'Pengumuman berhasil ditambahkan'), 200
+        else:
+            return apiResponse(403, "Anda tidak memiliki akses disini"), 403
+
+
 api_competition_detail_bp = Blueprint('api_competition_detail', __name__)
 api_competition_detail = Api(api_competition_detail_bp)
 api_competition_detail.add_resource(
     CompetitionDetailApi, '/v2/competition/<encid>')
+api_competition_detail.add_resource(
+    CompetitionAnnouncement, '/v2/competition/announcement/<encid>')
 
 api_competition_bp = Blueprint("api_competition", __name__)
 api_competition = Api(api_competition_bp)
