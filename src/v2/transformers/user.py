@@ -2,7 +2,9 @@ import os
 import json
 import re
 
+
 def transform(n):
+    
     nextdata = {
         'id': n.id_user,
         'fullname': n.fullname,
@@ -19,7 +21,7 @@ def transform(n):
 
     # generate avatar
     if not n.avatar:
-        return {
+        nextdata["avatar"] = {
             'small': '/assets/4.2/img/avatar-default.jpg',
             'original': '/assets/4.2/img/avatar-default.jpg',
         }
@@ -31,9 +33,9 @@ def transform(n):
                 'original': avatar['original'] if re.match(r'^http', avatar['original']) else os.environ.get('MEDIA_HOST', 'https://media.kompetisi.id') + avatar['original']
             }
         except ValueError:
-            return {
-              'small': '/assets/4.2/img/avatar-default.jpg',
-              'original': '/assets/4.2/img/avatar-default.jpg',
-          }
+            nextdata["avatar"] = {
+                'small': '/assets/4.2/img/avatar-default.jpg',
+                'original': '/assets/4.2/img/avatar-default.jpg',
+            }
 
     return nextdata

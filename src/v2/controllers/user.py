@@ -7,10 +7,11 @@ class Profile(Resource):
   def get(self, username):
     result = getDataByUsername(username)
     
-    if result is not None:
+    if result != None:
         result = transform(result)
         # delete userkey
-        del result["user_key"]
+        if "user_key" in result :
+          del result["user_key"]
         return apiResponse(200,  'success', {'data': result})
     else:
         return apiResponse(204)
