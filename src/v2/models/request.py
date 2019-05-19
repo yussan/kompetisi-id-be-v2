@@ -54,7 +54,6 @@ def getRequest(Params={}):
     if 'lastid' in Params: 
         # loadmore to next competition
         s = s.where(Request.c.id_req < Params["lastid"])
-        c = c.where(Request.c.id_req < Params["lastid"])
 
     res = connection.execute(s)
     rescount = connection.execute(c)
