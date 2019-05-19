@@ -86,9 +86,11 @@ class FormValidator(Form):
 
 # controllers
 
+
 class FormActionValidator(Form):
     status = StringField('Status', [validators.Length(min=4, max=10)])
     message = StringField('Pesan', [validators.Length(min=4, max=300)])
+
 
 class RequestApi(Resource):
 
@@ -183,9 +185,10 @@ class RequestAction(Resource):
                 updateRequest(params, id)
 
                 # send email to users
-                body = EmailResponseBody.format('Kompetisi yang kamu kirimkan  dengan judul "'+ request_data['title'] +'" mendapatkan status "'+ params['status'] +'" dengan catatan "'+ params['note'] +'"')
+                body = EmailResponseBody.format('Kompetisi yang kamu kirimkan  dengan judul "' +
+                                                request_data['title'] + '" mendapatkan status "' + params['status'] + '" dengan catatan "' + params['note'] + '"')
                 sendEmail('Berikut jawaban atas kompetisi yang kamu kirim - kompetisi.id',
-                        body, [request_data['email']])
+                          body, [request_data['email']])
 
                 # json response
                 return apiResponse(200, 'Request berhasil di update'), 200
@@ -193,6 +196,7 @@ class RequestAction(Resource):
                 return apiResponse(400, 'formdata not valid'), 400
         else:
             return apiResponse(204, 'data request tidak ditemukan'), 200
+
 
 class RequestApiCount(Resource):
 
@@ -209,6 +213,7 @@ class RequestApiCount(Resource):
                 'waiting': countwaiting
             }
         }
+
 
 # blueprint initial
 api_request_bp = Blueprint('api_request', __name__)
