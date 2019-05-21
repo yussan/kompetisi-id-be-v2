@@ -310,6 +310,55 @@ class CompetitionAnnouncement(Resource):
         else:
             return apiResponse(403, "Anda tidak memiliki akses disini"), 403
 
+    def delete(self, encid):
+        # user key checker
+        userkey = request.headers.get('User-Key')
+
+        if userkey == None:
+            return apiResponse(403, "anda tidak memiliki akses disini"), 403
+        else:
+            # check userkey on database
+            userdata = getDataByUserKey(userkey)
+            if userdata is None:
+                return apiResponse(403, "akun tidak ditemukan"), 403
+
+        # userkey is valid
+        id = decId(encid)
+        competition = getDetail(id)
+
+        # check us competition available
+        if(competition['data'] == None):
+            return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
+
+        # only moderator, admin or author can added new annoucement
+        if userdata["level"] == "moderator" or userdata["level"] == "admin" or userdata["id_user"] == competition["data"]["author"]["id"]:
+            key = int(request.form.get("key"))
+            params = {}
+            params["dataPengumuman"] = json.loads(competition["data"]["dataPengumuman"])
+
+            if params["dataPengumuman"] != "" and params["dataPengumuman"] != None and len(params["dataPengumuman"]) > key:
+                # check is made by sistem or not
+                if params["dataPengumuman"][key]["by"] == "sistem":
+                    return apiResponse(422, 'Tidak bisa hapus pengumuman dari sistem'), 200
+                
+                # delete announcement by key
+                params["dataPengumuman"].pop(key)
+
+                # update announcement on database
+                params["dataPengumuman"] = json.dumps(params["dataPengumuman"])
+                updateData(params, id)
+                return apiResponse(200, 'Pengumuman berhasil dihapus'), 200
+            else:
+                # pengumuman tidak ditemukan
+                return apiResponse(422, "Pengumuman tidak ditemukan"), 200
+
+            # params["dataPengumuman"].insert(0, newAnnoucement)
+            # params["dataPengumuman"] = json.dumps(params["dataPengumuman"])
+            # print("Added announcement", encid)
+            # updateData(params, id)
+        else:
+            return apiResponse(403, "Anda tidak memiliki akses disini"), 403
+
 
 api_competition_detail_bp = Blueprint('api_competition_detail', __name__)
 api_competition_detail = Api(api_competition_detail_bp)

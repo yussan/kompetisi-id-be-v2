@@ -39,7 +39,7 @@ class Login(Resource):
 
             return apiResponse(200,  "Login berhasil", {"data": userdata})
         else:
-            return apiResponse(204)
+            return apiResponse(204, "Username/email dan password tidak cocok")
 
 
 class Register(Resource):
