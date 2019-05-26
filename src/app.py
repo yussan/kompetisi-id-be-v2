@@ -5,7 +5,7 @@ from v2.helpers.response import apiResponse
 
 # controllers
 from v2.controllers.competitions import api_competitions_bp
-from v2.controllers.competition import api_competition_detail_bp, api_competition_bp
+from v2.controllers.competition import api_competition_detail_bp
 from v2.controllers.news_list import api_newslist_bp
 from v2.controllers.news import api_news_bp
 from v2.controllers.categories import api_categories_bp
@@ -51,15 +51,24 @@ def create_app(environment=None):
     def handleNotFound(e):
         return jsonify(apiResponse(404, 'endpoint tidak ditemukan'))
 
+    # middlewares
+    def testCompetitionChecker():
+        print("--competition checker...")
+
+    # before request
+    app.before_request_funcs = {
+        "api_competition_detail": [testCompetitionChecker]
+    }
+    # end of before request
+
     # blueprint registration
-    # api v2
     app.register_blueprint(
         api_competition_detail_bp
     )
 
-    app.register_blueprint(
-        api_competition_bp
-    )
+    # app.register_blueprint(
+    #     api_competition_bp
+    # )
 
     app.register_blueprint(
         api_competitions_bp
@@ -124,8 +133,6 @@ def create_app(environment=None):
     app.register_blueprint(
         api_settings_bp
     )
-
-    # end of api v2
     # end of blueprint registration
 
     return app

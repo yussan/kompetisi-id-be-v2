@@ -13,6 +13,7 @@ Users = Table("user", metadata,
               Column("email", VARCHAR),
               Column("fullname", VARCHAR),
               Column("moto", VARCHAR),
+              Column("alamat", VARCHAR),
               Column("password", VARCHAR),
               Column("last_login", DATETIME),
               Column("tgl_gabung", DATETIME),
@@ -34,7 +35,7 @@ UsersOauth = Table("user_oauth", metadata,
                    )
 
 select_column_user = [Users.c.id_user, Users.c.username, Users.c.email, Users.c.fullname,
-                      Users.c.user_key, Users.c.avatar,
+                      Users.c.user_key, Users.c.avatar, Users.c.alamat,
                       Users.c.moto, Users.c.tgl_gabung, Users.c.last_login, Users.c.status, Users.c.level, Users.c.is_verified]
 
 join_user = Users.outerjoin(

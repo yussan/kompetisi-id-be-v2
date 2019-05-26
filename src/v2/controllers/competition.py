@@ -15,8 +15,6 @@ import os
 import json
 
 # class to validate post
-
-
 class CreateCompetitionValidator(Form):
     title = StringField('Judul kompetisi', [
                         validators.required(), validators.Length(min=4, max=100)])
@@ -34,7 +32,7 @@ class CreateCompetitionValidator(Form):
     main_cat = StringField('Main kategori', [validators.required()])
     sub_cat = StringField('Sub kategori', [validators.required()])
 
-
+# class to manage endpoint competition list
 class CompetitionApi(Resource):
     # controller to post new competition
     def post(self):
@@ -135,7 +133,7 @@ class CompetitionApi(Resource):
             # get validation error message
             return apiResponse(400, error_messages), 400
 
-
+# class to manage endpoint competition detail
 class CompetitionDetailApi(Resource):
 
     # controller to get competition by id
@@ -262,8 +260,7 @@ class CompetitionDetailApi(Resource):
     def delete(self, encid):
         pass
 
-
-# class to manage competition announcemen
+# class to manage endpoint competition announcemen
 class CompetitionAnnouncement(Resource):
     def put(self, encid):
 
@@ -360,13 +357,15 @@ class CompetitionAnnouncement(Resource):
             return apiResponse(403, "Anda tidak memiliki akses disini"), 403
 
 
+# Blueprint config
 api_competition_detail_bp = Blueprint('api_competition_detail', __name__)
+# api_competition_bp = Blueprint("api_competition", __name__)
+
 api_competition_detail = Api(api_competition_detail_bp)
+# api_competition = Api(api_competition_bp)
+
 api_competition_detail.add_resource(
     CompetitionDetailApi, '/v2/competition/<encid>')
 api_competition_detail.add_resource(
     CompetitionAnnouncement, '/v2/competition/announcement/<encid>')
-
-api_competition_bp = Blueprint("api_competition", __name__)
-api_competition = Api(api_competition_bp)
-api_competition.add_resource(CompetitionApi, "/v2/competition")
+api_competition_detail.add_resource(CompetitionApi, "/v2/competition")
