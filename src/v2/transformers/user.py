@@ -21,25 +21,6 @@ def transform(n):
         "avatar": transformAvatar(n.avatar)
     }
 
-    # generate avatar
-    # if not n.avatar:
-    #     nextdata["avatar"] = {
-    #         "small": "/assets/4.2/img/avatar-default.jpg",
-    #         "original": "/assets/4.2/img/avatar-default.jpg",
-    #     }
-    # else:
-    #     try:
-    #         avatar = json.loads(n.avatar)
-    #         nextdata["avatar"] = {
-    #             "small": avatar["small"] if avatar["small"].find("http") > -1 else os.environ.get("MEDIA_HOST", "https://media.kompetisi.id") + avatar["small"],
-    #             "original": avatar["original"] if re.match(r"^http", avatar["original"]) else os.environ.get("MEDIA_HOST", "https://media.kompetisi.id") + avatar["original"]
-    #         }
-    #     except ValueError:
-    #         nextdata["avatar"] = {
-    #             "small": "/assets/4.2/img/avatar-default.jpg",
-    #             "original": "/assets/4.2/img/avatar-default.jpg",
-    #         }
-
     return nextdata
 
 def transformAvatar(avatar):

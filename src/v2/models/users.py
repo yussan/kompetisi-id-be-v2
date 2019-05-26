@@ -34,7 +34,7 @@ UsersOauth = Table("user_oauth", metadata,
                    Column("oauth_token", TEXT),
                    )
 
-select_column_user = [Users.c.id_user, Users.c.username, Users.c.email, Users.c.fullname,
+select_column_user = [Users.c.id_user, Users.c.password, Users.c.username, Users.c.email, Users.c.fullname,
                       Users.c.user_key, Users.c.avatar, Users.c.alamat,
                       Users.c.moto, Users.c.tgl_gabung, Users.c.last_login, Users.c.status, Users.c.level, Users.c.is_verified]
 
