@@ -63,7 +63,7 @@ class SettingProfile(Resource):
                 userdata["fullname"] = params["fullname"] 
                 userdata["address"] = params["alamat"]
 
-                return apiResponse(200, "sukses ubah profil", userdata), 200
+                return apiResponse(200, "sukses ubah profil", {"data": userdata}), 200
 
 class SettingAccount(Resource):
     def put(self):
@@ -95,8 +95,7 @@ class SettingAccount(Resource):
                         # check is update password
                         if request.form.get("new_password") != None :
                             currentPassword = hashlib.md5(request.form.get("new_password")).hexdigest()
-                            params["password"] = currentPassword
-
+                            
                         # check is update email
                         if request.form.get("email") != userdata["email"]:
 
@@ -116,6 +115,7 @@ class SettingAccount(Resource):
                                         emailBody, [params["email"]])
 
                         # update database
+                        params["password"] = currentPassword
                         updateData(params, userdata["id"])
                         
                         return apiResponse(200, "Sukses update akun")
