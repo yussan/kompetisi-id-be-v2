@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 from ..helpers.encId import decId
-from ..models.competitions import getDetail, insertData, updateData, getSingleLatest
+from ..models.competitions import getDetail, insertData, updateData, getSingleLatest, checkHaveLikedCompetition
 from ..models.users import getDataByUserKey
 from ..transformers.competition import transform
 from ..helpers.response import apiResponse
@@ -356,6 +356,33 @@ class CompetitionAnnouncement(Resource):
         else:
             return apiResponse(403, "Anda tidak memiliki akses disini"), 403
 
+# class to manage competition like action
+class CompetitionLike(Resource):
+    # like / unline competition by competition id and user key
+    def post(self, encid):
+        userkey = request.headers.get('User-Key')
+
+        if userkey == None:
+            return apiResponse(403, "anda tidak memiliki akses disini"), 403
+        else:
+            # check userkey on database
+            userdata = getDataByUserKey(userkey)
+            if userdata is None:
+                return apiResponse(403, "akun tidak ditemukan"), 403
+
+        # check is competition available
+        id = decId(encid)
+        competition = getDetail(id)
+
+        if(competition['data'] == None):
+            return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
+
+        # check is have liked competition
+        haveLiked = checkHaveLikedCompetition({"competition_id": id, "user_id": userdata["id_user"]})
+
+        return {
+            "liked": haveLiked
+        }
 
 # Blueprint config
 api_competition_detail_bp = Blueprint('api_competition_detail', __name__)
@@ -369,3 +396,4 @@ api_competition_detail.add_resource(
 api_competition_detail.add_resource(
     CompetitionAnnouncement, '/v2/competition/announcement/<encid>')
 api_competition_detail.add_resource(CompetitionApi, "/v2/competition")
+api_competition_detail.add_resource(CompetitionLike, "/v2/competition/like/<encid>")

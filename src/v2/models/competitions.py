@@ -44,6 +44,13 @@ Competition = Table('kompetisi', metadata,
                     Column('id_sub_kat', INT),
                     )
 
+CompetitionAction = Table("kompetisi_btn", metadata, 
+    Column('id', BIGINT),
+    Column('id_kompetisi', BIGINT),
+    Column('id_user', BIGINT),
+    Column('like', INT)
+    )
+
 join_user = Competition.join(Users, Competition.c.id_user == Users.c.id_user)
 join_main_cat = join_user.join(
     MainCategory, Competition.c.id_main_kat == MainCategory.c.id_main_kat)
@@ -66,9 +73,9 @@ select_column = [Competition.c.id_kompetisi, Competition.c.judul_kompetisi, Comp
                  SubCategory.c.id_sub_kat, SubCategory.c.sub_kat,
                  Users.c.username, Users.c.fullname, Users.c.moto, Users.c.level]
 
-# functino to get list of competitions
+select_column_competition_action = [CompetitionAction.c.id, CompetitionAction.c.like]
 
-
+# function to get list of competitions
 def getList(Params={}):
     # order by
     orderby = Competition.c.id_kompetisi.desc()
@@ -167,8 +174,6 @@ def getList(Params={}):
     }
 
 # function to get competition related by competition id
-
-
 def getRelated(id):
     # get detail competitoin
     c_query = select([Competition.c.id_main_kat.label('main_kat'), Competition.c.tag]).select_from(
@@ -209,8 +214,6 @@ def getRelated(id):
         }
 
 # function to get detial competition by competition id
-
-
 def getDetail(id):
     query = select(select_column).select_from(
         join_sub_cat).where(Competition.c.id_kompetisi == id)
@@ -255,7 +258,7 @@ def getDetail(id):
 
     return response
 
-
+# function to get lattest competition
 def getSingleLatest():
     query = select(select_column).select_from(join_sub_cat).order_by(
         Competition.c.id_kompetisi.desc()).limit(1)
@@ -270,15 +273,44 @@ def getSingleLatest():
     return response
 
 # function to insert data into competition table
-
-
 def insertData(params):
     query = Competition.insert().values(params)
     return connection.execute(query)
 
 # function to update data competition by competition id
-
-
 def updateData(params, id):
     query = Competition.update().where(Competition.c.id_kompetisi == id).values(params)
     return connection.execute(query)
+
+# function to check is already like competition
+def checkHaveLikedCompetition(params):
+    query = select(select_column_competition_action).select_from(
+        CompetitionAction).where(and_(
+            CompetitionAction.c.id_kompetisi == params["competition_id"],
+            CompetitionAction.c.id_user == params["user_id"]
+        ))
+    resultAction = connection.execute(query).fetchone()
+
+    # params for mysql query
+    queryParams = {
+        "id_kompetisi": params["competition_id"],
+        "id_user": params["user_id"]
+    }
+
+    if resultAction :
+        # update row
+        queryParams["like"] = 0
+        query = CompetitionAction.update().where(and_(
+            CompetitionAction.c.id_kompetisi == params["competition_id"],
+            CompetitionAction.c.id_user == params["user_id"]
+        )).values(queryParams)
+        connection.execute(query)
+        return False
+    else :
+        # insert new row
+        queryParams["like"] = 1
+        insertQuery = CompetitionAction.insert().values(queryParams)
+        connection.execute(insertQuery)
+        return True
+
+# function to handle like/unlike competition
