@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 from ..helpers.encId import decId
-from ..models.competitions import getDetail, insertData, updateData, getSingleLatest, checkHaveLikedCompetition
+from ..models.competitions import getDetail, insertData, updateData, getSingleLatest, checkHaveLikedCompetition, getTotalActionCompetition
 from ..models.users import getDataByUserKey
 from ..transformers.competition import transform
 from ..helpers.response import apiResponse
@@ -150,6 +150,10 @@ class CompetitionDetailApi(Resource):
         if(competition['data'] != None):
 
             competition['data'] = transform(competition['data'])
+
+            # get competition action stats
+            actionStats = getTotalActionCompetition(id)
+            competition['data']["stats"]["likes"] = actionStats["likes"]
 
             userkey = request.headers.get('User-Key')
             userdata = {}

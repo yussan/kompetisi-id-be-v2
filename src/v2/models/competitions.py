@@ -285,8 +285,6 @@ def updateData(params, id):
 # function to check is already like competition
 def checkHaveLikedCompetition(params):
 
-    print("check params", params)
-
     query = select(select_column_competition_action).select_from(
         CompetitionAction).where(and_(
             CompetitionAction.c.id_kompetisi == params["competition_id"],
@@ -324,5 +322,15 @@ def checkHaveLikedCompetition(params):
             connection.execute(insertQuery)
             return True
 
+# get total action of competition
+def getTotalActionCompetition(competition_id):
+    qLikeCount = select([func.count().label('total')]).select_from(CompetitionAction).where(and_(CompetitionAction.c.id_kompetisi == competition_id, CompetitionAction.c.like == 1))
+
+    rLikeCount = connection.execute(qLikeCount)
+
+    return {
+        "likes": rLikeCount.fetchone()["total"],
+        "joined": 0
+    }
 
 # function to handle like/unlike competition
