@@ -49,7 +49,7 @@ def homeCounter():
         "activeCompetition": resCountActiveCompetition.fetchone()['total'],
         "deadlineThisMonth": resCountActiveCompetitionThisMount.fetchone()['total'],
         # ref: https://groups.google.com/forum/#!topic/sqlalchemy/3fipkThttQA
-        "totalPrizeActiveCompetition": convertToRelativeCurrency(int(resSumPrize.fetchone()['total'])),
+        "totalPrizeActiveCompetition": convertToRelativeCurrency(int(resSumPrize.fetchone()["total"]))
     }
 
 

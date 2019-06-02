@@ -386,10 +386,8 @@ class CompetitionLike(Resource):
 
 # Blueprint config
 api_competition_detail_bp = Blueprint('api_competition_detail', __name__)
-# api_competition_bp = Blueprint("api_competition", __name__)
 
 api_competition_detail = Api(api_competition_detail_bp)
-# api_competition = Api(api_competition_bp)
 
 api_competition_detail.add_resource(
     CompetitionDetailApi, '/v2/competition/<encid>')

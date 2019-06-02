@@ -5,4 +5,4 @@ def convertToRelativeCurrency(currency):
     currency = str(currency / 1000000) + " juta"
   elif (currency > 100000): 
     currency = str(currency / 1000) + " ribu"
-  return "IDR " + currency
+  return "IDR " + str(currency)
