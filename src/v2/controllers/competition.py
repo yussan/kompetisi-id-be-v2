@@ -15,6 +15,8 @@ import os
 import json
 
 # class to validate post
+
+
 class CreateCompetitionValidator(Form):
     title = StringField('Judul kompetisi', [
                         validators.required(), validators.Length(min=4, max=100)])
@@ -33,6 +35,8 @@ class CreateCompetitionValidator(Form):
     sub_cat = StringField('Sub kategori', [validators.required()])
 
 # class to manage endpoint competition list
+
+
 class CompetitionApi(Resource):
     # controller to post new competition
     def post(self):
@@ -134,6 +138,8 @@ class CompetitionApi(Resource):
             return apiResponse(400, error_messages), 400
 
 # class to manage endpoint competition detail
+
+
 class CompetitionDetailApi(Resource):
 
     # controller to get competition by id
@@ -142,8 +148,21 @@ class CompetitionDetailApi(Resource):
         competition = getDetail(id)
 
         if(competition['data'] != None):
+
             competition['data'] = transform(competition['data'])
-            # competition found
+
+            userkey = request.headers.get('User-Key')
+            userdata = {}
+            if userkey != None:
+                userdata = getDataByUserKey(userkey)
+                if userdata != None:
+                    competition['data']["is_liked"] = checkHaveLikedCompetition(
+                        {"competition_id": id, "user_id": userdata["id_user"], "onlyCheck": True})
+                else:
+                    competition['data']["is_liked"] = False
+            else:
+                competition['data']["is_liked"] = False
+
             return apiResponse(200, 'success', competition), 200
         else:
             # component not found
@@ -261,6 +280,8 @@ class CompetitionDetailApi(Resource):
         pass
 
 # class to manage endpoint competition announcemen
+
+
 class CompetitionAnnouncement(Resource):
     def put(self, encid):
 
@@ -331,13 +352,14 @@ class CompetitionAnnouncement(Resource):
         if userdata["level"] == "moderator" or userdata["level"] == "admin" or userdata["id_user"] == competition["data"]["author"]["id"]:
             key = int(request.form.get("key"))
             params = {}
-            params["dataPengumuman"] = json.loads(competition["data"]["dataPengumuman"])
+            params["dataPengumuman"] = json.loads(
+                competition["data"]["dataPengumuman"])
 
             if params["dataPengumuman"] != "" and params["dataPengumuman"] != None and len(params["dataPengumuman"]) > key:
                 # check is made by sistem or not
                 if params["dataPengumuman"][key]["by"] == "sistem":
                     return apiResponse(422, 'Tidak bisa hapus pengumuman dari sistem'), 200
-                
+
                 # delete announcement by key
                 params["dataPengumuman"].pop(key)
 
@@ -357,6 +379,8 @@ class CompetitionAnnouncement(Resource):
             return apiResponse(403, "Anda tidak memiliki akses disini"), 403
 
 # class to manage competition like action
+
+
 class CompetitionLike(Resource):
     # like / unline competition by competition id and user key
     def post(self, encid):
@@ -378,11 +402,13 @@ class CompetitionLike(Resource):
             return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
 
         # check is have liked competition
-        haveLiked = checkHaveLikedCompetition({"competition_id": id, "user_id": userdata["id_user"]})
+        haveLiked = checkHaveLikedCompetition(
+            {"competition_id": id, "user_id": userdata["id_user"]})
 
         return {
             "liked": haveLiked
         }
+
 
 # Blueprint config
 api_competition_detail_bp = Blueprint('api_competition_detail', __name__)
@@ -394,4 +420,5 @@ api_competition_detail.add_resource(
 api_competition_detail.add_resource(
     CompetitionAnnouncement, '/v2/competition/announcement/<encid>')
 api_competition_detail.add_resource(CompetitionApi, "/v2/competition")
-api_competition_detail.add_resource(CompetitionLike, "/v2/competition/like/<encid>")
+api_competition_detail.add_resource(
+    CompetitionLike, "/v2/competition/like/<encid>")

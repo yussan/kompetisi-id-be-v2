@@ -21,6 +21,10 @@ def transform(n):
         'is_mediapartner': n.mediapartner == 1,
         'is_garansi': n.garansi == "1",
         'content': n.konten,
+        'stats': {
+            'views': n.views,
+            'likes': 0
+        },
         'prize': {
             'total': n.total_hadiah,
             'description': n.hadiah
@@ -47,7 +51,6 @@ def transform(n):
         'tag': n.tag,
         'link_source': n.sumber,
         'link_join': n.ikuti,
-        'views': n.views,
         "status": n.status
     }
 

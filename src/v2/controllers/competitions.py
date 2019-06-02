@@ -66,6 +66,7 @@ class CompetitionListApi(Resource):
                 # get userdata by userkey
                 # check userkey on database
                 userdata = getDataByUserKey(userkey)
+                
                 if userdata is None:
                     return apiResponse(403, "kamu belum login"), 403
                 else:

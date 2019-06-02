@@ -284,6 +284,9 @@ def updateData(params, id):
 
 # function to check is already like competition
 def checkHaveLikedCompetition(params):
+
+    print("check params", params)
+
     query = select(select_column_competition_action).select_from(
         CompetitionAction).where(and_(
             CompetitionAction.c.id_kompetisi == params["competition_id"],
@@ -298,19 +301,28 @@ def checkHaveLikedCompetition(params):
     }
 
     if resultAction :
-        # update row
-        queryParams["like"] = 0
-        query = CompetitionAction.update().where(and_(
-            CompetitionAction.c.id_kompetisi == params["competition_id"],
-            CompetitionAction.c.id_user == params["user_id"]
-        )).values(queryParams)
-        connection.execute(query)
-        return False
+        if("onlyCheck" in params) :
+            # only check is checked
+            return resultAction["like"] == 1
+        else :
+            # update data to unlike competition
+            queryParams["like"] = 0 if resultAction["like"] == 1 else  resultAction["like"] == 0
+            query = CompetitionAction.update().where(and_(
+                CompetitionAction.c.id_kompetisi == params["competition_id"],
+                CompetitionAction.c.id_user == params["user_id"]
+            )).values(queryParams)
+            connection.execute(query)
+            return queryParams["like"] == 1
     else :
-        # insert new row
-        queryParams["like"] = 1
-        insertQuery = CompetitionAction.insert().values(queryParams)
-        connection.execute(insertQuery)
-        return True
+        if ("onlyCheck" in params) :
+            # only check is cheked
+            return False
+        else :
+            # insert new row
+            queryParams["like"] = 1
+            insertQuery = CompetitionAction.insert().values(queryParams)
+            connection.execute(insertQuery)
+            return True
+
 
 # function to handle like/unlike competition
