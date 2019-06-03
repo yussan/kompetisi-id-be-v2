@@ -145,7 +145,14 @@ class CompetitionDetailApi(Resource):
     # controller to get competition by id
     def get(self, encid):
         id = decId(encid)
-        competition = getDetail(id)
+
+        # generate paramaters
+        params = {
+            "no_count": request.args.get('no_count') == "1"
+        }
+
+
+        competition = getDetail(id, params)
 
         if(competition['data'] != None):
 

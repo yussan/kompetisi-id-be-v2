@@ -215,7 +215,10 @@ def getRelated(id):
         }
 
 # function to get detial competition by competition id
-def getDetail(id):
+def getDetail(id, params):
+
+    print("params", params)
+
     query = select(select_column).select_from(
         join_sub_cat).where(Competition.c.id_kompetisi == id)
     result = connection.execute(query)
@@ -230,9 +233,10 @@ def getDetail(id):
     if(response['data'] != None):
 
         # update total views
-        queryupdateviews = update(Competition).where(
-            Competition.c.id_kompetisi == id).values(views=Competition.c.views + 1)
-        connection.execute(queryupdateviews)
+        if params["no_count"] == None or params["no_count"] == False:
+            queryupdateviews = update(Competition).where(
+                Competition.c.id_kompetisi == id).values(views=Competition.c.views + 1)
+            connection.execute(queryupdateviews)
 
         # get next competition
         querynext = select([Competition.c.id_kompetisi.label('id'), Competition.c.judul_kompetisi.label(
