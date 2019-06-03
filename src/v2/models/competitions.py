@@ -185,6 +185,7 @@ def getRelated(id):
         Competition.c.id_kompetisi.desc()).select_from(join_sub_cat)\
         .where(MainCategory.c.main_kat == competition['main_kat'])\
         .where(Competition.c.deadline > datetime.datetime.now())\
+        .where(Competition.c.status == "posted")\
         .where(Competition.c.id_kompetisi != id)\
         .limit(3)
 
@@ -201,7 +202,7 @@ def getRelated(id):
         s2 = select(select_column).order_by(
             Competition.c.id_kompetisi.desc()).select_from(join_sub_cat).limit(3 - totaldata)
         s2 = s2.where(Competition.c.id_kompetisi != id).where(
-            Competition.c.deadline > datetime.datetime.now())
+            Competition.c.deadline > datetime.datetime.now()).where(Competition.c.status == "posted")
         # generate where not query
         for n in data:
             s2 = s2.where(Competition.c.id_kompetisi != n.id_kompetisi)
@@ -332,5 +333,3 @@ def getTotalActionCompetition(competition_id):
         "likes": rLikeCount.fetchone()["total"],
         "joined": 0
     }
-
-# function to handle like/unlike competition
