@@ -1,10 +1,10 @@
 from ..modules.db import connection
-from competitions import Competition
+from competitions import Competition, join_sub_cat
 from news import News
 from request import Request
 from competitions import Competition
 from users import Users
-from news import News
+from news import News, join_user
 from ..modules.db import connection
 from ..modules.number import convertToRelativeCurrency
 from sqlalchemy import select, func, and_
@@ -57,7 +57,7 @@ def superSidebarCounter():
 
     # get count competition
     qCountC = select([func.count().label('total')]).select_from(
-        Competition)
+        join_sub_cat)
 
     # get count competition by condition
     qLiveC = qCountC.where(and_(Competition.c.deadline >
@@ -68,7 +68,7 @@ def superSidebarCounter():
     qRejectC = qCountC.where(Competition.c.status == "reject")
 
     # get count news
-    qCountN = select([func.count().label("total")]).select_from(News)
+    qCountN = select([func.count().label("total")]).select_from(join_user)
 
     # get count news by condition
     qPostedN = qCountN.where(News.c.status == "post")
