@@ -41,7 +41,13 @@ class News(Resource):
     # controller to update news by news id
     def put(self, encid):
         id = decId(encid)
-        news = getDetail(id)
+
+        # generate paramaters
+        params = {
+            "no_count": request.args.get('no_count') == "1"
+        }
+
+        news = getDetail(id, params)
 
         if(news):
             # check userkey

@@ -407,7 +407,7 @@ class CompetitionLike(Resource):
 
         # check is competition available
         id = decId(encid)
-        competition = getDetail(id)
+        competition = getDetail(id, {"no_count": True})
 
         if(competition['data'] == None):
             return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
