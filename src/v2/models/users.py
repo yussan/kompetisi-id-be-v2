@@ -145,10 +145,6 @@ def register(params):
     params["password"] = password.hexdigest()
     params["level"] = "user"
 
-    print("register params", params)
-    print(connection.execute(Users.insert(), params))
-    # connection.execute(Users.insert(), params)
-
     # get latest inserted user
     query = select(select_column_user)\
         .select_from(Users)\

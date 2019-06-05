@@ -117,8 +117,6 @@ class CompetitionApi(Resource):
                 " " + latestCompetition['title'] + \
                 " #infokompetisi #kompetisiid"
 
-            print("posturl", postUrl)
-
             # auto post to sebangsa
             postToSebangsa({
                 "room_id": SBS_COMMUNITY_ROOM,
@@ -274,7 +272,6 @@ class CompetitionDetailApi(Resource):
                             params["dataPengumuman"])
 
                         # insert into database competition table
-                        print("updated competition", encid)
                         updateData(params, id)
 
                         return apiResponse(200, 'Kompetisi berhasil di update'), 200
@@ -332,7 +329,6 @@ class CompetitionAnnouncement(Resource):
 
             params["dataPengumuman"].insert(0, newAnnoucement)
             params["dataPengumuman"] = json.dumps(params["dataPengumuman"])
-            print("Added announcement", encid)
             updateData(params, id)
 
             return apiResponse(200, 'Pengumuman berhasil ditambahkan'), 200
@@ -384,7 +380,6 @@ class CompetitionAnnouncement(Resource):
 
             # params["dataPengumuman"].insert(0, newAnnoucement)
             # params["dataPengumuman"] = json.dumps(params["dataPengumuman"])
-            # print("Added announcement", encid)
             # updateData(params, id)
         else:
             return apiResponse(403, "Anda tidak memiliki akses disini"), 403

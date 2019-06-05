@@ -5,9 +5,6 @@ from werkzeug.utils import secure_filename
 # file controller from cloudinary
 def handleUpload(directory, file, directory_db):
   ReturnFile = {}
-
-  if(os.environ.get('FLASK_ENV') != 'production'):
-    print('Upload file into', directory)
   # check is directory available
   if not os.path.exists(directory):
     # create new directory
@@ -37,5 +34,4 @@ def handleUpload(directory, file, directory_db):
   #   ReturnFile['small'] = directory_db + '/' + filename
 
   # store to server
-  print("uploading image...", ReturnFile)
   return ReturnFile

@@ -216,9 +216,6 @@ def getRelated(id):
 
 # function to get detial competition by competition id
 def getDetail(id, params = {}):
-
-    print("params", params)
-
     query = select(select_column).select_from(
         join_sub_cat).where(Competition.c.id_kompetisi == id)
     result = connection.execute(query)

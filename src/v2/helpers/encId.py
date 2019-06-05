@@ -19,7 +19,6 @@ def decId(encid):
       missing_padding = len(encid) % 4
       if missing_padding != 0:
         encid += b'=' * (4 - missing_padding)
-      print("encid", encid)
       decoded = base64.decodestring(encid)
       decoded = base64.decodestring(decoded)
       # ref parse int: https://stackoverflow.com/questions/379906/how-do-i-parse-a-string-to-a-float-or-int-in-python

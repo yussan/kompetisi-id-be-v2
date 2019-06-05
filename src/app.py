@@ -51,13 +51,9 @@ def create_app(environment=None):
     def handleNotFound(e):
         return jsonify(apiResponse(404, 'endpoint tidak ditemukan'))
 
-    # middlewares
-    def testCompetitionChecker():
-        print("--competition checker...")
-
     # before request
     app.before_request_funcs = {
-        "api_competition_detail": [testCompetitionChecker]
+        "api_competition_detail": []
     }
     # end of before request
 
