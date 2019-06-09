@@ -42,12 +42,7 @@ class News(Resource):
     def put(self, encid):
         id = decId(encid)
 
-        # generate paramaters
-        params = {
-            "no_count": request.args.get('no_count') == "1"
-        }
-
-        news = getDetail(id, params)
+        news = getDetail(id)
 
         if(news):
             # check userkey
