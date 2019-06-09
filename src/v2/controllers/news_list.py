@@ -6,7 +6,6 @@ from ..helpers.encId import decId
 from ..transformers.news import transform
 from ..models.users import getDataByUserKey
 from ..modules.file_upload import handleUpload
-from ..modules.sebangsa import postToSebangsa
 from wtforms import Form, StringField, TextAreaField, validators
 
 import datetime             

@@ -117,12 +117,13 @@ class CompetitionApi(Resource):
                 " " + latestCompetition['title'] + \
                 " #infokompetisi #kompetisiid"
 
-            # auto post to sebangsa
-            postToSebangsa({
-                "room_id": SBS_COMMUNITY_ROOM,
-                "group_id": SBS_COMMUNITY_ID,
-                "post": postUrl
-            })
+            if params["status"] == "posted" :
+                # auto post to sebangsa
+                postToSebangsa({
+                    "room_id": SBS_COMMUNITY_ROOM,
+                    "group_id": SBS_COMMUNITY_ID,
+                    "post": postUrl
+                })
 
             return apiResponse(201, "kompetisi berhasil di tambahkan"), 201
         else:
