@@ -14,7 +14,8 @@ class FeedCompetition(Resource):
         item = ""
         competitions = CompetitionModel.getList({
             "limit": 10,
-            "orderby": "id_dsc"
+            "orderby": "id_dsc",
+            "status": "posted"
         })
 
         # looping xml items
@@ -47,7 +48,8 @@ class FeedNews(Resource):
     def get(self):
         item = ""
         news = NewsModel.getList({
-            "limit": 10
+            "limit": 10,
+            "status": "published"
         })
 
         for n in news["data"]:
