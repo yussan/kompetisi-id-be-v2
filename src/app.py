@@ -19,6 +19,7 @@ from v2.controllers.email_verification import api_email_verification_bp
 from v2.controllers.sebangsa import api_sebangsa_bp
 from v2.controllers.counter import api_counter_bp
 from v2.controllers.settings import api_settings_bp
+from v2.controllers.forgot_password import api_forgot_password_bp
 
 mail = Mail()
 
@@ -128,6 +129,10 @@ def create_app(environment=None):
 
     app.register_blueprint(
         api_settings_bp
+    )
+
+    app.register_blueprint(
+        api_forgot_password_bp
     )
     # end of blueprint registration
 

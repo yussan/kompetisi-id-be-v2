@@ -1,3 +1,7 @@
+<!-- 9 jun 2019 -->
+ALTER TABLE `user_token` 
+ADD COLUMN `token_type` ENUM("forgot-email") NULL AFTER `expired`;
+
 <!-- 31 Mei 2019
 alter tabel kompetisi_btn.tandai to kompetisi_btn.like -->
 ALTER TABLE `kompetisi_btn` 

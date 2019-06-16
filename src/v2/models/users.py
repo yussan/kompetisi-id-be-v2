@@ -42,7 +42,7 @@ join_user = Users.outerjoin(
     UsersOauth, Users.c.id_user == UsersOauth.c.user_id)
 
 EmailVerificationBody = """
-<div class="">
+<div>
         <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 30px; padding-left: 30px; padding-top: 30px; padding-bottom: 15px;"><![endif]-->
         <div style="color:#555555;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;line-height:120%; padding-right: 30px; padding-left: 30px; padding-top: 30px; padding-bottom: 15px;">
             <div style="font-family:Montserrat, 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:12px;line-height:14px;color:#555555;text-align:left;">
@@ -84,6 +84,7 @@ def getDataById(userid):
         .where(Users.c.id_user == userid)
 
     return connection.execute(query).fetchone()
+
 
 def getDataByUserKey(userkey):
     query = select(select_column_user)\
@@ -181,13 +182,15 @@ def setValidEmail(userId):
         is_verified=1, updated_at=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
     return connection.execute(query)
 
-# function to update database
-
-
+# function to update database by user id
 def updateData(Params, UserId):
     query = Users.update().where(Users.c.id_user == UserId).values(Params)
     return connection.execute(query)
 
+# function to update database by email
+def updateDataByEmail(Params, Email):
+    query = Users.update().where(Users.c.email == Email).values(Params)
+    return connection.execute(query)
 
 def oauthLogin(params):
     query = select(select_column_user)\
