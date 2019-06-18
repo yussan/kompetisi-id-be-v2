@@ -146,19 +146,27 @@ def register(params):
     params["password"] = password.hexdigest()
     params["level"] = "user"
 
+    # insert to database 
+    connection.execute(Users.insert().values(params))
+
+    print("register params", params)
+
     # get latest inserted user
     query = select(select_column_user)\
         .select_from(Users)\
-        .order_by(Users.c.id_user.desc())
+        .where(Users.c.email == params["email"])
 
+    # get user by email
     user = connection.execute(query).fetchone()
 
-    # send email confirmation to new user
-    emailVerifToken = generateEmailVerifToken(user["id_user"])
-    emailVerifUrl = "https://kompetisi.id/email-verification/" + emailVerifToken
-    emailBody = EmailVerificationBody.format(emailVerifUrl, emailVerifUrl)
-    sendEmail("Konfirmasi email anda untuk Kompetisi Id",
-              emailBody, [params["email"]])
+
+    if user != None:
+        # send email confirmation to new user
+        emailVerifToken = generateEmailVerifToken(user.id_user)
+        emailVerifUrl = "https://kompetisi.id/email-verification/" + emailVerifToken
+        emailBody = EmailVerificationBody.format(emailVerifUrl, emailVerifUrl)
+        sendEmail("Konfirmasi email anda untuk Kompetisi Id",
+                emailBody, [params["email"]])
 
     return user
 
