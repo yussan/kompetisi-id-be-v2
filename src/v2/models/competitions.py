@@ -1,7 +1,7 @@
 from ..modules.db import connection
 import datetime
 import enum
-from v2.helpers.encId import encId
+from v2.helpers.encId import encId, decId
 from v2.helpers.strings import generateTitleUrl
 from users import Users
 from categories import MainCategory, SubCategory
@@ -96,6 +96,8 @@ def getList(Params={}):
     # limit result
     if 'limit' in Params:
         s = s.limit(Params['limit'])
+    else:
+        s = s.limit(limit)
 
     # filter result by id
     if 'lastid' in Params:
@@ -213,6 +215,31 @@ def getRelated(id):
         return {
             'data': data2
         }
+
+# function to get liked competition by user id
+def getLiked(params = {}):
+
+    limit = 10
+
+    if "limit" in params:
+        limit = params["limit"]
+
+    # get all competition id
+    join_liked = CompetitionAction.join(join_sub_cat, Competition.c.id_kompetisi == CompetitionAction.c.id_kompetisi)
+    query = select(select_column).order_by(Competition.c.id_kompetisi.desc()).select_from(join_liked).where(and_(CompetitionAction.c.id_user == params["user_id"], CompetitionAction.c.like == 1)).limit(limit)
+
+    
+    if "lastid" in params:
+        # get more list competitions
+        params["lastid"] = decId(params["lastid"])
+        query = query.where(Competition.c.id_kompetisi < params["lastid"])
+    
+    res = connection.execute(query)
+
+    return {
+        "data": res.fetchall(),
+        "count": 0
+    }
 
 # function to get detial competition by competition id
 def getDetail(id, params = {}):

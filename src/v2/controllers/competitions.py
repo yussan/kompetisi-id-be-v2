@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from flask_restful import Api, Resource
-from ..models.competitions import getList, getRelated
+from ..models.competitions import getList, getRelated, getLiked
 from ..models.users import getDataByUserKey
 from ..helpers.response import apiResponse
 from ..helpers.encId import decId
@@ -66,7 +66,7 @@ class CompetitionListApi(Resource):
                 # get userdata by userkey
                 # check userkey on database
                 userdata = getDataByUserKey(userkey)
-                
+
                 if userdata is None:
                     return apiResponse(403, "kamu belum login"), 403
                 else:
@@ -80,7 +80,6 @@ class CompetitionListApi(Resource):
         competitions = getList(params)
         response = {}
         response['count'] = competitions['count'] if competitions['count'] else 0
-        
 
         if(len(competitions['data']) > 0):
             comdata = []
@@ -111,8 +110,33 @@ class CompetitionRelatedApi(Resource):
             return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
 
 
+class CompetitionLiked(Resource):
+    def get(self):
+        params = {}
+
+        params["user_id"] = request.args.get('user_id')
+        if request.args.get('limit'):
+            params["limit"] = request.args.get('limit')
+        if request.args.get('lastid'):
+            params["lastid"] = request.args.get('lastid')
+
+
+        competitions = getLiked(params)
+        if(len(competitions['data']) > 0):
+            comdata = []
+            for n in competitions['data']:
+                comdata.append(dict(transform(n)))
+            response = {}
+            response['data'] = comdata
+
+            return apiResponse(200, 'success', response), 200
+        else:
+            return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
+
+
 api_competitions_bp = Blueprint('api_competitions', __name__)
 api_competitions = Api(api_competitions_bp)
 api_competitions.add_resource(CompetitionListApi, '/v2/competitions')
+api_competitions.add_resource(CompetitionLiked, '/v2/competitions/liked')
 api_competitions.add_resource(
     CompetitionRelatedApi, '/v2/competitions/related/<encid>')
