@@ -111,19 +111,19 @@ class CompetitionApi(Resource):
             insertData(params)
 
             # get lattest data of competition
-            latestCompetition = getSingleLatest()
-            postUrl = "https://kompetisi.id/competition/" + \
-                latestCompetition['id'] + "/regulations/" + latestCompetition['nospace_title'][0] + \
-                " " + latestCompetition['title'] + \
-                " #infokompetisi #kompetisiid"
+            # latestCompetition = getSingleLatest()
+            # postUrl = "https://kompetisi.id/competition/" + \
+            #     latestCompetition['id'] + "/regulations/" + latestCompetition['nospace_title'][0] + \
+            #     " " + latestCompetition['title'] + \
+            #     " #infokompetisi #kompetisiid"
 
-            if params["status"] == "posted" :
-                # auto post to sebangsa
-                postToSebangsa({
-                    "room_id": SBS_COMMUNITY_ROOM,
-                    "group_id": SBS_COMMUNITY_ID,
-                    "post": postUrl
-                })
+            # if params["status"] == "posted" :
+            #     # auto post to sebangsa
+            #     postToSebangsa({
+            #         "room_id": SBS_COMMUNITY_ROOM,
+            #         "group_id": SBS_COMMUNITY_ID,
+            #         "post": postUrl
+            #     })
 
             return apiResponse(201, "kompetisi berhasil di tambahkan"), 201
         else:
