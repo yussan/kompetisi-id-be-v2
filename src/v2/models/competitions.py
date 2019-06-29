@@ -42,6 +42,7 @@ Competition = Table('kompetisi', metadata,
                     Column('ikuti', TEXT),
                     Column('id_main_kat', INT),
                     Column('id_sub_kat', INT),
+                    Column("draft", TEXT)
                     )
 
 CompetitionAction = Table("kompetisi_btn", metadata, 

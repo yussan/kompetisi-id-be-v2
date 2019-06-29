@@ -14,7 +14,8 @@ News = Table('berita', metadata,
              Column('content', TEXT),
              Column('author', BIGINT),
              Column('created_at', TEXT),
-             Column('updated_at', TEXT)
+             Column('updated_at', TEXT),
+             Column('draft', TEXT)
              )
 
 join_user = News.join(Users, News.c.author == Users.c.id_user)

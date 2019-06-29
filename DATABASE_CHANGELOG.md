@@ -1,3 +1,10 @@
+<!-- 27 jun 2019 -->
+ALTER TABLE `kompetisiid`.`berita` 
+ADD COLUMN `draft` ENUM('0', '1') NULL DEFAULT '0' AFTER `tag`;
+
+ALTER TABLE `ki-4.1`.`kompetisi` 
+CHANGE COLUMN `draft` ENUM('0', '1') NULL DEFAULT '0' ;
+
 <!-- 9 jun 2019 -->
 ALTER TABLE `user_token` 
 ADD COLUMN `token_type` ENUM("forgot-email") NULL AFTER `expired`;

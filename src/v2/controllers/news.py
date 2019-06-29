@@ -78,6 +78,7 @@ class News(Resource):
                       params["content"] = request.form.get("content")
                       params["tag"] = request.form.get("tags")
                       params["updated_at"] = now.strftime('%Y-%m-%d %H:%M:%S')
+                      params["draft"] = "1" if request.form.get("draft") == "true" else "0"
 
                       # start update query
                       updateNews(params, id)

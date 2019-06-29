@@ -106,6 +106,8 @@ class CompetitionApi(Resource):
             params["garansi"] = "1" if request.form.get(
                 "is_guaranteed") == "true" else "0"
             params["manage"] = "0"
+            params["draft"] = "1" if request.form.get(
+                "draft") == "true" else "0"
 
             # insert into database competition table
             insertData(params)
@@ -149,7 +151,6 @@ class CompetitionDetailApi(Resource):
         params = {
             "no_count": request.args.get('no_count') == "1"
         }
-
 
         competition = getDetail(id, params)
 
@@ -250,6 +251,8 @@ class CompetitionDetailApi(Resource):
                         params["garansi"] = "1" if request.form.get(
                             "is_guaranteed") == "true" else "0"
                         params["manage"] = "0"
+                        params["draft"] = "1" if request.form.get(
+                            "draft") == "true" else "0"
 
                         # update data pengumuman
                         # ref: http://strftime.org/

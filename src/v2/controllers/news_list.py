@@ -110,6 +110,7 @@ class NewsList(Resource):
             params["author"] = userdata["id_user"]
             params["created_at"] = now.strftime('%Y-%m-%d %H:%M:%S')
             params["updated_at"] = now.strftime('%Y-%m-%d %H:%M:%S')
+            params["draft"] = "1" if request.form.get("draft") == "true" else "0"
 
             # return params
 
