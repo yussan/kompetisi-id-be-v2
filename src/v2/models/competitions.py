@@ -45,12 +45,12 @@ Competition = Table('kompetisi', metadata,
                     Column("draft", TEXT)
                     )
 
-CompetitionAction = Table("kompetisi_btn", metadata, 
-    Column('id', BIGINT),
-    Column('id_kompetisi', BIGINT),
-    Column('id_user', BIGINT),
-    Column('like', INT)
-    )
+CompetitionAction = Table("kompetisi_btn", metadata,
+                          Column('id', BIGINT),
+                          Column('id_kompetisi', BIGINT),
+                          Column('id_user', BIGINT),
+                          Column('like', INT)
+                          )
 
 join_user = Competition.join(Users, Competition.c.id_user == Users.c.id_user)
 join_main_cat = join_user.join(
@@ -70,13 +70,17 @@ select_column = [Competition.c.id_kompetisi, Competition.c.judul_kompetisi, Comp
                  Competition.c.mediapartner, Competition.c.garansi,
                  Competition.c.kontak, Competition.c.sumber,
                  Competition.c.id_user,
+                 Competition.c.draft,
                  MainCategory.c.id_main_kat, MainCategory.c.main_kat,
                  SubCategory.c.id_sub_kat, SubCategory.c.sub_kat,
                  Users.c.username, Users.c.fullname, Users.c.moto, Users.c.level]
 
-select_column_competition_action = [CompetitionAction.c.id, CompetitionAction.c.like]
+select_column_competition_action = [
+    CompetitionAction.c.id, CompetitionAction.c.like]
 
 # function to get list of competitions
+
+
 def getList(Params={}):
     # order by
     orderby = Competition.c.id_kompetisi.desc()
@@ -136,15 +140,17 @@ def getList(Params={}):
     # filter by status
     if 'status' in Params:
         if Params['status'] == 'active':
-            s = s.where(and_(Competition.c.deadline > datetime.datetime.now(), Competition.c.status == "posted"))
-            c = c.where(and_(Competition.c.deadline > datetime.datetime.now(), Competition.c.status == "posted"))
+            s = s.where(and_(Competition.c.deadline >
+                             datetime.datetime.now(), Competition.c.status == "posted"))
+            c = c.where(and_(Competition.c.deadline >
+                             datetime.datetime.now(), Competition.c.status == "posted"))
         elif Params['status'] == 'waiting':
             s = s.where(Competition.c.status == "waiting")
             c = c.where(Competition.c.status == "waiting")
         elif Params['status'] == 'reject':
             s = s.where(Competition.c.status == "reject")
             c = c.where(Competition.c.status == "reject")
-        else :
+        else:
             s = s.where(Competition.c.status == "posted")
             c = c.where(Competition.c.status == "posted")
 
@@ -168,6 +174,13 @@ def getList(Params={}):
         s = s.where(Users.c.id_user == Params["user_id"])
         c = c.where(Users.c.id_user == Params["user_id"])
 
+    # show or hidden draft
+    if "show_draft" not in Params or Params["show_draft"] == False:
+        s = s.where(or_(Competition.c.draft != "1",
+                        Competition.c.draft == None))
+        c = c.where(or_(Competition.c.draft != "1",
+                        Competition.c.draft == None))
+
     res = connection.execute(s)
     rescount = connection.execute(c)
 
@@ -177,6 +190,8 @@ def getList(Params={}):
     }
 
 # function to get competition related by competition id
+
+
 def getRelated(id):
     # get detail competitoin
     c_query = select([Competition.c.id_main_kat.label('main_kat'), Competition.c.tag]).select_from(
@@ -189,6 +204,7 @@ def getRelated(id):
         .where(MainCategory.c.main_kat == competition['main_kat'])\
         .where(Competition.c.deadline > datetime.datetime.now())\
         .where(Competition.c.status == "posted")\
+        .where(or_(Competition.c.draft != "1", Competition.c.draft == None))\
         .where(Competition.c.id_kompetisi != id)\
         .limit(3)
 
@@ -205,7 +221,8 @@ def getRelated(id):
         s2 = select(select_column).order_by(
             Competition.c.id_kompetisi.desc()).select_from(join_sub_cat).limit(3 - totaldata)
         s2 = s2.where(Competition.c.id_kompetisi != id).where(
-            Competition.c.deadline > datetime.datetime.now()).where(Competition.c.status == "posted")
+            Competition.c.deadline > datetime.datetime.now()).where(Competition.c.status == "posted")\
+            .where(or_(Competition.c.draft != "1", Competition.c.draft == None))
         # generate where not query
         for n in data:
             s2 = s2.where(Competition.c.id_kompetisi != n.id_kompetisi)
@@ -218,7 +235,9 @@ def getRelated(id):
         }
 
 # function to get liked competition by user id
-def getLiked(params = {}):
+
+
+def getLiked(params={}):
 
     limit = 10
 
@@ -226,15 +245,16 @@ def getLiked(params = {}):
         limit = params["limit"]
 
     # get all competition id
-    join_liked = CompetitionAction.join(join_sub_cat, Competition.c.id_kompetisi == CompetitionAction.c.id_kompetisi)
-    query = select(select_column).order_by(Competition.c.id_kompetisi.desc()).select_from(join_liked).where(and_(CompetitionAction.c.id_user == params["user_id"], CompetitionAction.c.like == 1)).limit(limit)
+    join_liked = CompetitionAction.join(
+        join_sub_cat, Competition.c.id_kompetisi == CompetitionAction.c.id_kompetisi)
+    query = select(select_column).order_by(Competition.c.id_kompetisi.desc()).select_from(join_liked).where(
+        and_(CompetitionAction.c.id_user == params["user_id"], CompetitionAction.c.like == 1)).limit(limit)
 
-    
     if "lastid" in params:
         # get more list competitions
         params["lastid"] = decId(params["lastid"])
         query = query.where(Competition.c.id_kompetisi < params["lastid"])
-    
+
     res = connection.execute(query)
 
     return {
@@ -243,7 +263,9 @@ def getLiked(params = {}):
     }
 
 # function to get detial competition by competition id
-def getDetail(id, params = {}):
+
+
+def getDetail(id, params={}):
     query = select(select_column).select_from(
         join_sub_cat).where(Competition.c.id_kompetisi == id)
     result = connection.execute(query)
@@ -289,6 +311,8 @@ def getDetail(id, params = {}):
     return response
 
 # function to get lattest competition
+
+
 def getSingleLatest():
     query = select(select_column).select_from(join_sub_cat).order_by(
         Competition.c.id_kompetisi.desc()).limit(1)
@@ -303,16 +327,22 @@ def getSingleLatest():
     return response
 
 # function to insert data into competition table
+
+
 def insertData(params):
     query = Competition.insert().values(params)
     return connection.execute(query)
 
 # function to update data competition by competition id
+
+
 def updateData(params, id):
     query = Competition.update().where(Competition.c.id_kompetisi == id).values(params)
     return connection.execute(query)
 
 # function to check is already like competition
+
+
 def checkHaveLikedCompetition(params):
 
     query = select(select_column_competition_action).select_from(
@@ -328,24 +358,24 @@ def checkHaveLikedCompetition(params):
         "id_user": params["user_id"]
     }
 
-    if resultAction :
-        if("onlyCheck" in params) :
+    if resultAction:
+        if("onlyCheck" in params):
             # only check is checked
             return resultAction["like"] == 1
-        else :
+        else:
             # update data to unlike competition
-            queryParams["like"] = 0 if resultAction["like"] == 1 else  resultAction["like"] == 0
+            queryParams["like"] = 0 if resultAction["like"] == 1 else resultAction["like"] == 0
             query = CompetitionAction.update().where(and_(
                 CompetitionAction.c.id_kompetisi == params["competition_id"],
                 CompetitionAction.c.id_user == params["user_id"]
             )).values(queryParams)
             connection.execute(query)
             return queryParams["like"] == 1
-    else :
-        if ("onlyCheck" in params) :
+    else:
+        if ("onlyCheck" in params):
             # only check is cheked
             return False
-        else :
+        else:
             # insert new row
             queryParams["like"] = 1
             insertQuery = CompetitionAction.insert().values(queryParams)
@@ -353,8 +383,11 @@ def checkHaveLikedCompetition(params):
             return True
 
 # get total action of competition
+
+
 def getTotalActionCompetition(competition_id):
-    qLikeCount = select([func.count().label('total')]).select_from(CompetitionAction).where(and_(CompetitionAction.c.id_kompetisi == competition_id, CompetitionAction.c.like == 1))
+    qLikeCount = select([func.count().label('total')]).select_from(CompetitionAction).where(
+        and_(CompetitionAction.c.id_kompetisi == competition_id, CompetitionAction.c.like == 1))
 
     rLikeCount = connection.execute(qLikeCount)
 

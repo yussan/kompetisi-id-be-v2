@@ -72,6 +72,7 @@ class CompetitionListApi(Resource):
                 else:
                     # added params
                     params['user_id'] = userdata["id_user"]
+                    params["show_draft"] = True
 
         params['is_mediapartner'] = is_mediapartner == 'true'
         params['is_guaranted'] = is_guaranted == 'true'
