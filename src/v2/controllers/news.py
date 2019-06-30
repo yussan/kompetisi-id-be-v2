@@ -29,7 +29,6 @@ class News(Resource):
             # get related post
             ParamsRelated = {"status": ["published"], "notid": id, "limit": 3}
             related = getList(ParamsRelated)
-
             relateddata = []
             for n in related["data"]:
                 relateddata.append(transform(n))

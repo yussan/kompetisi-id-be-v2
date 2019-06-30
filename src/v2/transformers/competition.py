@@ -20,6 +20,7 @@ def transform(n):
         'updated_at': n.updated_at.strftime('%s'),
         'is_mediapartner': n.mediapartner == 1,
         'is_garansi': n.garansi == "1",
+        'is_draft': n.draft == "1",
         'content': n.konten,
         'stats': {
             'views': n.views,

@@ -17,7 +17,7 @@ def transform(n):
         'nospace_title':  (generateTitleUrl(n.title)[0]).replace('&', ''),
         'content': n.content,
         'image': transformImage(n.image),
-        'is_draft': n.status == 'draft',
+        'is_draft': n.draft == '1',
         'created_at': n.created_at.strftime('%s'),
         'updated_at': n.updated_at.strftime('%s'),
         'tag': n.tag

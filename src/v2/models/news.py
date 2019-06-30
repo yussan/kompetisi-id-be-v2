@@ -1,6 +1,6 @@
 from ..modules.db import connection
 from users import Users
-from sqlalchemy import Table, Column, MetaData, select, func, desc, BIGINT, VARCHAR, DATETIME, Enum, TEXT
+from sqlalchemy import Table, Column, MetaData, select, func, desc, BIGINT, VARCHAR, DATETIME, Enum, TEXT, or_
 
 metadata = MetaData()
 
@@ -22,7 +22,7 @@ join_user = News.join(Users, News.c.author == Users.c.id_user)
 
 # ref: http://docs.sqlalchemy.org/en/latest/core/expression_api.html?highlight=label#sqlalchemy.sql.expression.label
 select_column = [News.c.id, News.c.title, News.c.content, News.c.status, News.c.image,
-                 News.c.tag, News.c.tag, News.c.created_at, News.c.updated_at,
+                 News.c.tag, News.c.tag, News.c.created_at, News.c.updated_at, News.c.draft,
                  Users.c.username, Users.c.id_user, Users.c.moto]
 
 
@@ -38,11 +38,14 @@ def getList(Params={}):
     # generate where
     if 'limit' in Params:
         s = s.limit(Params['limit'])
+   
     if 'notid' in Params:
         s = s.where(News.c.id != Params['notid'])
         c = c.where(News.c.id != Params['notid'])
+   
     if 'lastid' in Params:
         s = s.where(News.c.id < Params['lastid'])
+   
     if 'status' in Params:
         if 'draft' in Params['status']:
             s = s.where(News.c.status == 'draft')
@@ -50,9 +53,15 @@ def getList(Params={}):
         if 'published' in Params['status']:
             s = s.where(News.c.status == 'post')
             c = c.where(News.c.status == 'post')
+   
     if 'tag' in Params:
         s = s.where(News.c.tag.like('%'+Params['tag']+'%'))
         c = c.where(News.c.tag.like('%'+Params['tag']+'%'))
+
+    # show draf news
+    if "show_draft" not in Params or Params["show_draft"] == False:
+        s = s.where(or_(News.c.draft != "1", News.c.draft == None))
+        c = c.where(or_(News.c.draft != "1", News.c.draft == None))
 
     res = connection.execute(s)
     rescount = connection.execute(c)
@@ -63,13 +72,17 @@ def getList(Params={}):
     }
 
 # model to update news by news id
+
+
 def updateNews(Params, id):
-  query = News.update().where(News.c.id == id).values(Params)
-  return connection.execute(query)
+    query = News.update().where(News.c.id == id).values(Params)
+    return connection.execute(query)
+
 
 def createNews(Params):
-  query = News.insert().values(Params)
-  return connection.execute(query)
+    query = News.insert().values(Params)
+    return connection.execute(query)
+
 
 def getDetail(id):
     s = select(select_column).select_from(join_user).where(News.c.id == id)

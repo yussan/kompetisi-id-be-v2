@@ -34,6 +34,19 @@ class NewsList(Resource):
             'limit': limit
         }
 
+        # get userkey on header and get userdata (optional)
+        userkey = request.headers.get('User-Key')
+
+        if userkey is not None:
+            # get userdata by userkey
+            # check userkey on database
+            userdata = getDataByUserKey(userkey)
+
+            if userdata is not None:
+                show_draft = request.args.get('show_draft')
+                params["show_draft"] = show_draft == "true" and (userdata["level"] == "admin" or userdata["level"] == "moderator")
+                
+
         # custom params
         if (lastid):
             params['lastid'] = decId(lastid)
