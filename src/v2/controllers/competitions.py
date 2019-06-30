@@ -57,8 +57,14 @@ class CompetitionListApi(Resource):
             params['status'] = status
 
         # get competitio by me (must logged in)
+        userkey = request.headers.get('User-Key')
+        if userkey != None:
+            userdata = getDataByUserKey(userkey)
+            # admin and moderator always show draft from all users
+            if userdata != None and (userdata["level"] == "admin" or userdata["level"] == "moderator"):
+                params["show_draft"] = True
+
         if by_me:
-            userkey = request.headers.get('User-Key')
             if userkey is None:
                 # response failed
                 return apiResponse(403, "kamu belum login"), 403

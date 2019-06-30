@@ -5,9 +5,9 @@ import json
 import re
 import os
 
-
 def transform(n):
-    return {
+
+    nextData = {
         # 'id': n.id_kompetisi,
         'id': encId(n.id_kompetisi),
         'title': n.judul_kompetisi.replace('&', ''),
@@ -54,6 +54,14 @@ def transform(n):
         'link_join': n.ikuti,
         "status": n.status
     }
+
+    # convert unicode to string
+    if type(nextData["contacts"]) != list : 
+        nextData["contacts"] = []
+    if type(nextData["announcement"]) != list : 
+        nextData["announcement"] = []
+
+    return nextData
 
 
 def transformImage(image):
