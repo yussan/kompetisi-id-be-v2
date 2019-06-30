@@ -42,9 +42,9 @@ class NewsList(Resource):
             # check userkey on database
             userdata = getDataByUserKey(userkey)
 
+            # admin and moderator always can see draft everywhere
             if userdata is not None:
-                show_draft = request.args.get('show_draft')
-                params["show_draft"] = show_draft == "true" and (userdata["level"] == "admin" or userdata["level"] == "moderator")
+                params["show_draft"] = (userdata["level"] == "admin" or userdata["level"] == "moderator")
                 
 
         # custom params
