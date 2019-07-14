@@ -318,7 +318,7 @@ class CompetitionAnnouncement(Resource):
             return apiResponse(204, 'Kompetisi tidak ditemukan'), 200
 
         # only moderator, admin or author can added new annoucement
-        if userdata["level"] == "moderator" or userdata["level"] == "admin" or userdata["id_user"] == competition["data"]["author"]["id"]:
+        if userdata["level"] == "moderator" or userdata["level"] == "admin" or userdata["id_user"] == competition["data"]["id_user"]:
             newAnnoucement = {"tgl": now.strftime(
                 '%Y-%m-%d %H:%M:%S'), "data": request.form.get("pengumuman"), "by": userStatus}
             params = {}
