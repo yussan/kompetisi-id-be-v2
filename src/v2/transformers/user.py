@@ -15,6 +15,7 @@ def transform(n):
         "status": n.status,
         "level": n.level,
         "is_verified": n.is_verified == 1,
+        "is_banned": n.status == "banned",
         # ref: https://stackoverflow.com/a/50763403/2780875
         "register_date": n.tgl_gabung.strftime("%Y-%m-%d %H:%M:%S"),
         "user_key": n.user_key,

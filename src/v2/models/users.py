@@ -3,7 +3,7 @@ from ..modules.mail import sendEmail
 from ..modules.crypto import generateEmailVerifToken
 import datetime
 import md5
-from sqlalchemy import Table, Column, MetaData, join, outerjoin, BIGINT, INT, TEXT, VARCHAR, DATETIME, select, or_, update
+from sqlalchemy import Table, Column, MetaData, join, outerjoin, BIGINT, INT, TEXT, VARCHAR, DATETIME, select, or_, and_, update
 
 metadata = MetaData()
 Users = Table("user", metadata,
@@ -36,7 +36,7 @@ UsersOauth = Table("user_oauth", metadata,
 
 select_column_user = [Users.c.id_user, Users.c.password, Users.c.username, Users.c.email, Users.c.fullname,
                       Users.c.user_key, Users.c.avatar, Users.c.alamat,
-                      Users.c.moto, Users.c.tgl_gabung, Users.c.last_login, Users.c.status, Users.c.level, Users.c.is_verified]
+                      Users.c.moto, Users.c.tgl_gabung, Users.c.last_login, Users.c.status, Users.c.level, Users.c.is_verified, Users.c.is_verified]
 
 join_user = Users.outerjoin(
     UsersOauth, Users.c.id_user == UsersOauth.c.user_id)
@@ -75,9 +75,27 @@ EmailVerificationBody = """
     </div>
 """
 
+def getUsers(params = {}):
+    query = select(select_column_user)\
+        .select_from(join_user)\
+        .limit(20)\
+        .order_by(Users.c.id_user.desc())
+
+    if "banned" in params and params["banned"] == True: 
+        query = query.where(Users.c.status == "banned")
+
+    if "verified" in params and params["verified"] == True: 
+        query = query.where( and_(Users.c.status == "active", Users.c.is_verified == 1))
+
+    if "unverified" in params and params["unverified"] == True: 
+        query = query.where( and_(Users.c.status == "active", Users.c.is_verified == 0))
+
+    if "lastid" in params:
+        query = query.where(Users.c.id_user < params["lastid"])
+    
+    return connection.execute(query).fetchall()
+
 # function to get userdata by user id
-
-
 def getDataById(userid):
     query = select(select_column_user)\
         .select_from(join_user)\
@@ -85,7 +103,7 @@ def getDataById(userid):
 
     return connection.execute(query).fetchone()
 
-
+# function to get user profile by userkey
 def getDataByUserKey(userkey):
     query = select(select_column_user)\
         .select_from(join_user)\
@@ -93,7 +111,7 @@ def getDataByUserKey(userkey):
 
     return connection.execute(query).fetchone()
 
-
+# function to get user profile by username
 def getDataByUsername(username):
     query = select(select_column_user)\
         .select_from(join_user)\
@@ -101,9 +119,7 @@ def getDataByUsername(username):
 
     return connection.execute(query).fetchone()
 
-# function to check is available same username in table user
-
-
+# function check is username available
 def checkUsername(username):
     query = select([Users.c.id_user])\
         .select_from(Users)\
@@ -112,8 +128,6 @@ def checkUsername(username):
     return connection.execute(query).fetchone()
 
 # function to check is availbale same email in table user
-
-
 def checkEmail(email):
     query = select([Users.c.id_user])\
         .select_from(Users)\
@@ -122,8 +136,6 @@ def checkEmail(email):
     return connection.execute(query).fetchone()
 
 # function to insert data new user by register params
-
-
 def register(params):
     # insert data to the db
     # ref: http://strftime.org/
@@ -170,7 +182,6 @@ def register(params):
 
     return user
 
-
 # function to select username by username and password
 def login(params):
     query = select(select_column_user)\
@@ -183,8 +194,6 @@ def login(params):
     return result
 
 # function to set user email is valid
-
-
 def setValidEmail(userId):
     query = update(Users).where(Users.c.id_user == userId).values(
         is_verified=1, updated_at=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
