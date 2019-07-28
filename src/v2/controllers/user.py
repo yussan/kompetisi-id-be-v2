@@ -24,6 +24,8 @@ class UserList(Resource):
       "unverified": request.args.get('unverified') == "true",
     }
 
+    print("params", params)
+
     lastid = request.args.get('lastid')
     if(lastid != None): params["lastid"] = lastid
 
