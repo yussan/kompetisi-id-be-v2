@@ -89,7 +89,7 @@ def getUsers(params = {}):
 
     if "unverified" in params and params["unverified"] == True: 
         query = query.where( and_(Users.c.status == "active"))
-        query = query.where( or_(Users.c.is_verified == 1, Users.c.is_verified == None))
+        query = query.where( or_(Users.c.is_verified != 1, Users.c.is_verified == None))
 
     if "lastid" in params:
         query = query.where(Users.c.id_user < params["lastid"])

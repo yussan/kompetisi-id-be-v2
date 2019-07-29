@@ -7,7 +7,7 @@ from users import Users
 from news import News, join_user
 from ..modules.db import connection
 from ..modules.number import convertToRelativeCurrency
-from sqlalchemy import select, func, and_
+from sqlalchemy import select, func, and_, or_
 import datetime
 import calendar
 from decimal import Decimal
@@ -89,7 +89,8 @@ def superSidebarCounter():
         Users)
 
     # get count user by condition
-    qActiveU = qCountU.where(Users.c.status == "active")
+    qVerifiedU = qCountU.where( and_(Users.c.status == "active", Users.c.is_verified == 1))
+    qUnverifiedU = qCountU.where( and_(Users.c.status == "active")).where( or_(Users.c.is_verified != 1, Users.c.is_verified == None))
     qBannedU = qCountU.where(Users.c.status == "banned")
 
     # execute query
@@ -107,7 +108,8 @@ def superSidebarCounter():
     rAcceptR = connection.execute(qAcceptR)
     rRejectR = connection.execute(qRejectR)
 
-    rActiveU = connection.execute(qActiveU)
+    rVerifiedU = connection.execute(qVerifiedU)
+    rUnverifiedU = connection.execute(qUnverifiedU)
     rBannedU = connection.execute(qBannedU)
 
     return {
@@ -130,7 +132,8 @@ def superSidebarCounter():
             "draft": rDraftN.fetchone()["total"],
         },
         "members": {
-            "active": rActiveU.fetchone()["total"],
+            "verified": rVerifiedU.fetchone()["total"],
+            "unverified": rUnverifiedU.fetchone()["total"],
             "banned": rBannedU.fetchone()["total"]
         }
     }
