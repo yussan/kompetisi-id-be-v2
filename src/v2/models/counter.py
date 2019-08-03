@@ -71,8 +71,8 @@ def superSidebarCounter():
     qCountN = select([func.count().label("total")]).select_from(join_user)
 
     # get count news by condition
-    qPostedN = qCountN.where(News.c.status == "post")
-    qDraftN = qCountN.where(News.c.status == "draft")
+    qPostedN = qCountN.where(News.c.draft != "1")
+    qDraftN = qCountN.where(News.c.draft == "1")
 
     # get count request
     qCountR = select([func.count().label('total')]).select_from(

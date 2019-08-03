@@ -26,6 +26,8 @@ class NewsList(Resource):
         notid = request.args.get('notid')
         status = request.args.get('status')
         tag = request.args.get('tag')
+        show_draft = request.args.get('show_draft')
+        draft = request.args.get('draft')
 
         if (not limit):
             limit = 9
@@ -48,6 +50,10 @@ class NewsList(Resource):
                 
 
         # custom params
+        if (show_draft):
+            params["show_draft"] = show_draft == "true"
+        if (draft):
+            params["draft"] = draft == "true"
         if (lastid):
             params['lastid'] = decId(lastid)
         if (tag):

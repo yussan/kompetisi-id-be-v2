@@ -62,6 +62,14 @@ def getList(Params={}):
     if "show_draft" not in Params or Params["show_draft"] == False:
         s = s.where(or_(News.c.draft != "1", News.c.draft == None))
         c = c.where(or_(News.c.draft != "1", News.c.draft == None))
+    
+    if "draft" in Params:
+        if Params["draft"] == True:
+            s = s.where(or_(News.c.draft == "1"))
+            c = c.where(or_(News.c.draft == "1"))
+        else:
+            s = s.where(or_(News.c.draft != "1"))
+            c = c.where(or_(News.c.draft != "1"))
 
     res = connection.execute(s)
     rescount = connection.execute(c)
