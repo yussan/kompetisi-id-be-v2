@@ -1,13 +1,19 @@
 import json
-from flask import request
-from v2.helpers.response import apiResponse
+from flask import request, jsonify
+from ..helpers.response import apiResponse
+from ..models.users import getDataByUserKey
 
-# only use and admin will valid
-def isModerator(next_function):
-  def wrapper(self, id):
-    athorization = request.headers.get('Authorization')
-    if athorization != 'yussan-1234567890' :
-      return apiResponse(401, 'Not authorized'), 401
-    else: 
-      return next_function(self, id)
-  return wrapper
+# only moderator and admin can through access
+
+
+def isModerator():
+    userKey = request.headers.get('User-Key')
+    if userKey == None:
+        return jsonify(apiResponse(401, 'Not authorized')), 401
+    else:
+        # get userdata by userKey and check level, level must be (admin or moderator)
+        userdata = getDataByUserKey(userKey)
+        if userdata is None:
+            return jsonify(apiResponse(401, "akun tidak ditemukan")), 401
+        elif(userdata["level"] != "admin" and userdata["level"] != "moderator"):
+            return jsonify(apiResponse(401, 'Not authorized')), 401

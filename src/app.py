@@ -53,19 +53,15 @@ def create_app(environment=None):
         return jsonify(apiResponse(404, 'endpoint tidak ditemukan'))
 
     # before request
-    app.before_request_funcs = {
-        "api_competition_detail": []
-    }
+    # app.before_request_funcs = {
+    #     "api_competition_detail": []
+    # }
     # end of before request
 
     # blueprint registration
     app.register_blueprint(
         api_competition_detail_bp
     )
-
-    # app.register_blueprint(
-    #     api_competition_bp
-    # )
 
     app.register_blueprint(
         api_competitions_bp
@@ -82,7 +78,7 @@ def create_app(environment=None):
     app.register_blueprint(
         api_categories_bp
     )
-
+        
     app.register_blueprint(
         api_request_bp
     )

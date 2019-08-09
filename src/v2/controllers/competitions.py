@@ -6,6 +6,9 @@ from ..helpers.response import apiResponse
 from ..helpers.encId import decId
 from ..transformers.competition import transform
 
+def beforeBlueprint():
+    print("before blueprint...")
+
 
 class CompetitionListApi(Resource):
     def post(self):
@@ -31,6 +34,8 @@ class CompetitionListApi(Resource):
         is_guaranted = request.args.get('is_guaranted')
         is_popular = request.args.get('is_popular')
         by_me = request.args.get("by_me")
+        min_deadline_date = request.args.get("min_deadline_date")
+        max_deadline_date = request.args.get("max_deadline_date")
 
         if(not limit):
             limit = 9
@@ -55,6 +60,10 @@ class CompetitionListApi(Resource):
             params['orderby'] = orderby
         if (status):
             params['status'] = status
+        if (min_deadline_date):
+            params['min_deadline_date'] = min_deadline_date
+        if (max_deadline_date):
+            params['max_deadline_date'] = max_deadline_date
 
         # get competitio by me (must logged in)
         userkey = request.headers.get('User-Key')
@@ -147,3 +156,4 @@ api_competitions.add_resource(CompetitionListApi, '/v2/competitions')
 api_competitions.add_resource(CompetitionLiked, '/v2/competitions/liked')
 api_competitions.add_resource(
     CompetitionRelatedApi, '/v2/competitions/related/<encid>')
+api_competitions_bp.before_request(beforeBlueprint)

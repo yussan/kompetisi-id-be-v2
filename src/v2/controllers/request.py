@@ -91,7 +91,6 @@ class FormActionValidator(Form):
     status = StringField('Status', [validators.Length(min=4, max=10)])
     message = StringField('Pesan', [validators.Length(min=4, max=300)])
 
-
 class RequestApi(Resource):
 
     # function to get list request
@@ -163,7 +162,7 @@ class RequestApi(Resource):
 
 class RequestAction(Resource):
 
-    @isModerator
+    # @isModerator
     def put(self, id):
 
         # check si request available
@@ -220,7 +219,9 @@ api_request_bp = Blueprint('api_request', __name__)
 api_request = Api(api_request_bp)
 
 # middlewares
-
+@api_request_bp.before_request
+def is_moderator():
+    return isModerator()
 
 # routes
 api_request.add_resource(RequestApi, '/v2/request')

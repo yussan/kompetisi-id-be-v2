@@ -22,4 +22,6 @@ def apiResponse(status, message='', data={}):
     if data:
         json_response.update(data)
 
+    print("response", json_response)
+
     return json_response
