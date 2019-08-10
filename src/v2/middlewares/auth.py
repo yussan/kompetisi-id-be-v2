@@ -6,7 +6,7 @@ from ..models.users import getDataByUserKey
 # only moderator and admin can through access
 
 
-def isModerator():
+def isAdminOrModerator():
     userKey = request.headers.get('User-Key')
     if userKey == None:
         return jsonify(apiResponse(401, 'Not authorized')), 401

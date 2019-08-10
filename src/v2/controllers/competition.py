@@ -7,12 +7,44 @@ from ..transformers.competition import transform
 from ..helpers.response import apiResponse
 from wtforms import Form, StringField, TextAreaField, FileField, validators, BooleanField
 from ..modules.file_upload import handleUpload
-from ..modules.sebangsa import postToSebangsa
+from ..modules.mail import sendEmail
+# from ..modules.sebangsa import postToSebangsa
 from ..config.sebangsa import SBS_API, SBS_COMMUNITY_ID, SBS_COMMUNITY_ROOM, SBS_NEWS_ROOM, SBS_PASSWORD, SBS_USERNAME
 
 import datetime
 import os
 import json
+
+EmailReport = """
+    <div class="">
+            <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 30px; padding-left: 30px; padding-top: 30px; padding-bottom: 15px;"><![endif]-->
+            <div style="color:#555555;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;line-height:120%; padding-right: 30px; padding-left: 30px; padding-top: 30px; padding-bottom: 15px;">
+                <div style="font-family:Montserrat, 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:12px;line-height:14px;color:#555555;text-align:left;">
+                <p style="margin: 0;font-size: 12px;line-height: 14px;text-align: center">
+                    <span style="font-size: 18px; line-height: 21px;">
+                    <strong>Ada Kiriman Kompetisi Baru</strong>
+                    </span>
+                </p>
+                </div>
+            </div>
+            <!--[if mso]></td></tr></table><![endif]-->
+            </div>
+
+            <div class="">
+            <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 30px;"><![endif]-->
+            <div style="color:#989898;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;line-height:120%; padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 30px;">
+                <div style="font-size:12px;line-height:14px;color:#989898;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;text-align:left;">
+                <p style="margin: 0;font-size: 14px;line-height: 17px;text-align: center">
+                    <a href="https://kompetisi.id/u/{}">{}</a> baru saja memasang kompetisi berjudul "{}", silahkan cek di <a href="https://kompetisi.id/super/competition/waiting">https://kompetisi.id/super/competition/waiting</a>
+                </p>
+                </div>
+            </div>
+            <!--[if mso]></td></tr></table><![endif]-->
+            </div>
+
+            <!--[if (!mso)&(!IE)]><!-->
+        </div>
+    """
 
 # class to validate post
 class CreateCompetitionValidator(Form):
@@ -108,6 +140,9 @@ class CompetitionApi(Resource):
             # insert into database competition table
             insertData(params)
 
+            # send report to moderator email
+
+
             # get lattest data of competition
             # latestCompetition = getSingleLatest()
             # postUrl = "https://kompetisi.id/competition/" + \
@@ -122,6 +157,14 @@ class CompetitionApi(Resource):
             #         "group_id": SBS_COMMUNITY_ID,
             #         "post": postUrl
             #     })
+
+            body = EmailReport.format(userdata["username"], userdata["username"], params["judul_kompetisi"])
+            
+            # if member add create/update competition
+            if userdata["level"] == "user" :
+                sendEmail('Ada Kompetisi Baru Dipasang - kompetisi.id',
+                body, ["kompetisiindonesia@gmail.com"])
+            
 
             return apiResponse(201, "kompetisi berhasil di tambahkan"), 201
         else:
@@ -271,6 +314,15 @@ class CompetitionDetailApi(Resource):
 
                         # insert into database competition table
                         updateData(params, id)
+
+                        body = EmailReport.format(userdata["username"], userdata["username"], params["judul_kompetisi"])
+
+                        print("userdata level---", userdata["level"])
+            
+                        # if member add create/update competition
+                        if userdata["level"] == "user" :
+                            sendEmail('Ada Kompetisi Baru Dipasang - kompetisi.id',
+                            body, ["kompetisiindonesia@gmail.com"])
 
                         return apiResponse(200, 'Kompetisi berhasil di update'), 200
                     else:

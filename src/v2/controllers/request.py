@@ -10,7 +10,7 @@ from ..modules.mail import sendEmail
 from ..models.request import getRequest, getRequestById, insertRequest, updateRequest, countRequest
 from ..helpers.response import apiResponse
 from ..transformers.request import transform
-from ..middlewares.auth import isModerator
+from ..middlewares.auth import isAdminOrModerator
 
 EmailThanksBody = """
 <div class="">
@@ -33,6 +33,37 @@ EmailThanksBody = """
             <div style="font-size:12px;line-height:14px;color:#989898;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;text-align:left;">
             <p style="margin: 0;font-size: 14px;line-height: 17px;text-align: center">
                 Kompetisi yang kamu kirim dengan judul "{}" akan divalidasi oleh moderator, kamu akan menerima email balasan berupa status aksi untuk kompetisi ini.
+            </p>
+            </div>
+        </div>
+        <!--[if mso]></td></tr></table><![endif]-->
+        </div>
+
+        <!--[if (!mso)&(!IE)]><!-->
+    </div>
+"""
+
+EmailReport = """
+<div class="">
+        <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 30px; padding-left: 30px; padding-top: 30px; padding-bottom: 15px;"><![endif]-->
+        <div style="color:#555555;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;line-height:120%; padding-right: 30px; padding-left: 30px; padding-top: 30px; padding-bottom: 15px;">
+            <div style="font-family:Montserrat, 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:12px;line-height:14px;color:#555555;text-align:left;">
+            <p style="margin: 0;font-size: 12px;line-height: 14px;text-align: center">
+                <span style="font-size: 18px; line-height: 21px;">
+                <strong>Ada Kiriman Kompetisi Baru</strong>
+                </span>
+            </p>
+            </div>
+        </div>
+        <!--[if mso]></td></tr></table><![endif]-->
+        </div>
+
+        <div class="">
+        <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 30px;"><![endif]-->
+        <div style="color:#989898;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;line-height:120%; padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 30px;">
+            <div style="font-size:12px;line-height:14px;color:#989898;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;text-align:left;">
+            <p style="margin: 0;font-size: 14px;line-height: 17px;text-align: center">
+                {} baru saja mengirimkan info kompetisi baru berjudul "{}", silahkan cek di <a href="https://kompetisi.id/super/requests">https://kompetisi.id/super/requests</a>
             </p>
             </div>
         </div>
@@ -153,7 +184,12 @@ class RequestApi(Resource):
             # ref: https://www.digitalocean.com/community/tutorials/how-to-use-string-formatters-in-python-3
             body = EmailThanksBody.format(params['nama'])
             sendEmail('Terimakasih Telah Mengirim Kompetisi - kompetisi.id',
-                      body, [params['email']])
+                body, [params['email']])
+
+            # send email report to moderator
+            body = EmailReport.format(params['email'], params['nama'])
+            sendEmail('Ada Kiriman Kompetisi baru - kompetisi.id',
+                body, ["kompetisiindonesia@gmail.com"])
 
             return apiResponse(201, 'Kompetisi kamu akan dicek oleh moderator, status selanjutkan akan kami kirim via email'), 201
         else:
@@ -221,7 +257,7 @@ api_request = Api(api_request_bp)
 # middlewares
 @api_request_bp.before_request
 def is_moderator():
-    return isModerator()
+    return isAdminOrModerator()
 
 # routes
 api_request.add_resource(RequestApi, '/v2/request')
