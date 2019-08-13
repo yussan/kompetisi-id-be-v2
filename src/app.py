@@ -9,7 +9,7 @@ from v2.controllers.competition import api_competition_detail_bp
 from v2.controllers.news_list import api_newslist_bp
 from v2.controllers.news import api_news_bp
 from v2.controllers.categories import api_categories_bp
-from v2.controllers.request import api_request_bp
+from v2.controllers.request import api_request_bp, api_request_super_bp
 from v2.controllers.test import api_test_bp
 from v2.controllers.auth import api_auth_bp
 from v2.controllers.user import api_user_bp
@@ -81,6 +81,10 @@ def create_app(environment=None):
         
     app.register_blueprint(
         api_request_bp
+    )
+
+    app.register_blueprint(
+        api_request_super_bp
     )
 
     app.register_blueprint(

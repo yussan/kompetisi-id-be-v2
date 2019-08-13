@@ -117,40 +117,11 @@ class FormValidator(Form):
 
 # controllers
 
-
 class FormActionValidator(Form):
     status = StringField('Status', [validators.Length(min=4, max=10)])
     message = StringField('Pesan', [validators.Length(min=4, max=300)])
 
-class RequestApi(Resource):
-
-    # function to get list request
-    def get(self):
-        Params = {}
-
-        limit = request.args.get('limit')
-        status = request.args.get('status')
-        lastid = request.args.get('lastid')
-
-        # parameter generator
-        if(limit):
-            Params['limit'] = limit
-        if(status):
-            Params['status'] = status
-        if(lastid):
-            Params['lastid'] = lastid
-
-        requestdata = []
-        result = getRequest(Params)
-
-        if len(result['data']) < 1:
-            return apiResponse(204), 200
-        else:
-            for n in result['data']:
-                requestdata.append(transform(n))
-
-            return apiResponse(200, 'ok', {'data': requestdata, 'count': result['count']}), 200
-
+class RequestSendApi(Resource):
     # function to add list request
     # TODO: validation input file
     def post(self):
@@ -195,8 +166,38 @@ class RequestApi(Resource):
         else:
             return apiResponse(400, 'formdata not valid'), 400
 
+    
+class RequestSuperApi(Resource):
 
-class RequestAction(Resource):
+    # function to get list request
+    def get(self):
+        Params = {}
+
+        limit = request.args.get('limit')
+        status = request.args.get('status')
+        lastid = request.args.get('lastid')
+
+        # parameter generator
+        if(limit):
+            Params['limit'] = limit
+        if(status):
+            Params['status'] = status
+        if(lastid):
+            Params['lastid'] = lastid
+
+        requestdata = []
+        result = getRequest(Params)
+
+        if len(result['data']) < 1:
+            return apiResponse(204), 200
+        else:
+            for n in result['data']:
+                requestdata.append(transform(n))
+
+            return apiResponse(200, 'ok', {'data': requestdata, 'count': result['count']}), 200
+
+
+class RequestSuperAction(Resource):
 
     # @isModerator
     def put(self, id):
@@ -233,7 +234,7 @@ class RequestAction(Resource):
             return apiResponse(204, 'data request tidak ditemukan'), 200
 
 
-class RequestApiCount(Resource):
+class RequestSuperApiCount(Resource):
 
     def get(self):
         countwaiting = countRequest('waiting')
@@ -252,14 +253,19 @@ class RequestApiCount(Resource):
 
 # blueprint initial
 api_request_bp = Blueprint('api_request', __name__)
+api_request_super_bp = Blueprint('api_request_super', __name__)
+
 api_request = Api(api_request_bp)
+api_request_super = Api(api_request_super_bp)
 
 # middlewares
-@api_request_bp.before_request
+@api_request_super_bp.before_request
 def is_moderator():
     return isAdminOrModerator()
 
 # routes
-api_request.add_resource(RequestApi, '/v2/request')
-api_request.add_resource(RequestApiCount, '/v2/request/count')
-api_request.add_resource(RequestAction, '/v2/request/action/<int:id>')
+api_request.add_resource(RequestSendApi, '/v2/request/send')
+
+api_request_super.add_resource(RequestSuperApi, '/v2/request')
+api_request_super.add_resource(RequestSuperApiCount, '/v2/request/count')
+api_request_super.add_resource(RequestSuperAction, '/v2/request/action/<int:id>')
