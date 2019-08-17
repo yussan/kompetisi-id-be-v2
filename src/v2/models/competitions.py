@@ -174,6 +174,16 @@ def getList(Params={}):
         s = s.where(Users.c.id_user == Params["user_id"])
         c = c.where(Users.c.id_user == Params["user_id"])
 
+    # filter by minimum date
+    if "min_deadline_date" in Params: 
+        s = s.where(Competition.c.deadline >= datetime.datetime.strptime(Params["min_deadline_date"], "%Y-%m-%d"))
+        c = c.where(Competition.c.deadline >= datetime.datetime.strptime(Params["min_deadline_date"], "%Y-%m-%d"))
+
+    # filter by maximum date
+    if "max_deadline_date" in Params: 
+        s = s.where(Competition.c.deadline <= datetime.datetime.strptime(Params["max_deadline_date"], "%Y-%m-%d"))
+        c = c.where(Competition.c.deadline <= datetime.datetime.strptime(Params["max_deadline_date"], "%Y-%m-%d"))
+
     # show or hidden draft
     if "show_draft" not in Params or Params["show_draft"] == False:
         s = s.where(or_(Competition.c.draft != "1",
