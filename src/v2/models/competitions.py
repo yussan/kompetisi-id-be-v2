@@ -73,7 +73,7 @@ select_column = [Competition.c.id_kompetisi, Competition.c.judul_kompetisi, Comp
                  Competition.c.draft,
                  MainCategory.c.id_main_kat, MainCategory.c.main_kat,
                  SubCategory.c.id_sub_kat, SubCategory.c.sub_kat,
-                 Users.c.username, Users.c.fullname, Users.c.moto, Users.c.level]
+                 Users.c.username, Users.c.fullname, Users.c.moto, Users.c.level, Users.c.avatar]
 
 select_column_competition_action = [
     CompetitionAction.c.id, CompetitionAction.c.like]
@@ -175,14 +175,18 @@ def getList(Params={}):
         c = c.where(Users.c.id_user == Params["user_id"])
 
     # filter by minimum date
-    if "min_deadline_date" in Params: 
-        s = s.where(Competition.c.deadline >= datetime.datetime.strptime(Params["min_deadline_date"], "%Y-%m-%d"))
-        c = c.where(Competition.c.deadline >= datetime.datetime.strptime(Params["min_deadline_date"], "%Y-%m-%d"))
+    if "min_deadline_date" in Params:
+        s = s.where(Competition.c.deadline >= datetime.datetime.strptime(
+            Params["min_deadline_date"], "%Y-%m-%d"))
+        c = c.where(Competition.c.deadline >= datetime.datetime.strptime(
+            Params["min_deadline_date"], "%Y-%m-%d"))
 
     # filter by maximum date
-    if "max_deadline_date" in Params: 
-        s = s.where(Competition.c.deadline <= datetime.datetime.strptime(Params["max_deadline_date"], "%Y-%m-%d"))
-        c = c.where(Competition.c.deadline <= datetime.datetime.strptime(Params["max_deadline_date"], "%Y-%m-%d"))
+    if "max_deadline_date" in Params:
+        s = s.where(Competition.c.deadline <= datetime.datetime.strptime(
+            Params["max_deadline_date"], "%Y-%m-%d"))
+        c = c.where(Competition.c.deadline <= datetime.datetime.strptime(
+            Params["max_deadline_date"], "%Y-%m-%d"))
 
     # show or hidden draft
     if "show_draft" not in Params or Params["show_draft"] == False:

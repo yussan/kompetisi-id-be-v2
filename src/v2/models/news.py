@@ -23,7 +23,7 @@ join_user = News.join(Users, News.c.author == Users.c.id_user)
 # ref: http://docs.sqlalchemy.org/en/latest/core/expression_api.html?highlight=label#sqlalchemy.sql.expression.label
 select_column = [News.c.id, News.c.title, News.c.content, News.c.status, News.c.image,
                  News.c.tag, News.c.tag, News.c.created_at, News.c.updated_at, News.c.draft,
-                 Users.c.username, Users.c.id_user, Users.c.moto]
+                 Users.c.username, Users.c.id_user, Users.c.moto, Users.c.avatar]
 
 
 def getList(Params={}):

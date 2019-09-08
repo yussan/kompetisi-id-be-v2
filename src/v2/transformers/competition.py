@@ -1,5 +1,6 @@
 from v2.helpers.encId import encId
 from v2.helpers.strings import generateTitleUrl
+from v2.transformers.user import transformAvatar
 # ref: http://docs.python-guide.org/en/latest/scenarios/json/
 import json
 import re
@@ -44,7 +45,8 @@ def transform(n):
             'username': n.username,
             'name': n.fullname,
             'moto': n.moto,
-            'level': n.level
+            'level': n.level,
+            'avatar': transformAvatar(n.avatar)
         },
         # ref teranary condition: https://stackoverflow.com/questions/394809/does-python-have-a-ternary-conditional-operator
         'announcement': json.loads(n.dataPengumuman) if n.dataPengumuman else [],

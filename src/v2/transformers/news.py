@@ -1,5 +1,6 @@
 from v2.helpers.strings import generateTitleUrl
 from v2.helpers.encId import encId
+from v2.transformers.user import transformAvatar
 import json
 import re
 import os
@@ -11,7 +12,8 @@ def transform(n):
         'author': {
             'id': n.id_user,
             'username': n.username,
-            'moto': n.moto
+            'moto': n.moto,
+            'avatar': transformAvatar(n.avatar)
         },
         'title': n.title.replace('&', ''),
         'nospace_title':  (generateTitleUrl(n.title)[0]).replace('&', ''),
