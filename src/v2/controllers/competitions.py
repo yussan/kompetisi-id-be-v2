@@ -34,8 +34,12 @@ class CompetitionListApi(Resource):
         is_guaranted = request.args.get('is_guaranted')
         is_popular = request.args.get('is_popular')
         by_me = request.args.get("by_me")
+
+        # query for calendar competition
         min_deadline_date = request.args.get("min_deadline_date")
         max_deadline_date = request.args.get("max_deadline_date")
+        min_announcement_date = request.args.get("min_announcement_date")
+        max_announcement_date = request.args.get("max_announcement_date")
 
         if(not limit):
             limit = 9
@@ -64,6 +68,10 @@ class CompetitionListApi(Resource):
             params['min_deadline_date'] = min_deadline_date
         if (max_deadline_date):
             params['max_deadline_date'] = max_deadline_date
+        if (min_announcement_date):
+            params['min_announcement_date'] = min_announcement_date
+        if (max_announcement_date):
+            params['max_announcement_date'] = max_announcement_date
 
         # get competitio by me (must logged in)
         userkey = request.headers.get('User-Key')

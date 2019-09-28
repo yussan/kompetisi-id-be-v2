@@ -140,9 +140,9 @@ def getList(Params={}):
     # filter by status
     if 'status' in Params:
         if Params['status'] == 'active':
-            s = s.where(and_(Competition.c.deadline >
+            s = s.where(and_(Competition.c.deadline >=
                              datetime.datetime.now(), Competition.c.status == "posted"))
-            c = c.where(and_(Competition.c.deadline >
+            c = c.where(and_(Competition.c.deadline >=
                              datetime.datetime.now(), Competition.c.status == "posted"))
         elif Params['status'] == 'waiting':
             s = s.where(Competition.c.status == "waiting")
@@ -174,19 +174,33 @@ def getList(Params={}):
         s = s.where(Users.c.id_user == Params["user_id"])
         c = c.where(Users.c.id_user == Params["user_id"])
 
-    # filter by minimum date
+    # filter by minimum deadline date
     if "min_deadline_date" in Params:
         s = s.where(Competition.c.deadline >= datetime.datetime.strptime(
             Params["min_deadline_date"], "%Y-%m-%d"))
         c = c.where(Competition.c.deadline >= datetime.datetime.strptime(
             Params["min_deadline_date"], "%Y-%m-%d"))
 
-    # filter by maximum date
+    # filter by minimum announcement date
+    if "min_announcement_date" in Params:
+        s = s.where(Competition.c.pengumuman >= datetime.datetime.strptime(
+            Params["min_announcement_date"], "%Y-%m-%d"))
+        c = c.where(Competition.c.pengumuman >= datetime.datetime.strptime(
+            Params["min_announcement_date"], "%Y-%m-%d"))
+
+    # filter by maximum deadline date
     if "max_deadline_date" in Params:
         s = s.where(Competition.c.deadline <= datetime.datetime.strptime(
             Params["max_deadline_date"], "%Y-%m-%d"))
         c = c.where(Competition.c.deadline <= datetime.datetime.strptime(
             Params["max_deadline_date"], "%Y-%m-%d"))
+
+    # filter by maximum announcement date
+    if "max_announcement_date" in Params:
+        s = s.where(Competition.c.pengumuman <= datetime.datetime.strptime(
+            Params["max_announcement_date"], "%Y-%m-%d"))
+        c = c.where(Competition.c.pengumuman <= datetime.datetime.strptime(
+            Params["max_announcement_date"], "%Y-%m-%d"))
 
     # show or hidden draft
     if "show_draft" not in Params or Params["show_draft"] == False:
