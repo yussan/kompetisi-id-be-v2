@@ -20,6 +20,7 @@ from v2.controllers.sebangsa import api_sebangsa_bp
 from v2.controllers.counter import api_counter_bp
 from v2.controllers.settings import api_settings_bp
 from v2.controllers.forgot_password import api_forgot_password_bp
+from v2.controllers.competition_subscription import api_competition_subscription_bp
 
 mail = Mail()
 
@@ -133,6 +134,10 @@ def create_app(environment=None):
 
     app.register_blueprint(
         api_forgot_password_bp
+    )
+
+    app.register_blueprint(
+        api_competition_subscription_bp
     )
     # end of blueprint registration
 
