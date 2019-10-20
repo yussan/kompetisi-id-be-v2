@@ -27,7 +27,7 @@ class CompetitionSubscribe(Resource):
           return apiResponse(403, 'akun tidak ditemukan'), 403
 
       Params = {
-        'competition_id': request.form.get('competition_id'),
+        'competition_id': decId(request.form.get('competition_id')),
         'user_id': userdata['id_user']
       } 
 
@@ -59,11 +59,14 @@ class CompetitionSubscribe(Resource):
             return apiResponse(403, 'akun tidak ditemukan'), 403
 
         Params = {
-          'competition_id': request.form.get('competition_id'),
+          'competition_id': decId(request.form.get('competition_id')),
           'user_id': userdata['id_user']
         }
+        
         subscribeAction(Params)
-        return apiResponse(204, 'Aksi berhasil'), 200
+
+        # response as action success
+        return apiResponse(201, 'Aksi berhasil'), 201
 
 api_competition_subscription_bp = Blueprint('api_competition_subscription', __name__)
 
