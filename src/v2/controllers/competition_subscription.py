@@ -27,16 +27,24 @@ class CompetitionSubscribe(Resource):
           return apiResponse(403, 'akun tidak ditemukan'), 403
 
       Params = {
-        'competition_id': decId(request.form.get('competition_id')),
         'user_id': userdata['id_user']
       } 
 
+      # custom params for http query
+      lastid = request.args.get('lastid')
+      limit = request.args.get('limit')
+
+      if lastid != None : Params['lastid'] = decId(lastid)
+      if limit != None : Params['limit'] = limit
+
+      # get data subscribed competitions from database
       competitions = subscribeList(Params)
 
       response = {}
       response['count'] = competitions['count'] if competitions['count'] else 0
 
-      if(len(competitions['data']) > 0):
+
+      if len(competitions['data']) > 0:
           comdata = []
           for n in competitions['data']:
               comdata.append(dict(transformCompetition(n)))

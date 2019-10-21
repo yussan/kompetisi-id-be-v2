@@ -28,16 +28,22 @@ def checkHaveSubscribedCompetition(Params):
 
 # function to get list subscribed competition by user_id
 # list from competition list
-def subscribeList(user_id):
-  orderby = CompetitionSubscription.c.id_kompetisi_langganan.desc()
-  limit = 20
+def subscribeList(Params):
+
+  orderby = Competition.c.id_kompetisi.desc()
+  limit = Params['limit'] if 'limit' in Params else 10
 
   s = select(select_column_competition)\
     .select_from(join_competition_subscription)\
-      .order_by(orderby)\
-        .limit(limit)
+      .where(CompetitionSubscription.c.id_user == Params["user_id"])\
+        .order_by(orderby)\
+          .limit(limit)
   c = select([func.count().label('total')])\
-    .select_from(join_competition_subscription)
+    .select_from(join_competition_subscription)\
+      .where(CompetitionSubscription.c.id_user == Params["user_id"])
+
+  if 'lastid' in Params:
+    s = s.where(Competition.c.id_kompetisi < Params['lastid'])
 
   res = connection.execute(s)
   rescount = connection.execute(c)
