@@ -156,16 +156,16 @@ def dashboardSidebarCounter(user_id):
         and_(Competition.c.status == "posted", Users.c.id_user == user_id))
     qLiveC = qCountC.where(and_(Competition.c.status == "posted", Users.c.id_user ==
                                 user_id, Competition.c.deadline > datetime.datetime.now()))
-    qSubscribedC = select([func.count().label('total')])\
-        .select_from(CompetitionSubscription)\
-            .where(CompetitionSubscription.c.id_user == user_id)
+    # qSubscribedC = select([func.count().label('total')])\
+    #     .select_from(CompetitionSubscription)\
+    #         .where(CompetitionSubscription.c.id_user == user_id)
 
     # execute query
     rWaitingC = connection.execute(qWaitingC)
     rPostedC = connection.execute(qPostedC)
     rRejectC = connection.execute(qRejectC)
     rLiveC = connection.execute(qLiveC)
-    rSubscribedC = connection.execute(qSubscribedC)
+    # rSubscribedC = connection.execute(qSubscribedC)
 
     return {
         "competition": {
@@ -173,7 +173,7 @@ def dashboardSidebarCounter(user_id):
             "posted": rPostedC.fetchone()["total"],
             "rejected": rRejectC.fetchone()["total"],
             "live": rLiveC.fetchone()["total"],
-            "subscribed": rSubscribedC.fetchone()["total"],
+            "subscribed": 0,
             "liked": 0,
         }
     }
