@@ -24,10 +24,11 @@ def transform(n):
 
     return nextdata
 
+
 def transformAvatar(avatar):
     # generate avatar
     if not avatar:
-       avatar = {
+        avatar = {
             "small": "/assets/4.2/img/avatar-default.jpg",
             "original": "/assets/4.2/img/avatar-default.jpg",
         }

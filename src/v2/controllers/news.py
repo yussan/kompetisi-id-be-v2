@@ -9,14 +9,19 @@ from ..models.users import getDataByUserKey
 from ..modules.file_upload import handleUpload
 from wtforms import Form, StringField, TextAreaField, validators
 
-import json 
+import json
 import os
 import datetime
 
+
 class CreateNewsValidator(Form):
-    title = StringField("Judul Berita", [validators.required(), validators.length(min=4, max=100)])
-    content = TextAreaField("Konten", [validators.required(), validators.length(min=4, max=5000)])
-    tags = StringField("Tags", [validators.required(), validators.length(min=4, max=2000)])
+    title = StringField(
+        "Judul Berita", [validators.required(), validators.length(min=4, max=100)])
+    content = TextAreaField(
+        "Konten", [validators.required(), validators.length(min=4, max=5000)])
+    tags = StringField(
+        "Tags", [validators.required(), validators.length(min=4, max=2000)])
+
 
 class News(Resource):
     # controller to get news bew news id
@@ -27,7 +32,7 @@ class News(Resource):
 
         if(data):
             # get related post
-            ParamsRelated = {"status": ["published"], "notid": id, "limit": 3}
+            ParamsRelated = {"status": ["published"], "notid": id, "limit": 4}
             related = getList(ParamsRelated)
             relateddata = []
             for n in related["data"]:
@@ -58,40 +63,44 @@ class News(Resource):
                     form = CreateNewsValidator(request.form)
 
                     if form.validate():
-                      # form is valid and ready to the mysql query
-                      params = {} 
-                      # get current timestamp
-                      now = datetime.datetime.now()
+                        # form is valid and ready to the mysql query
+                        params = {}
+                        # get current timestamp
+                        now = datetime.datetime.now()
 
-                      # check is upload new image
-                      if "image" in request.files:
-                          upload_dir_db = '/news/' + userdata["username"] + '/'+ str(now.year)
-                          upload_dir = os.environ.get(
-                              'MEDIA_DIR', '../media-kompetisiid') + upload_dir_db
-                          input_poster = request.files['image']
-                          poster = handleUpload(upload_dir, input_poster, upload_dir_db)
-                          # return as json stringify
-                          params["image"] = json.dumps(poster)
+                        # check is upload new image
+                        if "image" in request.files:
+                            upload_dir_db = '/news/' + \
+                                userdata["username"] + '/' + str(now.year)
+                            upload_dir = os.environ.get(
+                                'MEDIA_DIR', '../media-kompetisiid') + upload_dir_db
+                            input_poster = request.files['image']
+                            poster = handleUpload(
+                                upload_dir, input_poster, upload_dir_db)
+                            # return as json stringify
+                            params["image"] = json.dumps(poster)
 
-                      params["title"] = request.form.get("title")
-                      params["content"] = request.form.get("content")
-                      params["tag"] = request.form.get("tags")
-                      params["updated_at"] = now.strftime('%Y-%m-%d %H:%M:%S')
-                      params["draft"] = "1" if request.form.get("draft") == "true" else "0"
+                        params["title"] = request.form.get("title")
+                        params["content"] = request.form.get("content")
+                        params["tag"] = request.form.get("tags")
+                        params["updated_at"] = now.strftime(
+                            '%Y-%m-%d %H:%M:%S')
+                        params["draft"] = "1" if request.form.get(
+                            "draft") == "true" else "0"
 
-                      # start update query
-                      updateNews(params, id)
+                        # start update query
+                        updateNews(params, id)
 
-                      return apiResponse(200, "berita update berita"), 200
+                        return apiResponse(200, "berita update berita"), 200
                     else:
-                      # form is not valid
-                      # convert error message to string
-                      error_messages = ""
-                      for key, val in form.errors.items():
-                          error_messages += key + ": " + val[0] + " "
-                          
-                      # get validation error message
-                      return apiResponse(400, error_messages), 400
+                        # form is not valid
+                        # convert error message to string
+                        error_messages = ""
+                        for key, val in form.errors.items():
+                            error_messages += key + ": " + val[0] + " "
+
+                        # get validation error message
+                        return apiResponse(400, error_messages), 400
         else:
             return apiResponse(204, "berita tidak ditemukan"), 200
 

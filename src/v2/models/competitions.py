@@ -234,7 +234,7 @@ def getRelated(id):
         .where(Competition.c.status == "posted")\
         .where(or_(Competition.c.draft != "1", Competition.c.draft == None))\
         .where(Competition.c.id_kompetisi != id)\
-        .limit(3)
+        .limit(4)
 
     # generate query to get data
     res = connection.execute(s)
