@@ -247,7 +247,7 @@ def getRelated(id):
         }
     else:
         s2 = select(select_column).order_by(
-            Competition.c.id_kompetisi.desc()).select_from(join_sub_cat).limit(3 - totaldata)
+            Competition.c.id_kompetisi.desc()).select_from(join_sub_cat).limit(4 - totaldata)
         s2 = s2.where(Competition.c.id_kompetisi != id).where(
             Competition.c.deadline > datetime.datetime.now()).where(Competition.c.status == "posted")\
             .where(or_(Competition.c.draft != "1", Competition.c.draft == None))
