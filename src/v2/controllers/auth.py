@@ -23,7 +23,7 @@ class Login(Resource):
         # ref md5 hash: https://stackoverflow.com/a/5297495/2780875
         params = {
             "username": request.form.get("username"),
-            "password": hashlib.md5(request.form.get("password")).hexdigest()
+            "password": hashlib.md5(request.form.get("password").encode("utf-8")).hexdigest()
         }
 
         result = login(params)

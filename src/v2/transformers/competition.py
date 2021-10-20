@@ -1,6 +1,6 @@
-from v2.helpers.encId import encId
-from v2.helpers.strings import generateTitleUrl
-from v2.transformers.user import transformAvatar
+from ..helpers.encId import encId
+from ..helpers.strings import generateTitleUrl
+from ..transformers.user import transformAvatar
 # ref: http://docs.python-guide.org/en/latest/scenarios/json/
 import json
 import re
