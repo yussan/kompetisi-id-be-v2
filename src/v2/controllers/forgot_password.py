@@ -5,7 +5,7 @@ from ..modules.mail import sendEmail
 from ..helpers.response import apiResponse
 from ..modules.crypto import generateKIToken, validationKIToken, EMAIL_VERIFICATION_KEY
 from ..models.users import updateDataByEmail, checkEmail
-import md5
+import hashlib
 
 
 class ForgotPasswordValidator(Form):
@@ -30,7 +30,7 @@ class ForgotPassword(Resource):
             email = request.form.get("email")
 
             # check is email available
-            resCheckEmail= checkEmail(email)
+            resCheckEmail = checkEmail(email)
 
             if resCheckEmail is not None:
                 # generate new forgot password token
@@ -50,10 +50,10 @@ class ForgotPassword(Resource):
                 </p>
                 '''.format(link=change_password_link)
                 sendEmail('Lanjutkan Untuk Ganti Password - Kompetisi Id',
-                        email_body, [email])
+                          email_body, [email])
 
                 return apiResponse(200, "Kami telah mengirim link ganti password ke email kamu"), 200
-            else :
+            else:
                 return apiResponse(400, "Email tidak terdaftar di Kompetisi Id"), 400
         else:
             error_messages = ""
@@ -80,9 +80,8 @@ class ChangePassword(Resource):
                 password = request.form.get("password")
                 email = tokenValidation["value"]
 
-                # hash password and change password by email 
-                newpassword = md5.new()
-                newpassword.update(password)
+                # hash password and change password by email
+                newpassword = hashlib.md5(password)
 
                 updateDataByEmail({"password": newpassword.hexdigest()}, email)
 

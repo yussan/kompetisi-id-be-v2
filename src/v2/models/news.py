@@ -1,5 +1,5 @@
 from ..modules.db import connection
-from users import Users
+from .users import Users
 from sqlalchemy import Table, Column, MetaData, select, func, desc, BIGINT, VARCHAR, DATETIME, Enum, TEXT, or_
 
 metadata = MetaData()
@@ -38,14 +38,14 @@ def getList(Params={}):
     # generate where
     if 'limit' in Params:
         s = s.limit(Params['limit'])
-   
+
     if 'notid' in Params:
         s = s.where(News.c.id != Params['notid'])
         c = c.where(News.c.id != Params['notid'])
-   
+
     if 'lastid' in Params:
         s = s.where(News.c.id < Params['lastid'])
-   
+
     if 'status' in Params:
         if 'draft' in Params['status']:
             s = s.where(News.c.status == 'draft')
@@ -53,7 +53,7 @@ def getList(Params={}):
         if 'published' in Params['status']:
             s = s.where(News.c.status == 'post')
             c = c.where(News.c.status == 'post')
-   
+
     if 'tag' in Params:
         s = s.where(News.c.tag.like('%'+Params['tag']+'%'))
         c = c.where(News.c.tag.like('%'+Params['tag']+'%'))
@@ -62,7 +62,7 @@ def getList(Params={}):
     if "show_draft" not in Params or Params["show_draft"] == False:
         s = s.where(or_(News.c.draft != "1", News.c.draft == None))
         c = c.where(or_(News.c.draft != "1", News.c.draft == None))
-    
+
     if "draft" in Params:
         if Params["draft"] == True:
             s = s.where(or_(News.c.draft == "1"))
