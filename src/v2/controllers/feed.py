@@ -57,9 +57,6 @@ class FeedNews(Resource):
 
         for n in news["data"]:
             n = NewsTransformer.transform(n)
-            n["title"] = re.sub(r'[^\w]', '', n["title"])
-
-            print(n)
 
             link = "https://kompetisi.id/news/" + n["id"] + "/" + n["nospace_title"]
             
