@@ -1,7 +1,6 @@
 from flask import Blueprint, Response
 from flask_restful import Resource, Api
-from time import localtime, gmtime, strftime
-from v2.helpers.strings import stripTags
+from time import localtime, strftime
 import v2.models.competitions as CompetitionModel
 import v2.models.news as NewsModel
 from v2.modules.xml_template import feedTemplate
@@ -29,12 +28,13 @@ class FeedCompetition(Resource):
             item += """
                 <item>
                 <title>""" + n["title"] + """</title>
-                <description>Selengkapnya di """ + link + """ . """ + n["sort"] + """</description>
-                <link>https://kompetisi.id/competition/""" + link + """</link>
-                <guid>https://kompetisi.id/competition/""" + link + """</guid>
+                <description>Selengkapnya di """ + link + """</description>
+                <link>""" + link + """</link>
+                <guid>""" + link + """</guid>
                 <category domain="https://kompetisi.id">""" + "/".join(n["tag"].split(",")) + """</category>
                 <pubDate>""" + strftime("%a, %d %b %Y %H:%M:%S +0000", localtime(float(n["created_at"]))) + """</pubDate>
                 <comments>https://kompetisi.id/competition/""" + n["id"] + """/comments/""" + n["nospace_title"] + """</comments>
+                <media:content url=\"""" + n["poster"]["original"] + """\" type="image/*" medium="image/jpeg" duration="10"> </media:content>
                 </item>
             """
 
@@ -59,6 +59,8 @@ class FeedNews(Resource):
             n = NewsTransformer.transform(n)
             n["title"] = re.sub(r'[^\w]', '', n["title"])
 
+            print(n)
+
             link = "https://kompetisi.id/news/" + n["id"] + "/" + n["nospace_title"]
             
             item += """
@@ -70,6 +72,7 @@ class FeedNews(Resource):
                 <category domain="https://kompetisi.id">""" + "/".join(n["tag"].split(",")) + """</category>
                 <pubDate>""" + strftime("%a, %d %b %Y %H:%M:%S +0000", localtime(float(n["created_at"]))) + """</pubDate>
                 <comments>https://kompetisi.id/news/""" + n["id"] + """/""" + n["nospace_title"] + """</comments>
+                <media:content url=\"""" + n['image']['original']  + """\" type="image/*" medium="image/jpeg" duration="10"> </media:content>
                 </item>
             """
         return Response(feedTemplate(item, {
