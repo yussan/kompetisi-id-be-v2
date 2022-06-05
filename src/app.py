@@ -40,8 +40,10 @@ def create_app(environment=None):
     # flask mail config
     app.config['MAIL_SERVER'] = os.environ.get(
         'MAIL_SERVER', 'smtp.sendgrid.net')
-    app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', 'xyussanx')
-    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'Rahasia20')
+    app.config['MAIL_PORT'] = os.environ.get(
+        'MAIL_PORT', 25)
+    app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', '')
+    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', '')
     app.config['MAIL_DEFAULT_SENDER'] = os.environ.get(
         'MAIL_DEFAULT_SENDER', 'noreply@kompetisi.id')
 
@@ -79,7 +81,7 @@ def create_app(environment=None):
     app.register_blueprint(
         api_categories_bp
     )
-        
+
     app.register_blueprint(
         api_request_bp
     )
