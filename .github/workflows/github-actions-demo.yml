@@ -14,4 +14,4 @@ jobs:
         host: ${{ secrets.PROD_SSH_HOST }}
         user: ${{ secrets.PROD_SSH_USER }}
         key: ${{ secrets.PROD_SSH_KEY}}
-        command: "cd \"/home/webdev/Api/kompetisiid-api-python\" && git pull origin master && pm2 restart api-ki-42"
+        command: cd "/home/webdev/Api/kompetisiid-api-python" && git pull origin master && pm2 restart api-ki-42
