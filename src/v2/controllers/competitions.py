@@ -6,8 +6,8 @@ from ..helpers.response import apiResponse
 from ..helpers.encId import decId
 from ..transformers.competition import transform
 
-def beforeBlueprint():
-    print("before blueprint...")
+# def beforeBlueprint():
+    # print("before blueprint...")
 
 
 class CompetitionListApi(Resource):
@@ -164,4 +164,4 @@ api_competitions.add_resource(CompetitionListApi, '/v2/competitions')
 api_competitions.add_resource(CompetitionLiked, '/v2/competitions/liked')
 api_competitions.add_resource(
     CompetitionRelatedApi, '/v2/competitions/related/<encid>')
-api_competitions_bp.before_request(beforeBlueprint)
+# api_competitions_bp.before_request(beforeBlueprint)
