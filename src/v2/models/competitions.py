@@ -372,7 +372,6 @@ def updateData(params, id):
 
 
 def checkHaveLikedCompetition(params):
-
     query = select(select_column_competition_action).select_from(
         CompetitionAction).where(and_(
             CompetitionAction.c.id_kompetisi == params["competition_id"],

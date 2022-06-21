@@ -1,6 +1,5 @@
 import os
 from flask import Flask, jsonify
-from flask_mail import Mail
 from v2.helpers.response import apiResponse
 
 # controllers
@@ -22,7 +21,6 @@ from v2.controllers.settings import api_settings_bp
 from v2.controllers.forgot_password import api_forgot_password_bp
 from v2.controllers.competition_subscription import api_competition_subscription_bp
 
-mail = Mail()
 
 # app init
 
@@ -37,15 +35,6 @@ def create_app(environment=None):
     app.config['FLASK_ENV'] = os.environ.get('FLASK_ENV', 'development')
     app.config['FLASK_DEBUG'] = os.environ.get('FLASK_DEBUG', 'true')
 
-    # flask mail config
-    app.config['MAIL_SERVER'] = os.environ.get(
-        'MAIL_SERVER', 'smtp.sendgrid.net')
-    app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', 'xyussanx')
-    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'Rahasia20')
-    app.config['MAIL_DEFAULT_SENDER'] = os.environ.get(
-        'MAIL_DEFAULT_SENDER', 'noreply@kompetisi.id')
-
-    mail.init_app(app)
     # end of environment conf
 
     # handle 404
@@ -79,7 +68,7 @@ def create_app(environment=None):
     app.register_blueprint(
         api_categories_bp
     )
-        
+
     app.register_blueprint(
         api_request_bp
     )

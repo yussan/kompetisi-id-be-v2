@@ -117,9 +117,11 @@ class FormValidator(Form):
 
 # controllers
 
+
 class FormActionValidator(Form):
     status = StringField('Status', [validators.Length(min=4, max=10)])
     message = StringField('Pesan', [validators.Length(min=4, max=300)])
+
 
 class RequestSendApi(Resource):
     # function to add list request
@@ -153,20 +155,20 @@ class RequestSendApi(Resource):
 
             # email thanks
             # ref: https://www.digitalocean.com/community/tutorials/how-to-use-string-formatters-in-python-3
-            body = EmailThanksBody.format(params['nama'])
-            sendEmail('Terimakasih Telah Mengirim Kompetisi - kompetisi.id',
-                body, [params['email']])
+            # body = EmailThanksBody.format(params['nama'])
+            # sendEmail('Terimakasih Telah Mengirim Kompetisi - kompetisi.id',
+            #     body, [params['email']])
 
             # send email report to moderator
             body = EmailReport.format(params['email'], params['nama'])
             sendEmail('Ada Kiriman Kompetisi baru - kompetisi.id',
-                body, ["kompetisiindonesia@gmail.com"])
+                      body, ["kompetisiindonesia@gmail.com"])
 
             return apiResponse(201, 'Kompetisi kamu akan dicek oleh moderator, status selanjutkan akan kami kirim via email'), 201
         else:
             return apiResponse(400, 'formdata not valid'), 400
 
-    
+
 class RequestSuperApi(Resource):
 
     # function to get list request
@@ -259,13 +261,17 @@ api_request = Api(api_request_bp)
 api_request_super = Api(api_request_super_bp)
 
 # middlewares
+
+
 @api_request_super_bp.before_request
 def is_moderator():
     return isAdminOrModerator()
+
 
 # routes
 api_request.add_resource(RequestSendApi, '/v2/request/send')
 
 api_request_super.add_resource(RequestSuperApi, '/v2/request')
 api_request_super.add_resource(RequestSuperApiCount, '/v2/request/count')
-api_request_super.add_resource(RequestSuperAction, '/v2/request/action/<int:id>')
+api_request_super.add_resource(
+    RequestSuperAction, '/v2/request/action/<int:id>')

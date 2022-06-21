@@ -192,6 +192,10 @@ class CompetitionDetailApi(Resource):
     def get(self, encid):
         id = decId(encid)
 
+        # get headers data
+        userkey = request.headers.get('User-Key')
+        print("============userKey============ \n",  request.headers, "\n ===============================")
+
         # generate paramaters
         params = {
             'no_count': request.args.get('no_count') == '1'
@@ -207,7 +211,6 @@ class CompetitionDetailApi(Resource):
             actionStats = getTotalActionCompetition(id)
             competition['data']['stats']['likes'] = actionStats['likes']
 
-            userkey = request.headers.get('User-Key')
             userdata = {}
             if userkey != None:
                 userdata = getDataByUserKey(userkey)
@@ -332,8 +335,6 @@ class CompetitionDetailApi(Resource):
 
                         body = EmailReport.format(
                             userdata['username'], userdata['username'], params['judul_kompetisi'])
-
-                        print('userdata level---', userdata['level'])
 
                         # if member add create/update competition
                         if userdata['level'] == 'user':
