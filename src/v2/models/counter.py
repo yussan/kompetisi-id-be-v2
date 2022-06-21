@@ -1,13 +1,12 @@
 from ..modules.db import connection
 from ..modules.db import connection
 from ..modules.number import convertToRelativeCurrency
-from competitions import Competition, join_sub_cat
-from news import News
-from request import Request
-from competitions import Competition
-from competitions_subscription import CompetitionSubscription
-from users import Users
-from news import News, join_user
+from .news import News
+from .request import Request
+from .competitions import Competition, join_sub_cat
+from .competitions_subscription import CompetitionSubscription
+from .users import Users
+from .news import News, join_user
 from sqlalchemy import select, func, and_, or_
 import datetime
 import calendar
@@ -90,8 +89,10 @@ def superSidebarCounter():
         Users)
 
     # get count user by condition
-    qVerifiedU = qCountU.where( and_(Users.c.status == "active", Users.c.is_verified == 1))
-    qUnverifiedU = qCountU.where( and_(Users.c.status == "active")).where( or_(Users.c.is_verified != 1, Users.c.is_verified == None))
+    qVerifiedU = qCountU.where(
+        and_(Users.c.status == "active", Users.c.is_verified == 1))
+    qUnverifiedU = qCountU.where(and_(Users.c.status == "active")).where(
+        or_(Users.c.is_verified != 1, Users.c.is_verified == None))
     qBannedU = qCountU.where(Users.c.status == "banned")
 
     # execute query

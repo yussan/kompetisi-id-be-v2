@@ -2,7 +2,7 @@ from time import gmtime, strftime
 
 def feedTemplate(items = '', params={}):
   # ref: strftime https://docs.python.org/3.3/library/time.html?highlight=time.strftime#time.strftime
-  return """<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  return """<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
       <channel>
         <title>""" + (params["title"] if "title" in params else "Kompetisi Id Feed")  + """</title>
         <description>""" + (params["desc"] if "desc" in params else "Selalu ada hadiah setiap hari")  + """</description>

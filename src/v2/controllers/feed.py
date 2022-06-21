@@ -1,13 +1,12 @@
 from flask import Blueprint, Response
 from flask_restful import Resource, Api
-from time import localtime, gmtime, strftime
-from v2.helpers.strings import stripTags
+from time import localtime, strftime
 import v2.models.competitions as CompetitionModel
 import v2.models.news as NewsModel
 from v2.modules.xml_template import feedTemplate
 import v2.transformers.competition as CompetitionTransformer
 import v2.transformers.news as NewsTransformer
-
+import re
 
 class FeedCompetition(Resource):
     def get(self):
@@ -21,17 +20,21 @@ class FeedCompetition(Resource):
         # looping xml items
         for n in competitions['data']:
             n = CompetitionTransformer.transform(n)
+
+            link = "https://kompetisi.id/c/" + n["id"]
+
             # ref: split and join https://www.hackerrank.com/challenges/python-string-split-and-join/problem
             # ref: convert epoch to strftime
             item += """
                 <item>
                 <title>""" + n["title"] + """</title>
-                <description>""" + n["sort"] + """</description>
-                <link>https://kompetisi.id/competition/""" + n["id"] + """/regulations/""" + n["nospace_title"] + """</link>
-                <guid>https://kompetisi.id/competition/""" + n["id"] + """/regulations/""" + n["nospace_title"] + """</guid>
+                <description>Selengkapnya di """ + link + """</description>
+                <link>""" + link + """</link>
+                <guid>""" + link + """</guid>
                 <category domain="https://kompetisi.id">""" + "/".join(n["tag"].split(",")) + """</category>
                 <pubDate>""" + strftime("%a, %d %b %Y %H:%M:%S +0000", localtime(float(n["created_at"]))) + """</pubDate>
                 <comments>https://kompetisi.id/competition/""" + n["id"] + """/comments/""" + n["nospace_title"] + """</comments>
+                <media:content url=\"""" + n["poster"]["original"] + """\" type="image/*" medium="image/jpeg" duration="10"> </media:content>
                 </item>
             """
 
@@ -54,15 +57,19 @@ class FeedNews(Resource):
 
         for n in news["data"]:
             n = NewsTransformer.transform(n)
+
+            link = "https://kompetisi.id/news/" + n["id"] + "/" + n["nospace_title"]
+            
             item += """
                 <item>
                 <title>""" + n["title"] + """</title>
-                <description>""" + stripTags(n["content"]) + """</description>
-                <link>https://kompetisi.id/news/""" + n["id"] + """/""" + n["nospace_title"] + """</link>
-                <guid>https://kompetisi.id/news/""" + n["id"] + """/""" + n["nospace_title"] + """</guid>
+                <description>Selengkapnya di """ + link + """"</description>
+                <link>""" + link  + """</link>
+                <guid>""" + link + """/""" + n["nospace_title"] + """</guid>
                 <category domain="https://kompetisi.id">""" + "/".join(n["tag"].split(",")) + """</category>
                 <pubDate>""" + strftime("%a, %d %b %Y %H:%M:%S +0000", localtime(float(n["created_at"]))) + """</pubDate>
                 <comments>https://kompetisi.id/news/""" + n["id"] + """/""" + n["nospace_title"] + """</comments>
+                <media:content url=\"""" + n['image']['original']  + """\" type="image/*" medium="image/jpeg" duration="10"> </media:content>
                 </item>
             """
         return Response(feedTemplate(item, {

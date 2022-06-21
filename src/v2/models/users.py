@@ -2,7 +2,7 @@ from ..modules.db import connection
 from ..modules.mail import sendEmail
 from ..modules.crypto import generateEmailVerifToken
 import datetime
-import md5
+import hashlib
 from sqlalchemy import Table, Column, MetaData, join, outerjoin, BIGINT, INT, TEXT, VARCHAR, DATETIME, select, or_, and_, update
 
 metadata = MetaData()
@@ -75,28 +75,33 @@ EmailVerificationBody = """
     </div>
 """
 
-def getUsers(params = {}):
+
+def getUsers(params={}):
     query = select(select_column_user)\
         .select_from(join_user)\
         .limit(20)\
         .order_by(Users.c.id_user.desc())
 
-    if "banned" in params and params["banned"] == True: 
+    if "banned" in params and params["banned"] == True:
         query = query.where(Users.c.status == "banned")
 
-    if "verified" in params and params["verified"] == True: 
-        query = query.where( and_(Users.c.status == "active", Users.c.is_verified == 1))
+    if "verified" in params and params["verified"] == True:
+        query = query.where(
+            and_(Users.c.status == "active", Users.c.is_verified == 1))
 
-    if "unverified" in params and params["unverified"] == True: 
-        query = query.where( and_(Users.c.status == "active"))
-        query = query.where( or_(Users.c.is_verified != 1, Users.c.is_verified == None))
+    if "unverified" in params and params["unverified"] == True:
+        query = query.where(and_(Users.c.status == "active"))
+        query = query.where(or_(Users.c.is_verified != 1,
+                                Users.c.is_verified == None))
 
     if "lastid" in params:
         query = query.where(Users.c.id_user < params["lastid"])
-    
+
     return connection.execute(query).fetchall()
 
 # function to get userdata by user id
+
+
 def getDataById(userid):
     query = select(select_column_user)\
         .select_from(join_user)\
@@ -105,6 +110,8 @@ def getDataById(userid):
     return connection.execute(query).fetchone()
 
 # function to get user profile by userkey
+
+
 def getDataByUserKey(userkey):
     query = select(select_column_user)\
         .select_from(join_user)\
@@ -113,6 +120,8 @@ def getDataByUserKey(userkey):
     return connection.execute(query).fetchone()
 
 # function to get user profile by username
+
+
 def getDataByUsername(username):
     query = select(select_column_user)\
         .select_from(join_user)\
@@ -121,6 +130,8 @@ def getDataByUsername(username):
     return connection.execute(query).fetchone()
 
 # function check is username available
+
+
 def checkUsername(username):
     query = select([Users.c.id_user])\
         .select_from(Users)\
@@ -129,6 +140,8 @@ def checkUsername(username):
     return connection.execute(query).fetchone()
 
 # function to check is availbale same email in table user
+
+
 def checkEmail(email):
     query = select([Users.c.id_user])\
         .select_from(Users)\
@@ -137,6 +150,8 @@ def checkEmail(email):
     return connection.execute(query).fetchone()
 
 # function to insert data new user by register params
+
+
 def register(params):
     # insert data to the db
     # ref: http://strftime.org/
@@ -144,8 +159,7 @@ def register(params):
     # ref: http://flask.pocoo.org/snippets/37/
     # cur = connection.db.cursor()
 
-    password = md5.new()
-    password.update(params["password"])
+    password = hashlib.md5(params["password"])
 
     current_date = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -159,7 +173,7 @@ def register(params):
     params["password"] = password.hexdigest()
     params["level"] = "user"
 
-    # insert to database 
+    # insert to database
     connection.execute(Users.insert().values(params))
 
     print("register params", params)
@@ -172,18 +186,19 @@ def register(params):
     # get user by email
     user = connection.execute(query).fetchone()
 
-
     if user != None:
         # send email confirmation to new user
         emailVerifToken = generateEmailVerifToken(user.id_user)
         emailVerifUrl = "https://kompetisi.id/email-verification/" + emailVerifToken
         emailBody = EmailVerificationBody.format(emailVerifUrl, emailVerifUrl)
         sendEmail("Konfirmasi email anda untuk Kompetisi Id",
-                emailBody, [params["email"]])
+                  emailBody, [params["email"]])
 
     return user
 
 # function to select username by username and password
+
+
 def login(params):
     query = select(select_column_user)\
         .select_from(Users)\
@@ -195,20 +210,27 @@ def login(params):
     return result
 
 # function to set user email is valid
+
+
 def setValidEmail(userId):
     query = update(Users).where(Users.c.id_user == userId).values(
         is_verified=1, updated_at=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
     return connection.execute(query)
 
 # function to update database by user id
+
+
 def updateData(Params, UserId):
     query = Users.update().where(Users.c.id_user == UserId).values(Params)
     return connection.execute(query)
 
 # function to update database by email
+
+
 def updateDataByEmail(Params, Email):
     query = Users.update().where(Users.c.email == Email).values(Params)
     return connection.execute(query)
+
 
 def oauthLogin(params):
     query = select(select_column_user)\

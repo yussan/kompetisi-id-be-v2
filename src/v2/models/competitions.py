@@ -3,8 +3,8 @@ import datetime
 import enum
 from v2.helpers.encId import encId, decId
 from v2.helpers.strings import generateTitleUrl
-from users import Users
-from categories import MainCategory, SubCategory
+from .users import Users
+from .categories import MainCategory, SubCategory
 from sqlalchemy import Table, Column, MetaData, select, update, func, Enum, BIGINT, INT, DATE, DATETIME, TEXT, or_, and_
 
 metadata = MetaData()
@@ -372,7 +372,6 @@ def updateData(params, id):
 
 
 def checkHaveLikedCompetition(params):
-
     query = select(select_column_competition_action).select_from(
         CompetitionAction).where(and_(
             CompetitionAction.c.id_kompetisi == params["competition_id"],
