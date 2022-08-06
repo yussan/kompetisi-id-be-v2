@@ -108,13 +108,6 @@ EmailResponseBody = """
 # validations
 # ref: http://flask.pocoo.org/docs/0.12/patterns/wtforms/
 
-
-class FormValidator(Form):
-    title = StringField('Judul kompetisi', [validators.Length(min=4, max=100)])
-    email = StringField('Email', [validators.Length(min=4, max=50)])
-    link = StringField('Link', [validators.Length(min=4, max=100)])
-    poster = FileField('poster')
-
 # controllers
 
 
@@ -127,46 +120,31 @@ class RequestSendApi(Resource):
     # function to add list request
     # TODO: validation input file
     def post(self):
-        form = FormValidator(request.form)
-        if form.validate():
+        # start to insert database
+        params = {
+            'nama': request.json['title'],
+            'email': request.json['email'],
+            'link': request.json['link'],
+            'poster': "",
+            'status': 'waiting',
+            'note': ''
+        }
 
-            # handle upload poster
-            # ref : https://stackoverflow.com/a/30071999
-            now = datetime.datetime.now()
-            upload_dir_db = '/request/' + str(now.year)
-            upload_dir = os.environ.get(
-                'MEDIA_DIR', '../media-kompetisiid') + upload_dir_db
-            input_poster = request.files['poster']
-            poster = handleUpload(upload_dir, input_poster, upload_dir_db)
+        # insert data
+        insertRequest(params)
 
-            # start to insert database
-            params = {
-                'nama': request.form.get('title'),
-                'email': request.form.get('email'),
-                'link': request.form.get('link'),
-                # ref: https://stackoverflow.com/a/46227888/2780875
-                'poster': json.dumps(poster, separators=(',', ':')),
-                'status': 'waiting',
-                'note': ''
-            }
+        # email thanks
+        # ref: https://www.digitalocean.com/community/tutorials/how-to-use-string-formatters-in-python-3
+        # body = EmailThanksBody.format(params['nama'])
+        # sendEmail('Terimakasih Telah Mengirim Kompetisi - kompetisi.id',
+        #     body, [params['email']])
 
-            # insert data
-            insertRequest(params)
+        # send email report to moderator
+        body = EmailReport.format(params['email'], params['nama'])
+        sendEmail('Ada Kiriman Kompetisi baru - kompetisi.id',
+                  body, ["kompetisiindonesia@gmail.com"])
 
-            # email thanks
-            # ref: https://www.digitalocean.com/community/tutorials/how-to-use-string-formatters-in-python-3
-            # body = EmailThanksBody.format(params['nama'])
-            # sendEmail('Terimakasih Telah Mengirim Kompetisi - kompetisi.id',
-            #     body, [params['email']])
-
-            # send email report to moderator
-            body = EmailReport.format(params['email'], params['nama'])
-            sendEmail('Ada Kiriman Kompetisi baru - kompetisi.id',
-                      body, ["kompetisiindonesia@gmail.com"])
-
-            return apiResponse(201, 'Kompetisi kamu akan dicek oleh moderator, status selanjutkan akan kami kirim via email'), 201
-        else:
-            return apiResponse(400, 'formdata not valid'), 400
+        return apiResponse(201, 'Kompetisi kamu akan dicek oleh moderator, status selanjutkan akan kami kirim via email'), 201
 
 
 class RequestSuperApi(Resource):
