@@ -1,12 +1,10 @@
-import os
-import datetime
-import json
 from flask import Blueprint, request
 from flask_restful import Resource, Api
-from wtforms import Form, BooleanField, StringField, PasswordField, validators, FileField
+from wtforms import Form, StringField, validators
 # from flask_mail import Message
 from ..modules.file_upload import handleUpload
 from ..modules.mail import sendEmail
+from ..modules.telegram import sendTelegramMessage
 from ..models.request import getRequest, getRequestById, insertRequest, updateRequest, countRequest
 from ..helpers.response import apiResponse
 from ..transformers.request import transform
@@ -133,6 +131,13 @@ class RequestSendApi(Resource):
         # insert data
         insertRequest(params)
 
+        # send telegram notification to @kompetisiid_channel, request and forget
+        print('[NEW COMPETITION REQUEST]\nDari: ' + params['email'] + '\n' + 'Judul: ' + params['nama'] +
+              '\n' + 'Link: ' + params['link'] + '\nAkses ke https://old.kompetisi.id/super/requests/waiting')
+        sendTelegramMessage({
+            'message': '[Ada Request Kompetisi Baru]\n, Dari: ' + params['email'] + '\n' + 'Judul: ' + params['nama'] + '\n' + 'Link: ' + params['link'] + '\n Akses ke https://old.kompetisi.id/super/requests/waiting'
+        })
+
         # email thanks
         # ref: https://www.digitalocean.com/community/tutorials/how-to-use-string-formatters-in-python-3
         # body = EmailThanksBody.format(params['nama'])
@@ -140,9 +145,9 @@ class RequestSendApi(Resource):
         #     body, [params['email']])
 
         # send email report to moderator
-        body = EmailReport.format(params['email'], params['nama'])
-        sendEmail('Ada Kiriman Kompetisi baru - kompetisi.id',
-                  body, ["kompetisiindonesia@gmail.com"])
+        # body = EmailReport.format(params['email'], params['nama'])
+        # sendEmail('Ada Kiriman Kompetisi baru - kompetisi.id',
+        #           body, ["kompetisiindonesia@gmail.com"])
 
         return apiResponse(201, 'Kompetisi kamu akan dicek oleh moderator, status selanjutkan akan kami kirim via email'), 201
 
