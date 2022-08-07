@@ -132,10 +132,11 @@ class RequestSendApi(Resource):
         insertRequest(params)
 
         # send telegram notification to @kompetisiid_channel, request and forget
-        print('[NEW COMPETITION REQUEST]\nDari: ' + params['email'] + '\n' + 'Judul: ' + params['nama'] +
-              '\n' + 'Link: ' + params['link'] + '\nAkses ke https://old.kompetisi.id/super/requests/waiting')
         sendTelegramMessage({
-            'message': '[Ada Request Kompetisi Baru]\n, Dari: ' + params['email'] + '\n' + 'Judul: ' + params['nama'] + '\n' + 'Link: ' + params['link'] + '\n Akses ke https://old.kompetisi.id/super/requests/waiting'
+            'message': '[NEW COMPETITION REQUEST]\nDari: ' + params['email'] + '\n' + 'Judul: ' + params['nama'] +
+            '\n' + 'Link: ' +
+            params['link'] +
+            '\nAkses ke https://old.kompetisi.id/super/requests/waiting'
         })
 
         # email thanks
