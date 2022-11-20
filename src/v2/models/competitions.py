@@ -140,9 +140,9 @@ def getList(Params={}):
     # filter by status
     if 'status' in Params:
         if Params['status'] == 'active':
-            s = s.where(and_(Competition.c.deadline >=
+            s = s.where(and_(Competition.c.pengumuman >=
                              datetime.datetime.now(), Competition.c.status == "posted"))
-            c = c.where(and_(Competition.c.deadline >=
+            c = c.where(and_(Competition.c.pengumuman >=
                              datetime.datetime.now(), Competition.c.status == "posted"))
         elif Params['status'] == 'waiting':
             s = s.where(Competition.c.status == "waiting")
